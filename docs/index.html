@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>認定調査 特記事項メモ</title>
+<meta name="theme-color" content="#2A4A8A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="特記事項メモ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+/* Layout: one-hand phone app — sticky header, single working column, bottom tab bar. Paper-form neutrals, ink-blue accent, seal-red only for "recording". */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#17202B; --muted:#5B6676; --line:#DCE1E8;
+  --accent:#2A4A8A; --accent-weak:#E5ECF8; --accent-ink:#FFFFFF;
+  --rec:#C23B2A; --rec-weak:#FBE9E6; --ok:#2C7A57; --ok-weak:#E3F2EA; --warn:#9A6210; --warn-weak:#FBF0DD;
+  --sp-self:#2A4A8A; --sp-fam:#7A4A9A; --sp-inv:#4F5B6B; --sp-obs:#2C7A57;
+  --font:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --nav-h:58px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141A; --surface:#1A2029; --ink:#E5E9EF; --muted:#9AA4B2; --line:#2B3340;
+  --accent:#8DAEF0; --accent-weak:#1E2B44; --accent-ink:#0E1522;
+  --rec:#F0715F; --rec-weak:#3A1F1B; --ok:#6CC59B; --ok-weak:#16302A; --warn:#E3A94B; --warn-weak:#33280F;
+  --sp-self:#8DAEF0; --sp-fam:#C9A2E6; --sp-inv:#A9B3C1; --sp-obs:#6CC59B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141A; --surface:#1A2029; --ink:#E5E9EF; --muted:#9AA4B2; --line:#2B3340;
+  --accent:#8DAEF0; --accent-weak:#1E2B44; --accent-ink:#0E1522;
+  --rec:#F0715F; --rec-weak:#3A1F1B; --ok:#6CC59B; --ok-weak:#16302A; --warn:#E3A94B; --warn-weak:#33280F;
+  --sp-self:#8DAEF0; --sp-fam:#C9A2E6; --sp-inv:#A9B3C1; --sp-obs:#6CC59B; color-scheme:dark}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:flex;flex-direction:column;height:100%;max-width:760px;margin:0 auto;background:var(--bg)}
+header.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .brand{font-weight:700;font-size:13px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+header.top .case{flex:1;min-width:0;text-align:right}
+.casebtn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 12px;font-size:13px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+main.fixed{overflow:hidden}
+nav.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--surface);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{border:0;background:none;height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--muted)}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
+.view{padding-inline:16px;padding-block:14px 28px}
+.view[hidden]{display:none}
+
+/* capture */
+#v-cap{display:flex;flex-direction:column;height:100%;padding-block:10px 0}
+.activebar{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:stretch}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;min-height:44px}
+.active-item{border:1.5px solid var(--accent);background:var(--accent-weak);border-radius:10px;padding:6px 10px;text-align:left;display:flex;flex-direction:column;min-width:0}
+.active-item .l1{display:flex;gap:8px;align-items:baseline;min-width:0}
+.aid{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.aname{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.active-item .l2{font-size:11.5px;color:var(--muted)}
+.autobar{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1.5px solid var(--accent);background:var(--accent-weak);border-radius:12px;padding:8px 10px}
+.ab-main{min-width:0;flex:1}
+.ab-t{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:14px}
+.ab-c{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ab-s{font-size:12px;color:var(--muted);margin-top:2px}
+.ab-s.err{color:var(--rec)}
+.ab-btns{display:flex;flex-direction:column;gap:6px}
+.ab-btns .btn{padding:6px 10px;font-size:13px;white-space:nowrap}
+#autoToggle.on{background:var(--surface);color:var(--accent);border-color:var(--accent)}
+.tag.prov{background:none;border:1px dashed var(--accent);font-weight:400}
+.aib{display:inline-block;font-size:11px;border-radius:6px;padding:0 6px;background:var(--warn-weak);color:var(--warn);font-weight:700;vertical-align:middle}
+.seg5{grid-template-columns:1.3fr repeat(4,1fr)!important}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:8px;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 0;font-size:13.5px;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
+.log{flex:1;min-height:0;overflow:auto;margin-top:10px;display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
+.utt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
+.utt-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.utt-meta time{font-variant-numeric:tabular-nums}
+.utt-text{margin-top:2px;white-space:pre-wrap;word-break:break-word}
+.sp{font-weight:700;font-size:12px}
+.sp-本人{color:var(--sp-self)} .sp-家族{color:var(--sp-fam)} .sp-調査員{color:var(--sp-inv)} .sp-観察{color:var(--sp-obs)}
+.tag{background:var(--accent-weak);color:var(--accent);border-radius:6px;padding:0 6px;font-weight:700;font-variant-numeric:tabular-nums}
+.sug{border:1px dashed var(--muted);color:var(--muted);border-radius:6px;padding:0 6px;background:none;font-size:12px}
+.composer{border-top:1px solid var(--line);padding-block:8px 10px;background:var(--bg)}
+#interim{font-size:13px;color:var(--muted);min-height:0}
+#interim:empty{display:none}
+.inrow{display:flex;gap:8px;align-items:flex-end}
+#inp{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;resize:none;min-height:52px;max-height:30vh;font-size:16px}
+#inp:focus{border-color:var(--accent);outline:none}
+.primary{border:0;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:0 16px;min-height:52px;font-weight:700;white-space:nowrap}
+.subrow{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:6px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.subrow label{display:flex;gap:6px;align-items:center}
+.srbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:12.5px;display:flex;gap:6px;align-items:center}
+.srbtn.on{background:var(--rec-weak);border-color:var(--rec);color:var(--rec);font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.srbtn.on .dot{animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.srbtn.on .dot{animation:none}}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted);font-size:13.5px;background:var(--surface)}
+.empty ol{margin:6px 0 10px;padding-left:1.3em}
+.empty b{color:var(--ink)}
+
+/* generic */
+h2{font-size:18px;margin:0 0 4px;text-wrap:balance}
+h3{font-size:13px;margin:18px 0 6px;color:var(--muted);letter-spacing:.06em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-size:14px}
+.btn.acc{border-color:var(--accent);color:var(--accent);font-weight:700}
+.btn.fill{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn.danger{color:var(--rec);border-color:var(--rec)}
+.btn:disabled{opacity:.5}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+body.ai-off .ai-only{display:none!important}
+.sa-only{display:none}
+body.standalone .sa-only{display:block}
+body:not(.ai-off) .ai-offnote{display:none}
+
+/* items list */
+.grp{margin-top:14px}
+.grp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:700;font-size:14px;padding:4px 2px}
+.grp-h .prog{font-size:12px;color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+.irow{display:grid;grid-template-columns:46px 1fr auto;gap:8px;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:var(--surface);padding:10px 12px}
+.ilist{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ilist .irow:first-child{border-top:0}
+.irow .iid{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.irow .iname{min-width:0}
+.irow .ich{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badges{display:flex;gap:4px}
+.b{font-size:11px;border-radius:6px;padding:1px 6px;white-space:nowrap}
+.b-note{background:var(--ok-weak);color:var(--ok)}
+.b-utt{background:var(--accent-weak);color:var(--accent);font-variant-numeric:tabular-nums}
+.b-ai{background:var(--warn-weak);color:var(--warn)}
+
+/* detail */
+.back{border:0;background:none;color:var(--accent);padding:4px 0;font-size:14px}
+.axis{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--muted);vertical-align:middle;font-weight:400}
+.hint{font-size:13px;color:var(--muted);background:var(--surface);border-left:3px solid var(--line);padding:6px 10px;margin:8px 0}
+.choices{display:flex;flex-direction:column;gap:6px}
+.choice{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;min-height:44px}
+.choice .n{font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted);width:1.5em;text-align:right}
+.choice[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-weak);font-weight:700}
+.choice[aria-pressed="true"] .n{color:var(--accent)}
+.choices.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+.ulist{display:flex;flex-direction:column;gap:6px}
+.ul-item{display:flex;gap:8px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:14px}
+.ul-item .tx{flex:1;min-width:0;word-break:break-word}
+.x{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;padding:2px 4px}
+.plus{border:1px solid var(--accent);color:var(--accent);background:none;border-radius:6px;font-size:12px;padding:1px 8px;white-space:nowrap}
+details summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:10px}
+textarea.note{width:100%;min-height:150px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);font-size:16px;line-height:1.7;resize:vertical}
+textarea.note:focus{border-color:var(--accent);outline:none}
+.count{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prop{margin-top:10px;border:1.5px solid var(--warn);background:var(--warn-weak);border-radius:12px;padding:10px 12px}
+.prop .ph{font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.05em}
+.prop .pt{white-space:pre-wrap;margin-top:4px;word-break:break-word}
+.prop .pm{font-size:13px;margin-top:6px}
+.pn{display:flex;justify-content:space-between;gap:8px;margin-top:22px}
+
+/* output */
+pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-size:14px;line-height:1.75;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0}
+.warns{display:flex;flex-direction:column;gap:6px}
+.warn{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.warn .wk{font-size:11px;border-radius:6px;padding:1px 6px;background:var(--warn-weak);color:var(--warn);white-space:nowrap;font-weight:700}
+.warn .wk.miss{background:var(--rec-weak);color:var(--rec)}
+.ok{color:var(--ok);font-size:14px}
+
+/* paper preview: deliberately white paper in both themes, like the printed form */
+.paper{background:#FFFFFF;color:#111111;border:1px solid var(--line);border-radius:4px;padding:16px 12px;overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.paper p{margin:0 0 8px}
+.savecard{display:flex;flex-direction:column;gap:8px}
+.savecard label{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.savecard label input{margin-top:4px}
+.status{font-size:12.5px;color:var(--muted)}
+.status.err{color:var(--rec)}
+.status a{color:var(--accent)}
+
+/* 枚方市 様式52 sheet — fixed paper colors in both themes, sized in mm and scaled to fit */
+.fx-wrap{width:100%;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.18);background:#FFFFFF}
+.fx{position:relative;width:210mm;height:297mm;padding:8mm 10mm 6mm;background:#FFFFFF;color:#111111;transform-origin:0 0;font-family:"BIZ UDPGothic",var(--font);font-size:10pt;line-height:1.35}
+.fx-r{color:#E34B6A}
+.fx-top{display:flex;justify-content:space-between;align-items:center;height:10mm}
+.fx-title{background:#E34B6A;color:#FFFFFF;font-weight:700;font-size:13pt;border-radius:3mm;padding:1mm 4mm;letter-spacing:.05em}
+.fx-no{border:1.5pt solid #111111;font-size:16pt;width:15mm;height:9mm;display:flex;align-items:center;justify-content:center}
+.fx-ids{display:flex;align-items:center;gap:0;margin-top:2mm;height:9mm}
+.fx-lab{background:#E34B6A;color:#FFFFFF;font-size:6pt;line-height:1.15;text-align:center;padding:.6mm 1mm;margin-right:.8mm}
+.fx-boxes{display:flex;margin-right:4mm}
+.fx-d{width:6.5mm;height:8mm;border:.6pt solid #111111;margin-left:-.6pt;display:flex;align-items:center;justify-content:center;font-size:14pt}
+.fx-boxes .fx-d:first-child{margin-left:0}
+.fx-pg{border-color:#E34B6A;margin:0 1.5mm 0 3mm}
+.fx-pn{color:#E34B6A;font-size:6.5pt;line-height:1.3}
+.fx-gn{color:#E34B6A;font-size:7.5pt;margin:2mm 0 .8mm 53mm}
+.fx-body{display:grid;grid-template-columns:50mm 1fr;gap:3mm}
+.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:6.8pt;line-height:2.73mm;height:230mm;overflow:hidden}
+.fx-must{font-size:7.5pt;margin-top:1mm}
+.fx-t{border-collapse:collapse;width:100%;table-layout:fixed;border:.8pt solid #E34B6A}
+.fx-t th{height:8mm;font-weight:400;font-size:9pt;border:.8pt solid #E34B6A}
+.fx-t th:first-child{width:14mm}
+.fx-t td{height:7.4mm;padding:0;border-bottom:.6pt dashed #E34B6A;white-space:nowrap;overflow:hidden;font-size:10pt}
+.fx-t tr:last-child td{border-bottom:.8pt solid #E34B6A}
+.fx-c1{width:6mm;text-align:center;border-right:.6pt dashed #E34B6A}
+.fx-c2{width:8mm;text-align:center;border-right:.8pt solid #E34B6A}
+.fx-tx{padding-left:1.5mm!important}
+.fx-city{position:absolute;right:10mm;bottom:4mm;font-size:7.5pt}  /* 欄外右下 */
+
+/* simulation */
+.sim{border:1.5px solid var(--accent);border-radius:12px;background:var(--surface);padding:14px}
+.sim .lv{font-size:26px;font-weight:700;color:var(--accent);line-height:1.3}
+.sim .lv small{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
+.sim .mins{font-variant-numeric:tabular-nums}
+.scale{position:relative;height:30px;margin:14px 0 22px}
+.scale .bar{position:absolute;left:0;right:0;top:10px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--line),var(--accent-weak))}
+.scale .tk{position:absolute;top:6px;width:1px;height:16px;background:var(--muted)}
+.scale .tl{position:absolute;top:24px;font-size:10.5px;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.scale .mk{position:absolute;top:2px;width:4px;height:24px;margin-left:-2px;border-radius:2px;background:var(--rec)}
+.gs{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:13px;margin-top:6px}
+.gs .gb{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.gs .gb i{display:block;height:100%;background:var(--accent)}
+.gs .gv{font-variant-numeric:tabular-nums;text-align:right;min-width:3em}
+.pending{border:1px dashed var(--line);border-radius:12px;padding:12px;background:var(--surface);font-size:13.5px}
+
+/* form */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.form .full{grid-column:1/-1}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted);min-width:0}
+.form input,.form select,.form textarea{border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--surface);font-size:16px;width:100%;color:var(--ink)}
+.form textarea{min-height:70px;resize:vertical}
+.note-box{font-size:13px;line-height:1.7}
+.note-box ul{margin:4px 0;padding-left:1.2em}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.scrim[hidden]{display:none!important}
+.sheet{background:var(--surface);width:100%;max-width:760px;max-height:85%;overflow:auto;border-radius:16px 16px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sheet-h b{font-size:16px}
+.pick-g{margin-top:10px}
+.pick-g .t{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+.pick button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 8px;text-align:left;font-size:13px;display:flex;gap:6px;min-width:0}
+.pick button span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick button b{color:var(--accent);font-variant-numeric:tabular-nums}
+.pick button[aria-current="true"]{border-color:var(--accent);background:var(--accent-weak)}
+.pick button.has{box-shadow:inset 3px 0 0 var(--ok)}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+.toast[hidden]{display:none}
+</style>
+
+<div class="app">
+  <header class="top">
+    <span class="brand">特記事項メモ</span>
+    <div class="case"><button class="casebtn" id="caseBtn">ケース</button></div>
+  </header>
+
+  <main id="main">
+    <!-- 聞き取り -->
+    <section id="v-cap" class="view">
+      <div class="autobar">
+        <div class="ab-main">
+          <div class="ab-t"><b>自動振分け・特記作成</b><span class="ab-c" id="autoCounts"></span></div>
+          <div class="ab-s" id="autoStat"></div>
+        </div>
+        <div class="ab-btns">
+          <button class="btn fill" id="autoToggle" hidden>自動振分けを開始</button>
+          <button class="btn" id="finishBtn">仕上げ</button>
+        </div>
+      </div>
+      <div class="seg seg5" id="speakerSeg" role="group" aria-label="話者">
+        <button data-sp="自動">話者自動</button><button data-sp="本人">本人</button><button data-sp="家族">家族</button><button data-sp="調査員">調査員</button><button data-sp="観察">観察</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="composer">
+        <div id="interim"></div>
+        <div class="inrow">
+          <textarea id="inp" rows="2" placeholder="キーボードのマイクで話すと、ここに文字が入ります"></textarea>
+          <button class="primary" id="commitBtn">記録</button>
+        </div>
+        <div class="subrow">
+          <label><input type="checkbox" id="autoCommit" checked> 3秒止まったら自動で記録</label>
+          <button class="srbtn" id="srBtn" hidden><span class="dot"></span><span id="srLabel">連続音声認識</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 項目 -->
+    <section id="v-items" class="view" hidden></section>
+
+    <!-- 出力 -->
+    <section id="v-out" class="view" hidden></section>
+
+    <!-- 概況 -->
+    <section id="v-meta" class="view" hidden>
+      <h2>概況・ケース情報</h2>
+      <p class="small muted">氏名・住所・被保険者番号は入力しないでください。イニシャルや事業所内の管理番号で区別します。</p>
+      <div class="form" id="metaForm">
+        <label>調査実施日<input type="date" id="m-date" data-k="date"></label>
+        <label>保険者番号（用紙に印字）<input id="m-insurer" data-k="insurerNo" inputmode="numeric" maxlength="6" placeholder="272104" autocomplete="off"></label>
+        <label>調査員<input id="m-surveyor" data-k="surveyor" autocomplete="off"></label>
+        <label class="full">対象者（イニシャル・管理番号）<input id="m-subject" data-k="subject" placeholder="例：A.Y／No.0123" autocomplete="off"></label>
+        <label>年齢<input id="m-age" data-k="age" inputmode="numeric" autocomplete="off"></label>
+        <label>性別<select id="m-sex" data-k="sex"><option value="">—</option><option>男</option><option>女</option></select></label>
+        <label>申請区分<select id="m-kubun" data-k="kubun"><option value="">—</option><option>新規</option><option>更新</option><option>区分変更</option></select></label>
+        <label>調査場所<select id="m-place" data-k="place"><option value="">—</option><option>自宅</option><option>施設</option><option>病院</option><option>その他</option></select></label>
+        <label class="full">立会者<input id="m-witness" data-k="witness" placeholder="例：長女（同居）" autocomplete="off"></label>
+        <label class="full">世帯・主な介護者<textarea id="m-household" data-k="household" placeholder="例：長女夫婦と同居。日中は独居。"></textarea></label>
+        <label class="full">主な傷病・経過<textarea id="m-disease" data-k="disease" placeholder="例：脳梗塞後遺症（右片麻痺）、高血圧"></textarea></label>
+        <label class="full">利用中のサービス・住環境<textarea id="m-services" data-k="services" placeholder="例：通所介護 週2回、福祉用具（特殊寝台・手すり）。2階建て、居室1階。"></textarea></label>
+      </div>
+      <div class="sa-only">
+        <h3>AIの設定（ブラウザアプリ版）</h3>
+        <div class="card note-box">
+          <p class="small" style="margin:0 0 8px">会話の振り分けと特記事項の作成に、あなたのAnthropic APIキーを使います。キーは console.anthropic.com で発行してください。キーはこの端末のブラウザ内にだけ保存され、利用料はAnthropicから従量で請求されます。</p>
+          <div class="form">
+            <label class="full">APIキー<input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label>
+            <label class="full">モデル<select id="apiModel"></select></label>
+          </div>
+          <div class="btnrow"><button class="btn fill" id="apiSave">保存</button><button class="btn danger" id="apiClear">キーを削除</button></div>
+          <div class="status" id="apiStatus" style="margin-top:6px"></div>
+        </div>
+      </div>
+      <h3>使い方</h3>
+      <div class="card note-box">
+        <ul>
+          <li>「聞き取り」で「自動振分けを開始」を押し、キーボードのマイクで会話を最初から最後まで文字にします。項目を選ぶ必要はありません。</li>
+          <li>発言は話の切れ目ごとにまとめて判定され、話者（本人・家族・調査員）と調査項目が自動で付きます。点線の項目は判定前の仮の振り分けです。</li>
+          <li>振り分けられた項目ごとに、特記事項と選択肢の推定が自動で作られ、会話が進むと更新されます。終わったら「仕上げ」で全体を見直します。</li>
+          <li>「項目」で <span class="aib">AI</span> の付いた選択と特記を確認し、確定・修正します。自分で書き換えた特記は自動で上書きされません。<span class="ai-offnote">この表示ではAIは使えないため、キーワードでの振り分けと定型文になります。</span></li>
+          <li>「出力」で記入漏れを確認し、全文をコピーして調査票や自治体システムに貼り付けます。</li>
+        </ul>
+      </div>
+      <h3>個人情報の扱い</h3>
+      <div class="card note-box">
+        <ul>
+          <li>記録はこの端末のブラウザ内に自動保存されます。Google ドライブへの自動保存をオンにすると、特記事項用紙がドライブにも保存されます。転記が終わったらケースを削除してください（ドライブの用紙もゴミ箱に移ります）。</li>
+          <li>キーボードの音声入力は端末の設定によって外部サーバーで処理されます。AI下書きを使うと、聞き取り内容がClaudeに送信されます。</li>
+          <li>録音・外部サービス利用の可否は保険者（市町村）の取り決めに従い、本人・家族の同意を得てから使ってください。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabs" id="tabs">
+    <button data-v="cap" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>聞き取り</button>
+    <button data-v="items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h1M4 12h1M4 18h1"/></svg>項目</button>
+    <button data-v="out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7"/></svg>出力</button>
+    <button data-v="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.5 4-5 7-5s5.8 1.5 7 5"/></svg>概況</button>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(() => {
+"use strict";
+/* ---------- 認定調査票 基本調査 項目定義 ---------- */
+const GROUPS = [
+  {g:0, t:"概況（000・必須）", head:"概況"},
+  {g:1, t:"第1群 身体機能・起居動作", head:"1. 身体機能・起居動作に関連する項目についての特記事項"},
+  {g:2, t:"第2群 生活機能", head:"2. 生活機能に関連する項目についての特記事項"},
+  {g:3, t:"第3群 認知機能", head:"3. 認知機能に関連する項目についての特記事項"},
+  {g:4, t:"第4群 精神・行動障害", head:"4. 精神・行動障害に関連する項目についての特記事項"},
+  {g:5, t:"第5群 社会生活への適応", head:"5. 社会生活への適応に関連する項目についての特記事項"},
+  {g:6, t:"特別な医療", head:"6. 特別な医療についての特記事項"},
+  {g:7, t:"日常生活自立度", head:"7. 日常生活自立度に関連する項目についての特記事項"}
+];
+const C3 = ["つかまらないでできる","何かにつかまればできる","できない"];
+const SUP = ["支えなしでできる","何か支えがあればできる","できない"];
+const K3 = ["介助されていない","一部介助","全介助"];
+const K4 = ["介助されていない","見守り等","一部介助","全介助"];
+const DK = ["できる","できない"];
+const U3 = ["ない","ときどきある","ある"];
+const I = (id,name,axis,ch,kw,multi) => ({id, g:+id.split("-")[0], name, axis, ch, kw, multi:!!multi});
+const ITEMS = [
+  I("0","概況（主訴・家族状況・居住環境・使用している機器等）","g",[],["主訴","困って","家族","同居","独居","住ま","住宅","段差","手すり","ベッド","車いす","車椅子","福祉用具","介護保険","サービス","デイ","ヘルパー","入院","退院","病気","診断"]),
+  I("1-1","麻痺等の有無","u",["ない","左上肢","右上肢","左下肢","右下肢","その他（四肢の欠損）"],["麻痺","まひ","動かない","片麻痺","力が入らない","腕が上がらない","足が上がらない"],1),
+  I("1-2","拘縮の有無","u",["ない","肩関節","股関節","膝関節","その他（四肢の欠損）"],["拘縮","曲がらない","伸びない","関節","可動域","固く"],1),
+  I("1-3","寝返り","n",C3,["寝返り","横向き"]),
+  I("1-4","起き上がり","n",C3,["起き上が","起きる時","起こして"]),
+  I("1-5","座位保持","n",["できる","自分の手で支えればできる","支えてもらえればできる","できない"],["座位","座って","座っている","端座位","背もたれ"]),
+  I("1-6","両足での立位保持","n",SUP,["立位","立っている","立って"]),
+  I("1-7","歩行","n",C3,["歩","杖","歩行器","シルバーカー","ふらつ","転倒","転ん"]),
+  I("1-8","立ち上がり","n",C3,["立ち上が"]),
+  I("1-9","片足での立位","n",SUP,["片足","片脚"]),
+  I("1-10","洗身","k",[...K3,"行っていない"],["入浴","風呂","洗身","体を洗","背中","シャワー"]),
+  I("1-11","つめ切り","k",K3,["爪","つめ"]),
+  I("1-12","視力","n",["普通（日常生活に支障がない）","約1m離れた視力確認表の図が見える","目の前に置いた視力確認表の図が見える","ほとんど見えない","見えているのか判断不能"],["視力","見え","目が","眼鏡","メガネ","白内障","緑内障"]),
+  I("1-13","聴力","n",["普通","普通の声がやっと聞き取れる","かなり大きな声なら何とか聞き取れる","ほとんど聞こえない","聞こえているのか判断不能"],["聞こえ","聞え","耳","補聴器","難聴"]),
+  I("2-1","移乗","k",K4,["移乗","車いす","車椅子","ベッドから","乗り移","便座に"]),
+  I("2-2","移動","k",K4,["移動","トイレまで","居室","屋内","廊下"]),
+  I("2-3","えん下","n",["できる","見守り等","できない"],["飲み込","むせ","嚥下","えん下","誤嚥"]),
+  I("2-4","食事摂取","k",K4,["食事","食べ","箸","スプーン","ご飯","とろみ","刻み"]),
+  I("2-5","排尿","k",K4,["排尿","尿","おしっこ","失禁","パッド","おむつ","オムツ","リハパン","トイレ","ポータブル"]),
+  I("2-6","排便","k",K4,["排便","便","便秘","下剤","摘便","お尻を拭"]),
+  I("2-7","口腔清潔","k",K3,["歯磨","歯みが","入れ歯","義歯","うがい","口腔"]),
+  I("2-8","洗顔","k",K3,["洗顔","顔を洗","顔を拭"]),
+  I("2-9","整髪","k",K3,["整髪","髪","くし","ブラシ"]),
+  I("2-10","上衣の着脱","k",K4,["上着","上衣","シャツ","袖","ボタン","着替"]),
+  I("2-11","ズボン等の着脱","k",K4,["ズボン","パンツ","靴下","下衣"]),
+  I("2-12","外出頻度","u",["週1回以上","月1回以上","月1回未満"],["外出","出かけ","通院","散歩","デイ"]),
+  I("3-1","意思の伝達","n",["調査対象者が意思を他者に伝達できる","ときどき伝達できる","ほとんど伝達できない","できない"],["伝え","意思","会話","返答","返事"]),
+  I("3-2","毎日の日課を理解","n",DK,["日課","一日の流れ","予定"]),
+  I("3-3","生年月日や年齢を言う","n",DK,["生年月日","誕生日","年齢","何歳"]),
+  I("3-4","短期記憶","n",DK,["短期記憶","さっき","直前","3品","三品","覚えて"]),
+  I("3-5","自分の名前を言う","n",DK,["名前","氏名"]),
+  I("3-6","今の季節を理解する","n",DK,["季節"]),
+  I("3-7","場所の理解","n",DK,["場所","ここはどこ","どこにいる"]),
+  I("3-8","常時の徘徊","u",U3,["徘徊","歩き回","うろうろ"]),
+  I("3-9","外出すると戻れない","u",U3,["戻れない","迷子","道に迷","帰れなく","保護され"]),
+  I("4-1","物を盗られたなどと被害的になる","u",U3,["盗られ","とられ","盗まれ","被害"]),
+  I("4-2","作話","u",U3,["作話","事実と違う","話を作"]),
+  I("4-3","泣いたり、笑ったりして感情が不安定になる","u",U3,["泣","感情","情緒","涙"]),
+  I("4-4","昼夜の逆転がある","u",U3,["昼夜","夜中","眠れない","不眠","昼間寝"]),
+  I("4-5","しつこく同じ話をする","u",U3,["同じ話","同じこと","何度も聞","繰り返"]),
+  I("4-6","大声をだす","u",U3,["大声","怒鳴","叫"]),
+  I("4-7","介護に抵抗する","u",U3,["抵抗","拒否","嫌が","手を払"]),
+  I("4-8","「家に帰る」等と言い落ち着きがない","u",U3,["家に帰る","帰りたい","落ち着きがない","そわそわ"]),
+  I("4-9","一人で外に出たがり目が離せない","u",U3,["一人で外","出ていこう","目が離せない"]),
+  I("4-10","いろいろなものを集めたり、無断でもってくる","u",U3,["集め","収集","持ってく","ため込"]),
+  I("4-11","物を壊したり、衣類を破いたりする","u",U3,["壊","破い","投げ"]),
+  I("4-12","ひどい物忘れ","u",U3,["物忘れ","忘れ","置き忘","火の不始末","鍋を焦"]),
+  I("4-13","意味もなく独り言や独り笑いをする","u",U3,["独り言","ひとりごと","独り笑","ひとり笑"]),
+  I("4-14","自分勝手に行動する","u",U3,["自分勝手","勝手に"]),
+  I("4-15","話がまとまらず、会話にならない","u",U3,["話がまとまら","会話にならな","話が飛","つじつま"]),
+  I("5-1","薬の内服","k",K3,["薬","服薬","内服","飲み忘","お薬カレンダー"]),
+  I("5-2","金銭の管理","k",K3,["金銭","お金","財布","通帳","支払"]),
+  I("5-3","日常の意思決定","n",["できる（特別な場合でもできる）","特別な場合を除いてできる","日常的に困難","できない"],["意思決定","決め","判断","ケアプラン"]),
+  I("5-4","集団への不適応","u",U3,["集団","なじめ","他の利用者","トラブル"]),
+  I("5-5","買い物","k",K4,["買い物","買物","スーパー","ネットスーパー","生協"]),
+  I("5-6","簡単な調理","k",K4,["調理","料理","電子レンジ","温め","炊"]),
+  I("6","特別な医療（過去14日間）","m",["点滴の管理","中心静脈栄養","透析","ストーマ（人工肛門）の処置","酸素療法","レスピレーター（人工呼吸器）","気管切開の処置","疼痛の看護","経管栄養","モニター測定（血圧、心拍、酸素飽和度等）","じょくそうの処置","カテーテル（コンドームカテーテル、留置カテーテル、ウロストーマ等）"],["点滴","中心静脈","透析","ストーマ","人工肛門","酸素","人工呼吸器","気管切開","疼痛","経管","胃ろう","胃瘻","モニター","褥瘡","じょくそう","カテーテル","バルーン"],1),
+  I("7-1","障害高齢者の日常生活自立度（寝たきり度）","j",["自立","J1","J2","A1","A2","B1","B2","C1","C2"],["寝たきり","日中","ベッド上","離床"]),
+  I("7-2","認知症高齢者の日常生活自立度","j",["自立","Ⅰ","Ⅱa","Ⅱb","Ⅲa","Ⅲb","Ⅳ","M"],["認知症"])
+];
+ITEMS.find(x=>x.id==="6").g = 6;
+const BY = Object.fromEntries(ITEMS.map(x=>[x.id,x]));
+/* Wording follows 要介護認定 認定調査員テキスト2009改訂版（令和6年4月） */
+const AXIS = {
+  g:{label:"概況", guide:"必須。主訴、家族状況、調査対象者の居住環境、日常的に使用する機器・器械の有無等を記載する。"},
+  n:{label:"能力", guide:"確認動作を可能な限り実際に試行して評価する。試行した結果と日頃の状況が異なる場合は、一定期間（調査日より概ね過去1週間）の状況において、より頻回な状況に基づき選択し、その違いを特記事項に記載する。実際に行ってもらえなかった場合は、その理由や状況、聞き取り内容、選択した根拠を記載する。"},
+  k:{label:"介助の方法", guide:"実際に行われている介助で選択し、具体的な「介護の手間」と「頻度」を特記事項に記載する。一定期間（調査日より概ね過去1週間）で、より頻回に見られる状況で選択する。「介助されていない」状態や「実際に行われている介助」が不適切と判断する場合は、その理由を記載した上で適切な介助の方法を選択する。"},
+  u:{label:"有無", guide:"BPSD関連は、一定期間（調査日より概ね過去1か月間）の状況において、行動がどの程度発生しているのか頻度に基づき選択する。有無によって発生している介護の手間を頻度とあわせて記載する。介護者が特に対応をとっていない場合もその旨を記載する。"},
+  m:{label:"特別な医療", guide:"過去14日間に、医師の指示に基づき看護師等によって実施された医療行為のみ「ある（該当する）」とする。実施者・頻度・処置の内容を記載する。"},
+  j:{label:"自立度", guide:"判定基準に照らし、根拠となる日中の生活状況・移動の状況、認知症の症状と介護の必要性を記載する。"}
+};
+const EXTRA = {
+  "1-1":"確認動作で確認した状況と日頃の状況（概ね過去1週間）が異なる場合は、より頻回な状況に基づき選択し、違いと選択した根拠を記載する。",
+  "1-2":"「関節の動く範囲の制限の有無の確認方法」に示す動作で確認する。確認できなかった場合は、その理由と聞き取り内容を記載する。",
+  "2-12":"「2-12 外出頻度」で定める選択基準（週1回以上／月1回以上／月1回未満）に基づいて選択し、外出の目的と頻度を記載する。",
+  "4-12":"何らかの行動が発生していない場合でも、周囲の者が何らかの行動をとらなければならないような状況（火の不始末など）が発生している場合は「行動が発生している」として評価する。"
+};
+const SPEAKERS = ["本人","家族","調査員","観察"];
+const ORDER = ITEMS.map(x=>x.id);
+
+/* ---------- state ---------- */
+const KEY = "ninteiTokki.v1";
+let DB = {cur:null, cases:{}};
+const S = {view:"cap", detail:null, speaker:"本人"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2,10);
+const pad = n => String(n).padStart(2,"0");
+const today = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const hhmm = () => { const d=new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const C = () => DB.cases[DB.cur];
+const IT = id => { const c=C(); return c.items[id] || (c.items[id] = {c:[], note:""}); };
+
+function newCase(meta){
+  const id = "c"+Date.now().toString(36)+uid().slice(0,3);
+  DB.cases[id] = {id, meta:Object.assign({date:today(), insurerNo:"272104"}, meta||{}), utts:[], items:{}, prop:{}, active:"1-1", updated:Date.now()};
+  DB.cur = id; return DB.cases[id];
+}
+function load(){
+  try { const s = localStorage.getItem(KEY); if (s) { const d = JSON.parse(s); if (d && d.cases) DB = d; } } catch(e) {}
+  if (!DB.cur || !DB.cases[DB.cur]) { const ids = Object.keys(DB.cases); if (ids.length) DB.cur = ids[0]; else newCase(); }
+}
+let saveT;
+function flush(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch(e) { toast("この端末に保存できませんでした。出力タブからコピーして控えてください"); } }
+function save(){ C().updated = Date.now(); clearTimeout(saveT); saveT = setTimeout(flush, 400); scheduleDrive(); }
+document.addEventListener("visibilitychange", () => { if (document.hidden) { clearTimeout(saveT); flush(); if (drivePending) { clearTimeout(driveT); driveSave(false); } } });
+
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2600); }
+
+async function copyText(text){
+  try { await navigator.clipboard.writeText(text); toast("コピーしました"); return true; }
+  catch(e) { toast("コピーできませんでした。本文を長押しして選択してください"); return false; }
+}
+
+/* ---------- Claude (sample capability) ---------- */
+let SAMPLE = null;
+document.body.classList.add("ai-off");
+if (window.claude && typeof window.claude.use === "function") {
+  window.claude.use("sample").then(s => { SAMPLE = s; document.body.classList.toggle("ai-off", !s); if (S.view==="cap") renderLog(false); }).catch(()=>{});
+}
+
+/* ---------- browser app (opened directly, not inside claude.ai) ----------
+   Claude is called with the user's own API key through the official SDK, and
+   exposes the same sample()/sample.json() shape the rest of the page uses. */
+const STANDALONE = !(window.claude && typeof window.claude.use === "function");
+if (STANDALONE) document.body.classList.add("standalone");
+const SDK_URL = "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.128.0/+esm";
+const API = {key:"", model:"claude-opus-5-5"};
+const MODELS = [["claude-opus-5-5","Claude Opus 5.5（標準・高精度）"],["claude-sonnet-5-5","Claude Sonnet 5.5（費用を抑える）"],["claude-haiku-5-5","Claude Haiku 5.5（最も安い）"]];
+let sdkMod = null;
+function loadApi(){ try { API.key = localStorage.getItem(KEY+".apikey") || ""; API.model = localStorage.getItem(KEY+".model") || API.model; } catch(e) {} }
+function parseJsonLoose(t){
+  const tries = [t, (t.match(/```(?:json)?\s*([\s\S]*?)```/)||[])[1]];
+  const a = Math.min(...["{","["].map(ch => { const i = t.indexOf(ch); return i < 0 ? Infinity : i; })), b = Math.max(t.lastIndexOf("}"), t.lastIndexOf("]"));
+  if (a < b) tries.push(t.slice(a, b+1));
+  for (const s of tries) { if (!s) continue; try { return JSON.parse(s); } catch(_) {} }
+  return undefined;
+}
+function makeApiSample(){
+  const call = async (input, opts = {}) => {
+    if (!API.key) throw {code:"no_key"};
+    let Anthropic;
+    try { sdkMod = sdkMod || await import(SDK_URL); Anthropic = sdkMod.default; } catch(_) { throw {code:"sdk_load"}; }
+    const client = new Anthropic({apiKey: API.key, dangerouslyAllowBrowser: true, maxRetries: 2});
+    const text0 = typeof input === "string" ? input : input.map(m => m.content).join("\n\n");
+    let msg;
+    try {
+      msg = await client.beta.messages.create({
+        model: API.model,
+        max_tokens: 16000,
+        betas: ["server-side-fallback-2026-07-01"],
+        fallbacks: "default",
+        output_config: {effort: opts.modelTier === "quick" ? "low" : "medium"},
+        messages: [{role: "user", content: text0}]
+      }, {signal: opts.signal});
+    } catch(e) {
+      if (opts.signal?.aborted || e?.name === "AbortError" || e instanceof Anthropic.APIUserAbortError) throw {code:"cancelled"};
+      if (e instanceof Anthropic.AuthenticationError) throw {code:"auth"};
+      if (e instanceof Anthropic.PermissionDeniedError) throw {code:"auth"};
+      if (e instanceof Anthropic.NotFoundError) throw {code:"model"};
+      if (e instanceof Anthropic.RateLimitError) throw {code:"rate_limited"};
+      if (e instanceof Anthropic.BadRequestError) throw {code: /credit|billing/i.test(e.message) ? "credit" : "bad_request", message: e.message};
+      if (e instanceof Anthropic.APIError && e.status === 402) throw {code:"credit"};
+      throw {code:"upstream_error", message: String(e?.message || e)};
+    }
+    if (msg.stop_reason === "refusal") throw {code:"refused"};
+    const text = (msg.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+    if (!text.trim()) throw {code:"empty_completion"};
+    try { opts.onText?.({text, delta:text}); } catch(_) {}
+    return {text, truncated: msg.stop_reason === "max_tokens"};
+  };
+  const sample = (input, opts) => call(input, opts);
+  sample.json = async (input, opts) => {
+    const {text, truncated} = await call(input, opts);
+    const v = truncated ? undefined : parseJsonLoose(text);
+    if (v === undefined) throw {code:"invalid_json", text};
+    return v;
+  };
+  return sample;
+}
+function applyApiSetting(){
+  SAMPLE = API.key ? makeApiSample() : null;
+  document.body.classList.toggle("ai-off", !SAMPLE);
+}
+if (STANDALONE) { loadApi(); applyApiSetting(); }
+
+function aiErr(e){
+  const m = {
+    no_key:"AIを使うには「概況」タブでAPIキーを設定してください。", auth:"APIキーが正しくないか、無効です。「概況」タブで確認してください。",
+    credit:"Anthropicのクレジット残高が不足しています。console.anthropic.com で確認してください。", model:"選んだモデルを利用できません。「概況」タブでモデルを変えてください。",
+    sdk_load:"AIの部品を読み込めませんでした。通信状態を確認してください。", bad_request:"AIへの依頼の形式に問題がありました。",
+    not_granted:"AIの利用が許可されませんでした。", sampling_disabled:"このアカウントではAIを使えません。",
+    rate_limited:"利用回数の上限です。しばらくしてから試してください。", session_expired:"claude.aiに再ログインしてください。",
+    refused:"この内容では下書きを作れませんでした。記録を見直してください。", prompt_too_large:"記録が長すぎます。項目ごとの下書きを使ってください。",
+    invalid_json:"AIの応答を読み取れませんでした。もう一度試してください。", empty_completion:"AIの応答が空でした。"
+  };
+  if (["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(e?.code)) document.body.classList.add("ai-off");
+  return m[e?.code] || "AIに接続できませんでした。もう一度試してください。";
+}
+
+/* ---------- helpers ---------- */
+function choiceText(it, idxs){
+  if (!idxs || !idxs.length) return "";
+  return idxs.slice().sort((a,b)=>a-b).map(i => `${i+1}.${it.ch[i]}`).join("・");
+}
+function suggest(text){
+  const out = [];
+  for (const it of ITEMS) { let s=0; for (const k of it.kw) if (text.includes(k)) s += k.length>1?2:1; if (s) out.push([it.id,s]); }
+  return out.sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+}
+function uttsFor(id){ return C().utts.filter(u=>u.tags.includes(id)); }
+function sugFor(id){ return C().utts.filter(u=>!u.tags.includes(id) && u.sug.includes(id)); }
+function metaSummary(){
+  const m = C().meta, rows = [
+    ["年齢",m.age],["性別",m.sex],["申請区分",m.kubun],["調査場所",m.place],["立会者",m.witness],
+    ["世帯・主な介護者",m.household],["主な傷病・経過",m.disease],["利用中のサービス・住環境",m.services]];
+  return rows.filter(r=>r[1]).map(r=>`${r[0]}：${r[1]}`).join("\n") || "（未入力）";
+}
+const VAGUE = ["やや","おそらく","恐らく","たぶん","多分","思われ","ようだ","ようである","ようです","らしい","かもしれない","かも知れない","若干","多少","少し","少々","ほぼ","だいたい","大体","なんとなく","時々","ときどき","くらい","ぐらい"];
+/* quoted choice names such as 「2.ときどきある」 are the official wording, not vague prose */
+const vagueWords = s => { const t = (s||"").replace(/「\d+\.[^」]*」/g, ""); return VAGUE.filter(v => t.includes(v)); };
+/* choices quoted in a note as 「2.何かにつかまればできる」 → [1] */
+const citedChoices = (it, note) => it.ch.map((t,k) => (note||"").includes(`「${k+1}.${t}」`) ? k : -1).filter(k => k >= 0);
+const line = u => `[${u.t}] ${u.sp}${u.tags.length?`（${u.tags.join(",")}）`:""}：${u.text}`;
+const RULES = `記載ルール（要介護認定 認定調査員テキスト2009改訂版に準拠）:
+- 特記事項は「選択根拠」「手間」「頻度」の3つのポイントに留意し、基本調査と矛盾しないよう簡潔明瞭に記載する。文末は「〜である」「〜とのこと」「〜を選択する」の調子でそろえる。
+- 選択根拠：本文の最後に、選んだ選択肢を選択肢の表記どおりに「 」で囲んで示す（例：より頻回な状況に基づき「2.何かにつかまればできる」を選択する。／頻度から「3.ある」を選択する。）。特別な医療は「ある（該当する）」を選択する、と書く。
+- 能力の項目：調査時に実際に行ってもらった状況（「調査時、〜」）と、調査対象者や介護者から聞き取りした日頃の状況（「家族の話では、〜とのこと」）を書き、異なる場合は一定期間（調査日より概ね過去1週間）の状況において、より頻回な状況に基づき選択したことを書く。実際に行ってもらえなかった場合は、その理由や状況を書く。
+- 介助の方法の項目：実際に行われている具体的な「介護の手間」（誰が、何を）と「頻度」を書く。福祉用具（補装具や介護用品等）や器具類を使用している場合は、使用している状況を書く。「介助されていない」状態や「実際に行われている介助」が不適切と判断できる事実が会話にある場合だけ、その事実を書き「不適切な状況にあると判断し、適切な介助の方法を選択する。」と書く。
+- 有無（BPSD関連）の項目：一定期間（調査日より概ね過去1か月間）の行動の内容と頻度、それによって発生している介護の手間（介護者の対応）を書く。介護者が特に対応をとっていない場合はその旨を書く。場面や目的からみて不適当な行動でない場合は「1.ない」とし、その理由を書く。
+- 選択は頻度が高い方を優先する：一定期間の状況において、より頻回な状況に基づき選択し、特記事項に「より頻回な状況に基づき「n.選択肢」を選択する。」と書く。最も重い状態や中間の選択肢を選ばない。
+- 頻度：「ときどき」「頻繁に」のように人によってイメージする量が一定でない言葉は用いず、「週に2、3回」「（1回／週）」のように数量を用いて具体的に記載する。
+- 聞き取った内容は「家族の話では、〜とのこと」「〜と聞き取る」、調査員が確認した内容は「調査時、〜」「〜を確認」と書き分ける。用語は「介護者」「介護の手間」「見守り等」「一部介助」「全介助」などテキストの表記を用いる。
+- 記録にない事実を補ったり推測で書いたりしない。判断に必要な情報が足りなければ別に示す。
+- あいまいな表現を使わない（使用禁止：やや、おそらく、たぶん、〜と思われる、〜のようだ、〜らしい、〜かもしれない、少し、若干、多少、ほぼ、だいたい、時々、〜くらい）。
+- 氏名は書かず、本人・長女・妻などの続柄で表す。
+- 1項目2〜5文、250字程度まで。概況（id "0"）だけは4〜8文で、主訴、家族状況（同居・主な介護者）、調査対象者の居住環境（住居の形態・段差・居室の位置など）、日常的に使用する機器・器械の有無を記載する。`;
+
+/* ---------- capture view ---------- */
+const logEl = $("#log"), inp = $("#inp");
+function updateActive(){ renderAuto(); }
+function emptyLog(){
+  return `<div class="empty"><b>聞き取りの始め方</b><ol>
+  <li>${SAMPLE ? "「自動振分けを開始」を押します。" : "会話をそのまま記録します。"}</li>
+  <li>下の入力欄をタップし、キーボードのマイクで会話を最初から最後まで文字にします。3秒止まるごとに1発言として記録されます。</li>
+  <li>話者と項目は自動で判定され、項目ごとの特記事項が自動で作られます。終わったら「仕上げ」を押します。</li></ol>
+  <button class="btn" id="loadSample">サンプルのケースを開いて試す</button></div>`;
+}
+function renderLog(scroll=true){
+  const c = C();
+  if (!c.utts.length) { logEl.innerHTML = emptyLog(); renderAuto(); return; }
+  logEl.innerHTML = c.utts.map(u => `<div class="utt" data-u="${u.id}">
+    <div class="utt-meta"><span class="sp sp-${esc(u.sp)}">${esc(u.sp)}</span><time>${esc(u.t)}</time>
+    ${u.tags.map(t=>`<span class="tag${u.cls||u.manual?"":" prov"}" title="${esc(BY[t]?.name||"")}">${esc(t)} ${esc(BY[t]?.name.slice(0,7)||"")}</span>`).join("")}
+    ${!u.cls && !u.manual ? '<span class="small">判定待ち</span>' : ""}</div>
+    <div class="utt-text">${esc(u.text)}</div></div>`).join("");
+  if (scroll) logEl.scrollTop = logEl.scrollHeight;
+  renderAuto();
+}
+function commit(text){
+  text = (text||"").trim(); if (!text) return;
+  const c = C(), fixed = S.speaker !== "自動";
+  c.utts.push({id:uid(), t:hhmm(), sp: fixed ? S.speaker : "—", spFixed: fixed, text, tags: suggest(text).slice(0,2), sug:[], cls:false});
+  save(); renderLog(); keepAwake(); scheduleAuto();
+}
+
+/* ---------- 自動振分け・特記作成 ----------
+   Event-driven: each new utterance schedules one pass (sooner once 5 are waiting).
+   Pass = classify new utterances (speaker + items) → redraft notes of the items they touched.
+   Any AI failure pauses auto mode; the surveyor restarts it. */
+const AUTO = {on:false, busy:false, again:false, timer:null, msg:"", err:false};
+const unclassified = () => C().utts.filter(u => !u.cls && !u.manual);
+function setAutoMsg(m, err){ AUTO.msg = m; AUTO.err = !!err; renderAuto(); }
+function renderAuto(){
+  const c = C(), un = unclassified().length, notes = ITEMS.filter(it=>IT(it.id).note.trim()).length;
+  $("#autoCounts").innerHTML = `発言 ${c.utts.length}・特記 ${notes}/${ITEMS.length}項目 <button class="sug" id="todoBtn">未作成 ${ITEMS.length-notes}</button>`;
+  const st = $("#autoStat");
+  st.textContent = AUTO.msg || (!SAMPLE ? "キーワードで項目に振り分け、聞き取りから定型文の特記を作ります"
+    : !AUTO.on ? (un ? `判定待ち ${un} 件。開始すると振り分けて特記を作ります` : "開始すると、会話を項目に振り分けて特記事項を作ります")
+    : un ? `判定待ち ${un} 件（話の切れ目でまとめて判定します）` : "待機中。話すと自動で振り分けます");
+  st.classList.toggle("err", AUTO.err);
+  const tg = $("#autoToggle"); tg.hidden = !SAMPLE; tg.textContent = AUTO.on ? "一時停止" : "自動振分けを開始"; tg.classList.toggle("on", AUTO.on);
+}
+function scheduleAuto(){
+  if (!SAMPLE) { localAuto(); return; }
+  if (!AUTO.on) { renderAuto(); return; }
+  clearTimeout(AUTO.timer);
+  const n = unclassified().length;
+  if (n) AUTO.timer = setTimeout(()=>runAuto(false), n >= 5 ? 1500 : 20000);
+  renderAuto();
+}
+/* No-AI fallback: keyword tags become final, notes rebuilt from the template */
+function localAuto(){
+  const touched = new Set();
+  for (const u of unclassified()) { u.cls = true; u.tags.forEach(t=>touched.add(t)); }
+  for (const id of touched) { const st = IT(id); if (!st.note.trim() || st.noteBy==="ai") { st.note = template(id); st.noteBy = "ai"; } }
+  if (touched.size) save();
+  renderLog(false);
+}
+const ITEM_LIST = ITEMS.map(it => `${it.id} ${it.name}`).join("\n");
+function classifyPrompt(ctx, batch){
+  return `介護保険の要介護認定調査（訪問調査）の会話を音声入力で文字にしたものです。「新しい発言」それぞれについて、話者と、判断材料になる認定調査項目を判定してください。
+
+話者：本人／家族／調査員 のいずれか。調査員の質問、確認動作の指示、調査員が見て確認した内容は「調査員」。【話者確定】と付いた発言は、その話者のまま返す。
+項目：下の一覧のidを0〜3個。調査員の質問だけの発言にも、何を尋ねているかで項目を付ける（例：「お風呂はどうしていますか」→1-10）。前後の文脈から、短い返答（「はい」「週2回くらい」など）が何についての答えかを判断する。雑談・あいさつなど無関係な発言は空配列。
+
+項目一覧：
+${ITEM_LIST}
+
+直前の会話（文脈のみ。判定しない）：
+${ctx.map(u=>`${u.sp}：${u.text}`).join("\n") || "（なし）"}
+
+新しい発言：
+${batch.map((u,i)=>`u${i+1}${u.spFixed?`【話者確定：${u.sp}】`:""}：${u.text}`).join("\n")}
+
+JSONだけを返す：{"u":[{"id":"u1","sp":"家族","items":["2-5"]}]}`;
+}
+async function classifyBatch(c, batch){
+  const idx = c.utts.indexOf(batch[0]);
+  const ctx = c.utts.slice(Math.max(0, idx-8), idx);
+  const res = await SAMPLE.json(classifyPrompt(ctx, batch), {modelTier:"quick", cache:false});
+  const map = {}; for (const x of (Array.isArray(res?.u) ? res.u : [])) map[String(x?.id)] = x;
+  const touched = new Set();
+  batch.forEach((u, i) => {
+    const r = map["u"+(i+1)]; u.cls = true; if (!r || u.manual) return;
+    u.tags = (Array.isArray(r.items) ? r.items : []).map(String).filter(id=>BY[id]).slice(0,3);
+    if (!u.spFixed && ["本人","家族","調査員"].includes(r.sp)) u.sp = r.sp;
+    u.tags.forEach(t=>touched.add(t));
+  });
+  save(); if (S.view==="cap") renderLog(false);
+  return touched;
+}
+async function draftItems(ids, tier){
+  const c = C();
+  const blocks = ids.map(id => {
+    const it = BY[id], st = IT(id);
+    return `■${it.id} ${it.name}（評価軸：${AXIS[it.axis].label}${it.multi?"・複数選択":""}）
+選択肢：${it.ch.map((t,k)=>`${k+1}.${t}`).join(" ")}
+調査員の選択：${st.cBy==="user" && st.c.length ? choiceText(it, st.c) : "未確定"}
+${st.noteBy!=="ai" && st.note.trim() ? `調査員が書いた特記（尊重する）：${st.note}\n` : ""}関係する発言：
+${uttsFor(id).map(line).join("\n")}`;
+  }).join("\n\n");
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。訪問調査の会話から振り分けた発言をもとに、項目ごとに認定調査票の特記事項と選択の目安を作ってください。
+
+${RULES}
+- 評価軸の考え方：能力＝調査時の確認動作と日頃の状況。介助の方法＝実際に行われている介助の内容と頻度。有無＝過去1か月の行動の有無と頻度、介護の手間。特別な医療＝過去14日間に医師の指示で看護師等が実施したもの。
+- 調査員の質問は文脈として読み、回答から事実を書く。発言から判断できない項目は note を空文字にする。
+- 調査員の選択が確定している項目は、その選択に沿って書き suggest は null。
+
+概況：
+${metaSummary()}
+
+項目ごとの記録：
+${blocks}
+
+JSONだけを返す：{"items":[{"id":"2-5","note":"特記事項本文","suggest":3,"states":[{"choice":1,"perWeek":28,"desc":"日中"},{"choice":3,"perWeek":3,"desc":"夜間"}],"perWeek":null,"missing":"判断に足りない情報（なければ空文字）"}]}
+suggest は選択肢の番号（複数選択の項目は番号の配列、判断できなければ null）。
+選択は頻度で決める。次の値を必ず付ける（会話から回数が分からない場合は付けない）：
+- 能力・介助の方法の項目：states に、一定期間（調査日より概ね過去1週間）に見られた状況を選択肢ごとに分けて、その状況が週に何回あるかを perWeek で入れる。例：普段はトイレまで介助なし（1日5回）、通院時のみ車いすを押してもらう（週1回）→ [{"choice":1,"perWeek":35,"desc":"トイレまで自力"},{"choice":4,"perWeek":1,"desc":"通院時は車いすを押してもらう"}]。入浴のように機会が少ない行為は、機会ごとに数える（週3回の入浴がすべて全介助 → {"choice":3,"perWeek":3}）。
+- BPSD関連の項目（3-8・3-9・第4群・5-4）と2-12 外出頻度：perWeek に、過去1か月間の行動（外出）の回数を週あたりで入れる（毎日→7、週2回→2、月2回→0.5、月1回→0.23、ない→0）。
+- 頻度が高い方の状況で選択し、最も重い状態や中間の選択肢を選ばない。頻度の少ない状況は、その内容と頻度を特記事項に書く。`;
+  const res = await SAMPLE.json(prompt, {modelTier: tier, cache:false});
+  return applyDrafts(res?.items);
+}
+/* 仕上げ: every item of one group, read against the whole conversation */
+async function draftAllGroup(ids){
+  const c = C();
+  let rec = c.utts.map(line).join("\n");
+  if (rec.length > 120000) rec = rec.slice(-120000);
+  const defs = ids.map(id => {
+    const it = BY[id], st = IT(id);
+    return `■${it.id} ${it.name}（評価軸：${AXIS[it.axis].label}${it.multi?"・複数選択":""}）
+選択肢：${it.ch.map((t,k)=>`${k+1}.${t}`).join(" ")}
+調査員の選択：${st.cBy==="user" && st.c.length ? choiceText(it, st.c) : "未確定"}${st.noteBy!=="ai" && st.note.trim() ? `\n調査員が書いた特記（尊重する）：${st.note}` : ""}`;
+  }).join("\n");
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。訪問調査の会話全体を読み、下に挙げた項目の「すべて」について、認定調査票の特記事項と選択の目安を作ってください。
+
+${RULES}
+- 評価軸の考え方：能力＝調査時の確認動作と日頃の状況。介助の方法＝実際に行われている介助の内容と頻度。有無＝過去1か月の行動の有無と頻度、介護の手間。特別な医療＝過去14日間に医師の指示で看護師等が実施したもの。
+- 項目タグが付いていない発言や、別の項目の話の中にも判断材料があれば使う（例：「自分で歩いてトイレに行く」は移動・歩行の材料になる）。
+- 問題がない項目も、根拠があれば書く（例：「調査時、何にもつかまらずに自力で寝返りができたため、「1.つかまらないでできる」を選択する。」「家族の話では、この1か月間、物を盗られたと言うことはないとのことのため、「1.ない」を選択する。」）。
+- 会話に判断材料がまったくない項目だけ note を空文字にし、missing に「〜について会話で確認できていない」と書く。推測で埋めない。
+- 調査員の選択が確定している項目は、その選択に沿って書き suggest は null。
+
+概況：
+${metaSummary()}
+
+対象項目：
+${defs}
+
+会話全体（[時刻] 話者（振り分けた項目）：内容）：
+${rec}
+
+JSONだけを返す。対象項目のすべてを1件ずつ含める：{"items":[{"id":"1-3","note":"特記事項本文","suggest":2,"states":[{"choice":2,"perWeek":7,"desc":"ベッド柵につかまる"}],"perWeek":null,"missing":""}]}
+suggest は選択肢の番号（複数選択の項目は番号の配列、判断できなければ null）。
+選択は頻度で決める。次の値を必ず付ける（会話から回数が分からない場合は付けない）：
+- 能力・介助の方法の項目：states に、一定期間（調査日より概ね過去1週間）に見られた状況を選択肢ごとに分けて、その状況が週に何回あるかを perWeek で入れる。例：普段はトイレまで介助なし（1日5回）、通院時のみ車いすを押してもらう（週1回）→ [{"choice":1,"perWeek":35,"desc":"トイレまで自力"},{"choice":4,"perWeek":1,"desc":"通院時は車いすを押してもらう"}]。入浴のように機会が少ない行為は、機会ごとに数える（週3回の入浴がすべて全介助 → {"choice":3,"perWeek":3}）。
+- BPSD関連の項目（3-8・3-9・第4群・5-4）と2-12 外出頻度：perWeek に、過去1か月間の行動（外出）の回数を週あたりで入れる（毎日→7、週2回→2、月2回→0.5、月1回→0.23、ない→0）。
+- 頻度が高い方の状況で選択し、最も重い状態や中間の選択肢を選ばない。頻度の少ない状況は、その内容と頻度を特記事項に書く。`;
+  const res = await SAMPLE.json(prompt, {modelTier:"default", cache:false});
+  const arr = Array.isArray(res?.items) ? res.items : [];
+  for (const x of arr) { const id = String(x?.id||""); if (BY[id] && !String(x.note||"").trim() && x.missing) IT(id).missing = String(x.missing); }
+  return applyDrafts(arr);
+}
+function applyDrafts(arr){
+  const c = C(); let n = 0;
+  for (const x of (Array.isArray(arr) ? arr : [])) {
+    const id = String(x?.id||"").trim(), it = BY[id]; if (!it) continue;
+    const st = IT(id), note = String(x.note||"").trim();
+    if (note) {
+      if (!st.note.trim() || st.noteBy==="ai") { st.note = note; st.noteBy = "ai"; delete c.prop[id]; }
+      else c.prop[id] = {note, suggest:null, missing: x.missing ? String(x.missing) : ""};
+      st.missing = x.missing ? String(x.missing) : "";
+      n++;
+    }
+    const sg = (Array.isArray(x.suggest) ? x.suggest : [x.suggest]).map(Number).filter(k => Number.isInteger(k) && k>=1 && k<=it.ch.length);
+    const fq = freqChoice(it, x);
+    if (fq) { st.basis = fq.basis; st.basisK = fq.k ?? null; }
+    if (st.cBy !== "user") {
+      if (fq && fq.tie) { st.c = []; st.cBy = ""; }   /* same frequency: left for the surveyor */
+      else if (fq) { st.c = [fq.k]; st.cBy = "ai"; }
+      else if (sg.length) { st.c = it.multi ? Array.from(new Set(sg.map(k=>k-1))) : [sg[0]-1]; st.cBy = "ai"; }
+    }
+    /* keep an AI-written note's 「n.選択肢」を選択 in step with the selection actually made */
+    if (st.noteBy === "ai" && !it.multi && st.c.length === 1) {
+      const cited = citedChoices(it, st.note), k = st.c[0];
+      if (cited.length === 1 && cited[0] !== k) st.note = st.note.replace(`「${cited[0]+1}.${it.ch[cited[0]]}」`, `「${k+1}.${it.ch[k]}」`);
+    }
+  }
+  save(); return n;
+}
+/* 頻度が高い方を優先して選択する（テキスト：より頻回な状況に基づき選択）
+   能力・介助の方法：AIが挙げた状況ごとの回数（週あたり）で最も多い状況の選択肢。同数なら判断しない。
+   BPSD関連：週1回以上＝「3.ある」、月1回以上週1回未満＝「2.ときどきある」、それ未満＝「1.ない」。
+   2-12 外出頻度：週1回以上／月1回以上／月1回未満。 */
+const BPSD = new Set(["3-8","3-9","4-1","4-2","4-3","4-4","4-5","4-6","4-7","4-8","4-9","4-10","4-11","4-12","4-13","4-14","4-15","5-4"]);
+const MONTHLY = 12/52;   /* 月1回 = 週0.23回 */
+const fmtW = f => f >= 1 ? `週${Math.round(f*10)/10}回` : f > 0 ? `月${Math.round(f*52/12*10)/10}回` : "なし";
+function freqChoice(it, x){
+  const f = Number(x?.perWeek);
+  if ((BPSD.has(it.id) || it.id === "2-12") && x?.perWeek !== null && x?.perWeek !== undefined && Number.isFinite(f) && f >= 0) {
+    const k = it.id === "2-12" ? (f >= 1 ? 0 : f >= MONTHLY ? 1 : 2) : (f >= 1 ? 2 : f >= MONTHLY ? 1 : 0);
+    return {k, basis: `${it.id==="2-12"?"外出":"行動の発生"}：${fmtW(f)} → 「${k+1}.${it.ch[k]}」`};
+  }
+  if ((it.axis === "n" || it.axis === "k") && Array.isArray(x?.states)) {
+    const ss = x.states.map(s => ({k: Number(s?.choice)-1, f: Number(s?.perWeek), d: String(s?.desc||"")}))
+      .filter(s => Number.isInteger(s.k) && s.k >= 0 && s.k < it.ch.length && Number.isFinite(s.f) && s.f >= 0);
+    if (!ss.length) return null;
+    const max = Math.max(...ss.map(s=>s.f)), top = ss.filter(s => s.f === max);
+    const list = ss.map(s => `「${s.k+1}.${it.ch[s.k]}」${fmtW(s.f)}`).join("、");
+    if (top.length !== 1) return {k: null, basis: `${list} → 同じ頻度のため調査員が判断`, tie: true};
+    return {k: top[0].k, basis: ss.length > 1 ? `${list} → より頻回な「${top[0].k+1}.${it.ch[top[0].k]}」` : `${list}`};
+  }
+  return null;
+}
+async function runAuto(){
+  if (!SAMPLE || !AUTO.on) return;
+  if (AUTO.busy) { AUTO.again = true; return; }
+  const c = C(), batch = unclassified().slice(0, 25);
+  if (!batch.length) return;
+  AUTO.busy = true;
+  try {
+    setAutoMsg(`振り分け中…（${batch.length}件）`);
+    const touched = await classifyBatch(c, batch);
+    if (touched.size && C()===c) { setAutoMsg(`特記事項を作成中…（${touched.size}項目）`); await draftItems([...touched], "default"); }
+    setAutoMsg(""); if (S.view==="items") renderItems();
+  } catch(e) {
+    AUTO.on = false; clearTimeout(AUTO.timer);
+    setAutoMsg(aiErr(e) + " 自動振分けを止めました。", true);
+  } finally {
+    AUTO.busy = false; renderAuto();
+    if (AUTO.again && AUTO.on) { AUTO.again = false; scheduleAuto(); }
+  }
+}
+async function finishAll(){
+  const c = C();
+  if (!c.utts.length) { toast("まだ記録がありません"); return; }
+  if (!SAMPLE) { localAuto(); go("out"); toast("記録から特記事項を作りました。出力を確認してください"); return; }
+  if (AUTO.busy) { toast("処理中です。終わってからもう一度押してください"); return; }
+  AUTO.busy = true; clearTimeout(AUTO.timer); $("#finishBtn").disabled = true;
+  try {
+    let left;
+    while ((left = unclassified()).length) { setAutoMsg(`振り分け中…（残り${left.length}件）`); await classifyBatch(c, left.slice(0,25)); }
+    for (const [i, g] of GROUPS.entries()) {
+      setAutoMsg(`全項目の特記事項を作成中…（${g.t}　${i+1}/${GROUPS.length}）`);
+      await draftAllGroup(ITEMS.filter(x=>x.g===g.g).map(x=>x.id));
+    }
+    setAutoMsg(""); go("out");
+    const noNote = ITEMS.filter(it=>!IT(it.id).note.trim()).length, miss = missingItems().length;
+    toast(noNote || miss ? `仕上げました。会話に情報がなく特記を作れなかった項目 ${noNote} 件・選択未確定 ${miss} 件` : "全項目の特記事項を作成しました");
+  } catch(e) { setAutoMsg(aiErr(e), true); }
+  finally { AUTO.busy = false; $("#finishBtn").disabled = false; renderAuto(); }
+}
+$("#autoToggle").addEventListener("click", () => {
+  AUTO.on = !AUTO.on; AUTO.err = false; AUTO.msg = "";
+  if (AUTO.on) { keepAwake(); if (unclassified().length) runAuto(); } else clearTimeout(AUTO.timer);
+  renderAuto(); renderLog(false);
+});
+$("#finishBtn").addEventListener("click", finishAll);
+/* Items still without a note: what to ask about before leaving the home */
+$("#autoCounts").addEventListener("click", e => {
+  if (e.target.id !== "todoBtn") return;
+  const todo = ITEMS.filter(it => !IT(it.id).note.trim());
+  let h = `<div class="sheet-h"><b>特記が未作成の項目（${todo.length}）</b><button class="btn" data-close>閉じる</button></div>
+    <p class="small muted" style="margin:0 0 6px">会話でまだ触れていない項目です。退出前に聞き取ると、仕上げで特記が作られます。</p>`;
+  for (const g of GROUPS) {
+    const its = todo.filter(x=>x.g===g.g); if (!its.length) continue;
+    h += `<div class="pick-g"><div class="t">${esc(g.t)}</div><div class="pick">${its.map(x=>`<button data-todo="${x.id}"><b>${x.id}</b><span>${esc(x.name)}</span></button>`).join("")}</div></div>`;
+  }
+  openSheet(h);
+  sheet.onclick = ev => { const b = ev.target.closest("[data-todo]"); if (b) { closeSheet(); go("items"); openDetail(b.dataset.todo); } };
+});
+let autoT, composing = false;
+inp.addEventListener("compositionstart", ()=>{ composing = true; clearTimeout(autoT); });
+inp.addEventListener("compositionend", ()=>{ composing = false; armAuto(); });
+inp.addEventListener("input", armAuto);
+function armAuto(){
+  clearTimeout(autoT);
+  if (!$("#autoCommit").checked || composing) return;
+  autoT = setTimeout(()=>{ if (!composing && inp.value.trim()) { commit(inp.value); inp.value=""; } }, 3000);
+}
+inp.addEventListener("keydown", e => { if (e.key==="Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); clearTimeout(autoT); commit(inp.value); inp.value=""; } });
+$("#commitBtn").addEventListener("click", ()=>{ clearTimeout(autoT); commit(inp.value); inp.value=""; inp.focus(); });
+try { const a = localStorage.getItem(KEY+".auto"); if (a!==null) $("#autoCommit").checked = a==="1"; } catch(e) {}
+$("#autoCommit").addEventListener("change", e => { try { localStorage.setItem(KEY+".auto", e.target.checked?"1":"0"); } catch(_){} });
+
+function setSpeaker(sp){ S.speaker = sp; document.querySelectorAll("#speakerSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.sp===sp)); }
+$("#speakerSeg").addEventListener("click", e => { const b=e.target.closest("button"); if (b) setSpeaker(b.dataset.sp); });
+
+logEl.addEventListener("click", e => {
+  if (e.target.id==="loadSample") { loadSample(); return; }
+  const card = e.target.closest(".utt"); if (card) openUtt(card.dataset.u);
+});
+
+/* Web Speech (standalone browsers only; artifact frame refuses the mic) */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, recOn = false;
+if (SR) $("#srBtn").hidden = false;
+function setRecUI(on){ $("#srBtn").classList.toggle("on", on); $("#srLabel").textContent = on ? "認識中（タップで停止）" : "連続音声認識"; if (!on) $("#interim").textContent=""; }
+function startSR(){
+  try {
+    rec = new SR(); rec.lang = "ja-JP"; rec.continuous = true; rec.interimResults = true;
+    rec.onresult = e => { let interim=""; for (let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if (r.isFinal) commit(r[0].transcript); else interim += r[0].transcript; } $("#interim").textContent = interim; };
+    rec.onerror = e => { if (["not-allowed","service-not-allowed","audio-capture"].includes(e.error)) { recOn=false; setRecUI(false); $("#srBtn").hidden = true; toast("この画面では連続音声認識を使えません。キーボードのマイクで入力してください"); } };
+    rec.onend = () => { if (recOn) { try { rec.start(); } catch(_) { recOn=false; setRecUI(false); } } else setRecUI(false); };
+    rec.start(); recOn = true; setRecUI(true); keepAwake();
+  } catch(e) { recOn=false; setRecUI(false); $("#srBtn").hidden = true; toast("連続音声認識を開始できませんでした"); }
+}
+$("#srBtn").addEventListener("click", ()=>{ if (recOn) { recOn=false; try{rec.stop();}catch(_){}; setRecUI(false); } else startSR(); });
+
+let wake = null;
+async function keepAwake(){ if (wake || !("wakeLock" in navigator)) return; try { wake = await navigator.wakeLock.request("screen"); wake.addEventListener("release", ()=>wake=null); } catch(e) {} }
+
+/* ---------- sheets ---------- */
+const scrim = $("#scrim"), sheet = $("#sheet");
+function openSheet(html){ sheet.innerHTML = html; scrim.hidden = false; }
+function closeSheet(){ scrim.hidden = true; sheet.innerHTML = ""; }
+scrim.addEventListener("click", e => { if (e.target===scrim || e.target.closest("[data-close]")) closeSheet(); });
+
+function openPicker(onPick, current, allowNone){
+  const c = C();
+  let h = `<div class="sheet-h"><b>項目を選ぶ</b><button class="btn" data-close>閉じる</button></div>`;
+  if (allowNone) h += `<div class="pick"><button data-pick=""${current?"":' aria-current="true"'}><span>項目なし（全般・雑談）</span></button></div>`;
+  for (const g of GROUPS) {
+    h += `<div class="pick-g"><div class="t">${esc(g.t)}</div><div class="pick">` +
+      ITEMS.filter(x=>x.g===g.g).map(x => {
+        const has = c.utts.some(u=>u.tags.includes(x.id));
+        return `<button data-pick="${x.id}"${x.id===current?' aria-current="true"':""} class="${has?"has":""}"><b>${x.id}</b><span>${esc(x.name)}</span></button>`;
+      }).join("") + `</div></div>`;
+  }
+  openSheet(h);
+  sheet.onclick = e => { const b = e.target.closest("[data-pick]"); if (b) onPick(b.dataset.pick); };
+}
+
+function openUtt(id){
+  const c = C(), u = c.utts.find(x=>x.id===id); if (!u) return;
+  const render = () => {
+    sheet.innerHTML = `<div class="sheet-h"><b>発言を編集</b><button class="btn" data-close>閉じる</button></div>
+      <textarea class="note" id="uText" style="min-height:110px">${esc(u.text)}</textarea>
+      <h3>話者</h3><div class="seg" id="uSp">${SPEAKERS.map(s=>`<button data-sp="${s}" aria-pressed="${s===u.sp}">${s}</button>`).join("")}</div>
+      <h3>紐づく項目</h3><div class="ulist">${u.tags.map(t=>`<div class="ul-item"><span class="tag">${esc(t)}</span><span class="tx">${esc(BY[t]?.name||"")}</span><button class="x" data-rm="${esc(t)}" aria-label="外す">×</button></div>`).join("") || '<p class="small muted">なし</p>'}</div>
+      <div class="btnrow"><button class="btn acc" id="uAdd">項目を追加</button><button class="btn danger" id="uDel">この発言を削除</button></div>`;
+    scrim.hidden = false;
+  };
+  render();
+  sheet.oninput = e => { if (e.target.id==="uText") { u.text = e.target.value; save(); renderLog(false); } };
+  sheet.onclick = e => {
+    const sp = e.target.closest("#uSp button"); if (sp) { u.sp = sp.dataset.sp; u.spFixed = true; save(); renderLog(false); render(); return; }
+    const rm = e.target.closest("[data-rm]"); if (rm) { u.tags = u.tags.filter(t=>t!==rm.dataset.rm); u.manual = true; save(); renderLog(false); render(); return; }
+    if (e.target.id==="uAdd") { openPicker(pid => { if (pid && !u.tags.includes(pid)) u.tags.push(pid); u.manual = true; save(); renderLog(false); openUtt(id); }, null, false); return; }
+    if (e.target.id==="uDel") {
+      if (e.target.dataset.armed) { c.utts = c.utts.filter(x=>x.id!==id); save(); renderLog(false); updateActive(); closeSheet(); toast("削除しました"); }
+      else { e.target.dataset.armed = "1"; e.target.textContent = "もう一度押すと削除します"; }
+    }
+  };
+}
+
+/* ---------- items view ---------- */
+function renderItems(){
+  const v = $("#v-items"), c = C();
+  if (S.detail) { renderDetail(); return; }
+  const aiC = ITEMS.filter(x=>IT(x.id).cBy==="ai" && IT(x.id).c.length).length;
+  let h = `<h2>基本調査・特記事項</h2>
+    <p class="small muted" style="margin:0">会話から自動で作られた特記と選択を確認します。<span class="aib">AI</span> は自動作成・推定のまま未確認の項目です。</p>
+    <div style="margin-top:8px">${simHTML(true)}</div>
+    ${aiC?`<div class="btnrow"><button class="btn" id="confirmAll">AI推定の選択 ${aiC} 件をすべて確定</button></div>`:""}`;
+  for (const g of GROUPS) {
+    const its = ITEMS.filter(x=>x.g===g.g);
+    const sel = its.filter(x=>IT(x.id).c.length).length, nt = its.filter(x=>IT(x.id).note.trim()).length, nch = its.filter(x=>x.ch.length).length;
+    h += `<div class="grp"><div class="grp-h"><span>${esc(g.t)}</span><span class="prog">${nch?`選択 ${sel}/${nch}・`:""}特記 ${nt}/${its.length}</span></div><div class="ilist">` +
+      its.map(x => {
+        const st = IT(x.id), n = uttsFor(x.id).length;
+        return `<button class="irow" data-open="${x.id}"><span class="iid">${formCode(x)}</span>
+          <span class="iname">${esc(x.name)}<span class="ich">${st.cBy==="ai"&&st.c.length?'<span class="aib">AI</span> ':""}${esc(choiceText(x, st.c)) || "未選択"}</span></span>
+          <span class="badges">${n?`<span class="b b-utt">${n}</span>`:""}${c.prop[x.id]?'<span class="b b-ai">別案</span>':""}${st.note.trim()?`<span class="b ${st.noteBy==="ai"?"b-ai":"b-note"}">${st.noteBy==="ai"?"特記AI":"特記"}</span>`:""}</span></button>`;
+      }).join("") + `</div></div>`;
+  }
+  v.innerHTML = h;
+}
+$("#v-items").addEventListener("click", e => {
+  const o = e.target.closest("[data-open]"); if (o) { openDetail(o.dataset.open); return; }
+  if (e.target.closest("#simJump")) { go("out"); return; }
+  if (e.target.id==="confirmAll") { let n=0; for (const it of ITEMS) { const st=IT(it.id); if (st.cBy==="ai" && st.c.length) { st.cBy="user"; n++; } } save(); renderItems(); toast(`${n}件の選択を確定しました`); }
+});
+function openDetail(id){ S.detail = id; renderItems(); $("#main").scrollTop = 0; }
+
+function renderDetail(){
+  const v = $("#v-items"), c = C(), it = BY[S.detail], st = IT(it.id), prop = c.prop[it.id];
+  const us = uttsFor(it.id), sg = sugFor(it.id), i = ORDER.indexOf(it.id);
+  const grid = it.axis==="j";
+  v.innerHTML = `<button class="back" id="dBack">‹ 項目一覧</button>
+    <h2>${formCode(it)}．${esc(it.name)} <span class="axis">${AXIS[it.axis].label}</span></h2>
+    <div class="hint">${esc(EXTRA[it.id] || AXIS[it.axis].guide)}</div>
+    ${st.cBy==="ai"&&st.c.length?`<div class="btnrow" style="margin:0 0 8px;align-items:center"><span class="aib">AI推定</span><span class="small muted">会話から推定した選択です。</span><button class="btn acc" id="cConfirm" style="padding:4px 10px">この選択で確定</button></div>`:""}
+    ${st.basis?`<div class="hint" style="border-left-color:var(--accent)">頻度による選択：${esc(st.basis)}</div>`:""}
+    <div class="choices${grid?" grid":""}" id="dCh">${it.ch.map((t,k)=>`<button class="choice" data-k="${k}" aria-pressed="${st.c.includes(k)}"><span class="n">${k+1}</span><span>${esc(t)}</span></button>`).join("")}</div>
+    ${it.multi?'<p class="small muted">複数選択できます。</p>':""}
+    <h3>この項目の聞き取り（${us.length}）</h3>
+    <div class="ulist">${us.map(u=>`<div class="ul-item"><span class="sp sp-${esc(u.sp)}">${esc(u.sp)}</span><span class="tx">${esc(u.text)}</span><button class="x" data-untag="${u.id}" aria-label="この項目から外す">×</button></div>`).join("") || '<p class="small muted">この項目に振り分けられた発言はまだありません。</p>'}</div>
+    ${sg.length?`<details><summary>キーワードが一致した他の発言（${sg.length}）</summary><div class="ulist" style="margin-top:6px">${sg.map(u=>`<div class="ul-item"><span class="sp sp-${esc(u.sp)}">${esc(u.sp)}</span><span class="tx">${esc(u.text)}</span><button class="plus" data-tag="${u.id}">紐づける</button></div>`).join("")}</div></details>`:""}
+    <h3>特記事項 ${st.noteBy==="ai"&&st.note.trim()?'<span class="aib">AI自動作成</span>':""}</h3>
+    ${st.noteBy==="ai"&&st.note.trim()?'<p class="small muted" style="margin:0 0 6px">会話が増えると自動で書き直されます。編集すると、以後は自動で上書きされません。</p>':""}
+    <textarea class="note" id="noteTa" placeholder="選択の根拠となる具体的な状況・頻度・介助の内容を書きます">${esc(st.note)}</textarea>
+    <div class="count" id="noteCount">${st.note.length} 字</div>
+    <div class="hint" id="vagueHint" style="border-left-color:var(--rec)"${vagueWords(st.note).length?"":" hidden"}>あいまいな表現：${esc(vagueWords(st.note).join("、"))}。具体的な状況や回数に書き換えてください。</div>
+    ${st.missing?`<div class="hint" style="border-left-color:var(--warn)">要確認：${esc(st.missing)}</div>`:""}
+    <div class="btnrow">
+      <button class="btn fill ai-only" id="aiOne"${us.length?"":" disabled"}>AIで下書き</button>
+      <button class="btn" id="aiStop" hidden>中止</button>
+      <button class="btn" id="tplOne"${us.length?"":" disabled"}>聞き取りから定型文</button>
+    </div>
+    <div id="propBox">${prop?propHTML(it, prop):""}</div>
+    <div class="pn">
+      <button class="btn" id="dPrev"${i>0?"":" disabled"}>‹ ${i>0?ORDER[i-1]:""}</button>
+      <button class="btn" id="dNext"${i<ORDER.length-1?"":" disabled"}>${i<ORDER.length-1?ORDER[i+1]:""} ›</button>
+    </div>`;
+}
+function propHTML(it, p){
+  const sug = Number.isInteger(p.suggest) && p.suggest>=1 && p.suggest<=it.ch.length ? p.suggest : null;
+  return `<div class="prop"><div class="ph">AIの下書き（未採用）</div><div class="pt" id="propText">${esc(p.note)}</div>
+    ${sug?`<div class="pm">選択の目安：${sug}.${esc(it.ch[sug-1])}</div>`:""}
+    ${p.missing?`<div class="pm">要確認：${esc(p.missing)}</div>`:""}
+    <div class="btnrow"><button class="btn fill" data-p="replace">特記に採用</button><button class="btn" data-p="append">末尾に追記</button>
+    ${sug?`<button class="btn" data-p="choose">選択の目安を選ぶ</button>`:""}<button class="btn" data-p="drop">破棄</button></div></div>`;
+}
+$("#v-items").addEventListener("input", e => {
+  if (e.target.id==="noteTa") { const st = IT(S.detail); st.note = e.target.value; st.noteBy = "user"; $("#noteCount").textContent = `${e.target.value.length} 字`;
+    const vg = vagueWords(e.target.value), vh = $("#vagueHint"); vh.hidden = !vg.length; vh.textContent = `あいまいな表現：${vg.join("、")}。具体的な状況や回数に書き換えてください。`; save(); }
+});
+$("#v-items").addEventListener("click", e => {
+  if (!S.detail) return;
+  const c = C(), it = BY[S.detail], st = IT(it.id);
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.id==="dBack") { S.detail=null; renderItems(); return; }
+  if (t.classList.contains("choice")) {
+    const k = +t.dataset.k, wasDone = !missingItems().length;
+    if (it.multi) {
+      if (st.c.includes(k)) st.c = st.c.filter(x=>x!==k);
+      else if (it.id!=="6" && k===0) st.c = [0];
+      else st.c = st.c.filter(x=> it.id==="6" || x!==0).concat(k);
+    } else st.c = st.c[0]===k ? [] : [k];
+    const wasAi = st.cBy==="ai"; st.cBy = "user";
+    save();
+    if (wasAi) renderDetail();
+    else document.querySelectorAll("#dCh .choice").forEach(b=>b.setAttribute("aria-pressed", st.c.includes(+b.dataset.k)));
+    if (!wasDone && !missingItems().length) toast(`全項目を入力しました。判定シミュレーション：${simulate().level}（目安）`);
+    return;
+  }
+  if (t.id==="cConfirm") { st.cBy = "user"; save(); renderDetail(); return; }
+  if (t.dataset.untag) { const u=c.utts.find(x=>x.id===t.dataset.untag); if (u) { u.tags=u.tags.filter(x=>x!==it.id); u.manual=true; save(); renderDetail(); } return; }
+  if (t.dataset.tag) { const u=c.utts.find(x=>x.id===t.dataset.tag); if (u && !u.tags.includes(it.id)) { u.tags.push(it.id); u.manual=true; save(); renderDetail(); } return; }
+  if (t.id==="tplOne") { const d = template(it.id); if (d) { c.prop[it.id] = {note:d, suggest:null, missing:""}; save(); renderDetail(); } return; }
+  if (t.id==="aiOne") { aiOne(it.id); return; }
+  if (t.id==="aiStop") { oneCtl?.abort(); return; }
+  if (t.dataset.p) {
+    const p = c.prop[it.id]; if (!p) return;
+    if (t.dataset.p==="replace") { st.note = p.note; delete c.prop[it.id]; }
+    if (t.dataset.p==="append") { st.note = (st.note.trim()? st.note.replace(/\s+$/,"")+"\n" : "") + p.note; delete c.prop[it.id]; }
+    if (t.dataset.p==="choose") { const k=p.suggest-1; st.c = it.multi ? Array.from(new Set([...st.c.filter(x=>x!==0||k===0), k])) : [k]; p.suggest=null; }
+    if (t.dataset.p==="drop") delete c.prop[it.id];
+    save(); renderDetail(); return;
+  }
+  if (t.id==="dPrev") { openDetail(ORDER[ORDER.indexOf(it.id)-1]); return; }
+  if (t.id==="dNext") { openDetail(ORDER[ORDER.indexOf(it.id)+1]); return; }
+});
+
+function template(id){
+  const us = uttsFor(id); if (!us.length) return "";
+  const clean = s => s.trim().replace(/[。．.、，,\s]+$/,"");
+  return us.map(u => {
+    const s = clean(u.text);
+    if (u.sp==="本人") return `本人より「${s}」とのこと。`;
+    if (u.sp==="家族") return `家族の話では、「${s}」とのこと。`;
+    if (u.sp==="観察") return `調査時、${s}を確認。`;
+    return `${s}。`;
+  }).join("");
+}
+
+let oneCtl = null;
+async function aiOne(id){
+  if (!SAMPLE) { toast("この表示ではAI下書きを使えません"); return; }
+  const c = C(), it = BY[id], st = IT(id), us = uttsFor(id), sg = sugFor(id);
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。次の聞き取り記録から、認定調査票の特記事項「（${it.id}）${it.name}」の下書きを作成してください。
+
+評価軸：${AXIS[it.axis].label}（${EXTRA[it.id] || AXIS[it.axis].guide}）
+選択肢：${it.ch.map((t,k)=>`${k+1}.${t}`).join(" ")}
+調査員の選択：${choiceText(it, st.c) || "未選択"}
+
+${RULES}
+
+出力形式：特記事項の本文だけを書く。判断に必要な情報が不足していれば、本文の後に改行して「【要確認】…」を1行。調査員の選択が未選択なら、さらに「【選択の目安】番号」を1行。前置きや見出しは書かない。
+
+概況：
+${metaSummary()}
+
+この項目に紐づく記録（[時刻] 話者：内容）：
+${us.map(line).join("\n")}
+${sg.length?`\n参考（キーワードが一致した他の記録）：\n${sg.slice(0,15).map(line).join("\n")}`:""}
+${st.note.trim()?`\n調査員がすでに書いた特記（活かして整える）：\n${st.note}`:""}`;
+  oneCtl = new AbortController();
+  $("#aiOne").disabled = true; $("#aiStop").hidden = false;
+  $("#propBox").innerHTML = `<div class="prop"><div class="ph">AIの下書き</div><div class="pt" id="propText">考えています…</div></div>`;
+  try {
+    const {text} = await SAMPLE(prompt, {signal:oneCtl.signal, cache:false, onText:({text})=>{ const el=$("#propText"); if (el && S.detail===id) el.textContent=text; }});
+    let note = text.trim(), missing = "", suggest = null;
+    const mm = note.match(/【要確認】(.*)/); if (mm) { missing = mm[1].trim(); note = note.replace(mm[0],""); }
+    const ms = note.match(/【選択の目安】\s*(\d+)/); if (ms) { suggest = +ms[1]; note = note.replace(/【選択の目安】.*/,""); }
+    c.prop[id] = {note:note.trim(), suggest, missing}; save();
+  } catch(e) { if (e?.code!=="cancelled") toast(aiErr(e)); }
+  finally { oneCtl = null; if (S.view==="items" && S.detail===id) renderDetail(); }
+}
+
+let bulkCtl = null;
+async function bulkDraft(){
+  if (!SAMPLE) { toast("この表示ではAI下書きを使えません"); return; }
+  const c = C();
+  const list = ITEMS.map(it => `${it.id}｜${it.name}｜${AXIS[it.axis].label}｜${it.ch.map((t,k)=>`${k+1}.${t}`).join(" ")}｜選択：${choiceText(it, IT(it.id).c) || "未選択"}`).join("\n");
+  let rec = c.utts.map(line).join("\n");
+  if (rec.length > 120000) rec = rec.slice(-120000);
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。訪問調査の聞き取り記録から、認定調査票の特記事項の下書きを項目ごとに作成してください。
+
+${RULES}
+- 記録に根拠がある項目だけを出力する。項目タグのない発言も、内容から該当する項目に振り分ける。1つの発言が複数の項目に関係してよい。
+- 評価軸の考え方：能力＝調査時の確認動作と日頃の状況。介助の方法＝実際に行われている介助の内容と頻度。有無＝過去1か月の行動の有無と頻度、介護の手間。特別な医療＝過去14日間に医師の指示で看護師等が実施したもの。
+
+出力：次の形のJSONだけを返す。
+{"items":[{"id":"2-5","note":"特記事項本文","suggest":3,"missing":"不足している情報（なければ空文字）"}]}
+suggestは記録から妥当と考えられる選択肢の番号（判断できなければnull）。調査員がすでに選択している項目では、その選択に沿って書き、suggestはnullにする。
+
+項目一覧（id｜項目名｜評価軸｜選択肢｜調査員の選択）：
+${list}
+
+概況：
+${metaSummary()}
+
+聞き取り記録（[時刻] 話者（調査員が付けた項目タグ）：内容）：
+${rec}`;
+  bulkCtl = new AbortController();
+  const btn = $("#bulkBtn"), stop = $("#bulkStop"), status = $("#bulkStatus");
+  btn.disabled = true; stop.hidden = false; status.textContent = "考えています…（1分ほどかかることがあります）";
+  try {
+    const data = await SAMPLE.json(prompt, {signal:bulkCtl.signal, cache:false, onText:({text})=>{ const s=$("#bulkStatus"); if (s) s.textContent = `作成中… ${text.length}字`; }});
+    const arr = Array.isArray(data?.items) ? data.items : [];
+    let n = 0;
+    for (const x of arr) {
+      const id = String(x?.id||"").trim(); if (!BY[id] || !x.note) continue;
+      c.prop[id] = {note:String(x.note).trim(), suggest: Number.isInteger(x.suggest)?x.suggest:null, missing: x.missing?String(x.missing):""}; n++;
+    }
+    save(); toast(`${n}項目のAI案を作りました`);
+  } catch(e) { if (e?.code!=="cancelled") toast(aiErr(e)); }
+  finally { bulkCtl = null; if (S.view==="items" && !S.detail) renderItems(); }
+}
+
+/* ---------- 判定シミュレーション（簡易推計・非公式） ----------
+   The official 一次判定 uses MHLW tree models that are not reproduced here.
+   This estimate: per-item severity (0 = 自立 … 1 = 最重度) → group means → weighted minutes,
+   plus the published 特別な医療 minutes, mapped onto the official 基準時間 bands. */
+const MED_MIN = [8.5,8.5,8.5,3.8,0.8,4.5,5.6,2.1,9.1,3.6,4.0,8.2];
+const G_W = {1:55, 2:70, 3:25, 4:30, 5:20};
+const BANDS = [[25,"非該当"],[32,"要支援1"],[50,"要支援2／要介護1"],[70,"要介護2"],[90,"要介護3"],[110,"要介護4"],[Infinity,"要介護5"]];
+function severity(it, c){
+  if (!c.length) return null;
+  if (it.multi) return (c.length===1 && c[0]===0) ? 0 : Math.min(1, c.filter(x=>x!==0).length/4);
+  const i = c[0];
+  if (it.id==="1-10") return i===3 ? 1 : i/2;
+  if (it.id==="1-12" || it.id==="1-13") return i===4 ? 1 : i/3;
+  return i/(it.ch.length-1);
+}
+const missingItems = () => ITEMS.filter(it => it.ch.length && it.id!=="6" && !IT(it.id).c.length).map(it=>it.id);
+function simulate(){
+  const groups = [1,2,3,4,5].map(g => {
+    const ss = ITEMS.filter(x=>x.g===g).map(x=>severity(x, IT(x.id).c));
+    const mean = ss.reduce((a,b)=>a+b,0)/ss.length;
+    return {g, mean, score: Math.round(100*(1-mean))};
+  });
+  const med = IT("6").c.reduce((a,k)=>a+MED_MIN[k],0);
+  const base = 15 + groups.reduce((a,x)=>a + G_W[x.g]*x.mean, 0);
+  const total = Math.round((base+med)*10)/10;
+  let level = BANDS.find(b => total < b[0])[1];
+  let note = "";
+  if (level==="要支援2／要介護1") {
+    const dem = IT("7-2").c[0];
+    if (dem>=2) { level = "要介護1"; note = "認知症高齢者の日常生活自立度がⅡa以上のため、要介護1として表示しています。"; }
+    else { level = "要支援2"; note = "認知症高齢者の日常生活自立度がⅡa未満のため要支援2として表示しています。状態が不安定な場合は要介護1になります。"; }
+  }
+  return {groups, med:Math.round(med*10)/10, total, level, note};
+}
+const GNAME = {1:"身体機能・起居動作",2:"生活機能",3:"認知機能",4:"精神・行動障害",5:"社会生活への適応"};
+function simHTML(compact){
+  const miss = missingItems();
+  if (miss.length) return `<div class="pending"><b>判定シミュレーション</b><br>すべての項目を選択すると表示されます。あと <b>${miss.length}</b> 項目（${miss.slice(0,8).join("、")}${miss.length>8?" ほか":""}）</div>`;
+  const r = simulate(), max = 130, pos = v => `${Math.min(100, v/max*100)}%`;
+  if (compact) return `<button class="sim" id="simJump" style="width:100%;text-align:left"><span class="small muted">判定シミュレーション（目安）</span><div class="lv">${esc(r.level)}<small class="mins">推計 ${r.total} 分</small></div><span class="small muted">出力タブで詳細を見る ›</span></button>`;
+  return `<div class="sim"><div class="small muted">判定シミュレーション（目安）</div>
+    <div class="lv">${esc(r.level)}<small class="mins">推計 ${r.total} 分</small></div>
+    <div class="scale" aria-hidden="true"><div class="bar"></div>
+      ${[25,32,50,70,90,110].map(v=>`<span class="tk" style="left:${pos(v)}"></span><span class="tl" style="left:${pos(v)}">${v}</span>`).join("")}
+      <span class="mk" style="left:${pos(r.total)}"></span></div>
+    ${r.note?`<p class="small" style="margin:0 0 8px">${esc(r.note)}</p>`:""}
+    <div class="small muted">群ごとの自立度（100＝自立）</div>
+    <div class="gs">${r.groups.map(x=>`<span>第${x.g}群 ${GNAME[x.g]}</span><span class="gb"><i style="width:${x.score}%"></i></span><span class="gv">${x.score}</span>`).join("")}</div>
+    ${r.med?`<p class="small" style="margin:8px 0 0">特別な医療の加算：${r.med} 分</p>`:""}
+    <p class="small muted" style="margin:10px 0 0">これは選択結果から作った簡易推計で、厚生労働省の一次判定ソフトの結果ではありません（樹形モデル・認知症加算は再現していません）。対象者や家族に要介護度の見込みとして伝えないでください。</p></div>`;
+}
+
+/* ---------- form (特記事項用紙：枚方市 様式 52・R7.10) ----------
+   Layout of the paper form: item panel on the left; 番号 (1桁｜2桁) and 特記事項 on 30 ruled lines per sheet.
+   One page model feeds the on-screen sheet, the Word file and the Drive copy. */
+const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:30, cpl:33, insurer:"272104"};
+const PANEL = "101麻痺等|102拘縮等|103寝返り|104起き上がり|105座位保持|106両足での立位|107歩行|108立ち上がり|109片足での立位|110洗身|111つめ切り|112視力|113聴力|201移乗|202移動|203えん下|204食事摂取|205排尿|206排便|207口腔清潔|208洗顔|209整髪|210上衣の着脱|211ズボン等の着脱|212外出頻度|301意思の伝達|302日課を理解|303生年月日をいう|304短期記憶|305自分の名前を言う|306今の季節を理解|307場所の理解|308徘徊|309外出して戻れない|401被害的|402作話|403感情が不安定|404昼夜逆転|405同じ話をする|406大声を出す|407介護に抵抗|408落ち着きなし|409一人で出たがる|410収集癖|411物や衣類を壊す|412ひどい物忘れ|413独り言（独り笑い）|414自分勝手に行動する|415話がまとまらない|501薬の内服|502金銭の管理|503日常の意思決定|504集団への不適応|505買い物|506簡単な調理|601点滴の管理|602中心静脈栄養|603透析|604ストーマの処置|605酸素療法|606レスピレーター|607気管切開の処置|608疼痛の看護|609経管栄養|610モニター測定|611じょくそうの処置|612カテーテル|701障害高齢者自立度|702認知症高齢者自立度"
+  .split("|").map(s => [s.slice(0,3), s.slice(3)]);
+const zen = s => s.replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 0xFEE0));
+function formCode(it){
+  if (it.id === "0") return "000";
+  if (it.id === "6") { const c = IT("6").c.slice().sort((a,b)=>a-b); return c.length ? "6" + pad(c[0]+1) : "6群"; }
+  const [g, n] = it.id.split("-"); return g + pad(+n);
+}
+function formEntries(){
+  return ITEMS.filter(it => IT(it.id).note.trim()).map(it => {
+    let t = IT(it.id).note.trim();
+    if (it.id === "6") { const c = IT("6").c.slice().sort((a,b)=>a-b); if (c.length > 1) t = `（${c.map(k=>"6"+pad(k+1)).join("・")}）` + t; }
+    return {code: formCode(it), text: t};
+  });
+}
+/* wrap to the ruled line: full-width = 1, half-width = 0.5; closing punctuation never starts a line */
+const NOHEAD = "、。，．）」』】・ー！？!?)ぁぃぅぇぉっゃゅょァィゥェォッャュョ";
+function wrapText(t, max){
+  const out = [];
+  for (const para of t.split("\n")) {
+    let line = "", w = 0;
+    for (const ch of para) {
+      const c = /[\x20-\x7E｡-ﾟ]/.test(ch) ? 0.5 : 1;
+      if (w + c > max && line && !NOHEAD.includes(ch)) { out.push(line); line = ""; w = 0; }
+      line += ch; w += c;
+    }
+    out.push(line);
+  }
+  return out;
+}
+function formPages(){
+  const pages = [[]];
+  for (const e of formEntries()) {
+    wrapText(e.text, FORM.cpl).forEach((l, i) => {
+      if (pages[pages.length-1].length >= FORM.rows) pages.push([]);
+      pages[pages.length-1].push({code: i===0 ? e.code : "", text: l});
+    });
+  }
+  return pages;
+}
+const insurerNo = () => (C().meta.insurerNo ?? FORM.insurer).replace(/\D/g,"").slice(0,6);
+
+/* on-screen sheet (HTML, mm units, scaled to the screen width) */
+function formSheetsHTML(){
+  const pages = formPages(), ins = insurerNo();
+  const boxes = (val, n) => Array.from({length:n}, (_, i) => `<span class="fx-d">${esc(val[i]||"")}</span>`).join("");
+  return pages.map((rows, pi) => `<div class="fx-wrap"><div class="fx">
+    <div class="fx-top"><span class="fx-title">認定調査票（特記事項）</span><span class="fx-no">${FORM.no}</span></div>
+    <div class="fx-ids"><span class="fx-lab">保険者<br>番　号</span><span class="fx-boxes">${boxes(ins,6)}</span>
+      <span class="fx-lab">被保険者<br>番　号</span><span class="fx-boxes">${boxes("000",10)}</span>
+      <span class="fx-d fx-pg">${pi>0?pi+1:""}</span><span class="fx-pn">２枚目以降がある場合は左の<br>枠内に何枚目かを記入して下さい</span></div>
+    <div class="fx-gn">※概況特記は必ず記入して下さい。</div>
+    <div class="fx-body">
+      <div class="fx-side"><div class="fx-panel">
+        <div>［調査項目］</div><div>０００．概況　<span class="fx-r">（必須）</span></div>
+        <div>（主訴、家族状況、調査対象者の<br>居住環境、日常的に使用する<br>機器・器械の有無　等）</div>
+        ${PANEL.map(([c,n]) => `<div>${zen(c)}．${esc(n)}</div>`).join("")}
+      </div><div class="fx-r fx-must">※７０１．７０２は必須</div></div>
+      <table class="fx-t"><thead><tr><th colspan="2">番　号</th><th>特　　　記　　　事　　　項</th></tr></thead><tbody>
+        ${Array.from({length:FORM.rows}, (_, i) => { const r = rows[i] || {code:"", text:""};
+          return `<tr><td class="fx-c1">${esc(r.code.slice(0,1))}</td><td class="fx-c2">${esc(r.code.slice(1))}</td><td class="fx-tx">${esc(r.text)}</td></tr>`; }).join("")}
+      </tbody></table>
+    </div>
+    <div class="fx-city">${FORM.city}</div>
+  </div></div>`).join("");
+}
+function fitSheets(){
+  document.querySelectorAll(".fx-wrap").forEach(w => {
+    const s = Math.min(1, w.clientWidth / (210 * 96 / 25.4));
+    const f = w.firstElementChild; f.style.transform = `scale(${s})`; w.style.height = `${297 * 96 / 25.4 * s}px`;
+  });
+}
+window.addEventListener("resize", fitSheets);
+const fileBase = () => { const m = C().meta; return `特記事項_${(m.subject||"未設定").replace(/[\\/:*?"<>|\s]/g,"")}_${m.date||today()}`; };
+
+/* Word (.docx) — the same sheet in WordprocessingML, A4, one sheet per page */
+function docxXML(){
+  const X = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const R = FORM.red, FONT = '<w:rFonts w:ascii="BIZ UDPゴシック" w:eastAsia="BIZ UDPゴシック" w:hAnsi="BIZ UDPゴシック"/>';
+  const run = (t, o={}) => `<w:r><w:rPr>${FONT}${o.b?"<w:b/>":""}<w:color w:val="${o.color||"111111"}"/><w:sz w:val="${o.sz||20}"/></w:rPr><w:t xml:space="preserve">${X(t)}</w:t></w:r>`;
+  const para = (runs, o={}) => `<w:p><w:pPr><w:spacing w:before="0" w:after="0"${o.line?` w:line="${o.line}" w:lineRule="exact"`:""}/>${o.ind?`<w:ind w:left="${o.ind}"/>`:""}<w:jc w:val="${o.jc||"left"}"/></w:pPr>${runs}</w:p>`;
+  const bd = (side, val, color, sz) => `<w:${side} w:val="${val}" w:sz="${sz||8}" w:space="0" w:color="${color}"/>`;
+  const NIL = ["top","left","bottom","right"].map(s => `<w:${s} w:val="nil"/>`).join("");
+  const tc = (w, content, o={}) => `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${o.span?`<w:gridSpan w:val="${o.span}"/>`:""}${o.vm?`<w:vMerge${o.vm==="restart"?' w:val="restart"':""}/>`:""}<w:tcBorders>${o.bd||NIL}</w:tcBorders>${o.fill?`<w:shd w:val="clear" w:color="auto" w:fill="${o.fill}"/>`:""}<w:tcMar><w:left w:w="${o.ml??40}" w:type="dxa"/><w:right w:w="40" w:type="dxa"/></w:tcMar><w:vAlign w:val="${o.va||"center"}"/></w:tcPr>${content || para("")}</w:tc>`;
+  const tr = (h, cells) => `<w:tr><w:trPr><w:trHeight w:val="${h}" w:hRule="exact"/></w:trPr>${cells}</w:tr>`;
+  const tbl = (grid, rows) => `<w:tbl><w:tblPr><w:tblW w:w="${grid.reduce((a,b)=>a+b,0)}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w=>`<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>${rows}</w:tbl>`;
+  const box = (t, color) => tc(369, para(run(t, {sz:26}), {jc:"center"}), {bd: ["top","left","bottom","right"].map(s=>bd(s,"single",color||R,6)).join("")});
+  const lab = t => tc(t.length>4?794:680, para(run(t.slice(0, t.length-2), {sz:12, color:"FFFFFF"}), {jc:"center"}) + para(run("番　号", {sz:12, color:"FFFFFF"}), {jc:"center"}), {fill:R});
+  const ins = insurerNo();
+  const panelLines = [
+    run("［調査項目］", {sz:14}), run("０００．概況　", {sz:14}) + run("（必須）", {sz:14, color:R}),
+    run("（主訴、家族状況、調査対象者の", {sz:14}), run("居住環境、日常的に使用する", {sz:14}), run("機器・器械の有無　等）", {sz:14}),
+    ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:14}))
+  ].map(r => para(r, {line:158, ind:60})).join("");
+  const BLK = "111111", sideBd = s => bd(s, "single", BLK, 12);
+  const G = [2835, 170, 340, 454, 6974];   /* panel 50mm | gap 3mm | 番 6mm | 号 8mm | 特記事項 123mm */
+  const sheet = (rows, pi) => {
+    const top = tbl([3969, 5953, 851], tr(567,
+      tc(3969, para(run("認定調査票（特記事項）", {b:1, sz:26, color:"FFFFFF"}), {jc:"center"}), {fill:R}) + tc(5953, "") +
+      tc(851, para(run(FORM.no, {sz:32}), {jc:"center"}), {bd: ["top","left","bottom","right"].map(sideBd).join("")})));
+    const ids = tbl([680, 369,369,369,369,369,369, 227, 794, 369,369,369,369,369,369,369,369,369,369, 340, 397, 2431], tr(510,
+      lab("保険者番号") + [...Array(6)].map((_,i)=>box(ins[i]||"", BLK)).join("") + tc(227, "") +
+      lab("被保険者番号") + [...Array(10)].map((_,i)=>box("000"[i]||"", BLK)).join("") + tc(340, "") +
+      box(pi>0 ? String(pi+1) : "") +
+      tc(2431, para(run("２枚目以降がある場合は左の", {sz:13, color:R})) + para(run("枠内に何枚目かを記入して下さい", {sz:13, color:R})), {ml:80})));
+    const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 3005});
+    const red = (s, v) => bd(s, v||"single", R, 8);
+    const head = tr(454,
+      tc(G[0], panelLines, {vm:"restart", va:"top", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"restart"}) +
+      tc(G[2]+G[3], para(run("番　号", {sz:18}), {jc:"center"}), {span:2, bd: red("top")+red("left")+red("bottom")+red("right")}) +
+      tc(G[4], para(run("特　　　記　　　事　　　項", {sz:18}), {jc:"center"}), {bd: red("top")+red("left")+red("bottom")+red("right")}));
+    const body = Array.from({length: FORM.rows}, (_, i) => {
+      const r = rows[i] || {code:"", text:""}, last = i === FORM.rows-1, bottom = red("bottom", last ? "single" : "dashed");
+      return tr(420,
+        tc(G[0], "", {vm:"cont", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"cont"}) +
+        tc(G[2], para(run(r.code.slice(0,1)), {jc:"center"}), {bd: red("left") + bottom + red("right","dashed")}) +
+        tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
+        tc(G[4], para(run(r.text)), {ml:80, bd: red("left") + bottom + red("right")}));
+    }).join("");
+    const foot = para(run("※７０１．７０２は必須", {sz:15, color:R}));
+    return top + para("", {line:120}) + ids + para("", {line:100}) + note + tbl(G, head + body) + foot;
+  };
+  const pages = formPages().map(sheet).join(`<w:p><w:r><w:br w:type="page"/></w:r></w:p>`);
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:footerReference w:type="default" r:id="rIdFooter"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="567" w:bottom="567" w:left="567" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+}
+async function docxBlob(){
+  const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
+  add("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`);
+  add("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+  add("word/document.xml", docxXML());
+  /* 欄外右下：大阪府　枚方市　R7.10 (page footer, every sheet) */
+  add("word/_rels/document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>`);
+  add("word/footer1.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="BIZ UDPゴシック" w:eastAsia="BIZ UDPゴシック" w:hAnsi="BIZ UDPゴシック"/><w:color w:val="111111"/><w:sz w:val="15"/></w:rPr><w:t xml:space="preserve">${FORM.city}</w:t></w:r></w:p></w:ftr>`);
+  return z;
+}
+let DL = null;
+if (window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then(d => { DL = d; if (S.view==="out") renderOut(); }).catch(()=>{});
+/* browser app: an ordinary download (iPhone shows the share/save sheet) */
+if (STANDALONE) DL = {save: async ({filename, data}) => {
+  const blob = data instanceof Blob ? data : new Blob([data], {type: filename.endsWith(".json") ? "application/json" : "application/octet-stream"});
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+  return {status:"saved"};
+}};
+function dlErr(e){
+  if (e?.code === "declined") return;
+  if (e?.code === "rate_limited") { toast("保存の確認画面がすでに開いています"); return; }
+  toast("この表示ではファイルを保存できません");
+}
+async function saveDocx(){
+  if (!DL) { toast("この表示ではファイルを保存できません"); return; }
+  if (!window.JSZip) { toast("Word出力の部品を読み込めませんでした。通信状態を確認してください"); return; }
+  const z = await docxBlob();
+  const blob = await z.generateAsync({type:"blob", compression:"DEFLATE", mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+  try { await DL.save({filename: fileBase()+".docx", data: blob}); toast("Wordファイルを保存しました"); } catch(e) { dlErr(e); }
+}
+async function saveBackup(){
+  if (!DL) { toast("この表示ではファイルを保存できません"); return; }
+  try { await DL.save({filename: fileBase()+"_バックアップ.json", data: JSON.stringify({app:"ninteiTokki", v:1, case:C()})}); toast("バックアップを保存しました"); } catch(e) { dlErr(e); }
+}
+$("#importFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text()), src = d?.case;
+    if (!src || !Array.isArray(src.utts) || typeof src.items !== "object") throw 0;
+    const c = newCase(src.meta); Object.assign(c, {utts:src.utts, items:src.items||{}, prop:src.prop||{}, active:src.active||"1-1"});
+    save(); refreshAll(); toast("バックアップを読み込みました");
+  } catch(_) { toast("このファイルは読み込めません。このアプリで保存したバックアップを選んでください"); }
+});
+
+/* Google Drive auto-save: a Google Doc of the form, replaced on each save (previous copy goes to trash) */
+const DRIVE = "Google Drive";
+let MCP = null, driveT = null, drivePending = false, driveBusy = false, driveAgain = false, driveMsg = "", driveErr = false;
+if (window.claude && typeof window.claude.use === "function") window.claude.use("mcp").then(m => { MCP = m; if (S.view==="out") renderOut(); }).catch(()=>{});
+const driveOn = () => { try { return localStorage.getItem(KEY+".drive")==="1"; } catch(e) { return false; } };
+function scheduleDrive(){
+  if (!MCP || !driveOn()) return;
+  drivePending = true; clearTimeout(driveT); driveT = setTimeout(()=>driveSave(false), 60000);
+}
+function hashStr(s){ let h = 0; for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i))|0; return String(h); }
+function setDriveMsg(msg, err){
+  driveMsg = msg; driveErr = !!err;
+  const el = $("#driveStatus"); if (el) { el.innerHTML = msg; el.classList.toggle("err", !!err); }
+}
+function driveStatusHTML(c){
+  if (driveMsg) return driveMsg;
+  return c.drive?.at ? `最終保存 ${esc(c.drive.at)}${c.drive.url?`　<a href="${esc(c.drive.url)}" target="_blank" rel="noopener">ドライブで開く</a>`:""}` : "まだ保存していません";
+}
+function driveErrMsg(e){
+  return ({
+    needs_reauth:"Google ドライブの再接続が必要です（claude.ai の設定 → コネクタ）。",
+    server_not_connected:"Google ドライブのコネクタが未接続です（claude.ai の設定 → コネクタで追加）。",
+    selection_required:"使うGoogle ドライブを選んでください。",
+    not_in_manifest:"このページでのGoogle ドライブ利用が許可されていません。",
+    blocked_by_policy:"組織の設定でGoogle ドライブへの保存が止められています。",
+    approval_required:"保存の承認が必要です。「今すぐドライブに保存」を押してください。",
+    not_granted:"この表示ではGoogle ドライブを使えません。", capability_disabled:"この表示ではGoogle ドライブを使えません。"
+  })[e?.code] || "Google ドライブに保存できませんでした。通信状態を確認して「今すぐドライブに保存」を押してください。";
+}
+async function driveSave(manual){
+  if (!MCP) return;
+  if (driveBusy) { driveAgain = true; return; }
+  if (!window.JSZip) { setDriveMsg("用紙ファイルの部品を読み込めませんでした。通信状態を確認してください。", true); return; }
+  const c = C(), h = hashStr(docxXML());
+  drivePending = false;
+  if (!manual && c.drive?.hash === h) return;
+  driveBusy = true; setDriveMsg("ドライブに保存中…");
+  try {
+    /* the Word sheet itself, kept as .docx so the form layout survives (no Google Docs conversion) */
+    const b64 = await (await docxBlob()).generateAsync({type:"base64", compression:"DEFLATE"});
+    const r = await MCP.callTool(DRIVE, "create_file", {title: fileBase()+".docx", base64Content: b64, contentMimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", disableConversionToGoogleType: true});
+    const p = r?.payload, f = p?.id ? p : (p?.file?.id ? p.file : null);
+    const old = c.drive?.fileId;
+    c.drive = {fileId: f?.id || null, url: f?.viewUrl || f?.webViewLink || "", at: `${(c.meta.date||"").slice(5).replace("-","/")} ${hhmm()}`, hash: h};
+    driveMsg = ""; setDriveMsg(driveStatusHTML(c));
+    flush();
+    if (old && f?.id && old !== f.id) MCP.callTool(DRIVE, "trash_file", {fileId: old}).catch(()=>{});
+  } catch(e) {
+    setDriveMsg(esc(driveErrMsg(e)), true);
+  } finally {
+    driveBusy = false;
+    if (driveAgain) { driveAgain = false; scheduleDrive(); }
+  }
+}
+
+/* ---------- output view ---------- */
+function buildOutput(withChoice){
+  const c = C(), m = c.meta;
+  let out = `認定調査票（特記事項）\n調査実施日：${m.date||""}　調査員：${m.surveyor||""}　対象者：${m.subject||""}\n`;
+  for (const g of GROUPS) {
+    const its = ITEMS.filter(x=>x.g===g.g);
+    out += `\n${g.head}\n`;
+    for (const it of its) {
+      const st = IT(it.id);
+      out += `${formCode(it)}　${it.name}${withChoice && st.c.length?`〔${choiceText(it, st.c)}〕`:""}\n${st.note.trim() || "（未作成）"}\n`;
+    }
+  }
+  return out;
+}
+function checks(){
+  const c = C(), w = [];
+  for (const it of ITEMS) {
+    const st = IT(it.id), hasNote = !!st.note.trim(), n = uttsFor(it.id).length;
+    const vg = vagueWords(st.note);
+    if (vg.length) w.push({id:it.id, kind:"note", msg:`あいまいな表現があります（${vg.join("、")}）`});
+    if (st.basisK != null && st.c.length === 1 && st.c[0] !== st.basisK)
+      w.push({id:it.id, kind:"note", msg:`選択（${choiceText(it, st.c)}）が、より頻回な状況（「${st.basisK+1}.${it.ch[st.basisK]}」）と違います。理由を特記に記載してください`});
+    const cited = citedChoices(it, st.note);
+    if (cited.length && st.c.length && cited.some(k => !st.c.includes(k))) w.push({id:it.id, kind:"miss", msg:`特記の選択根拠（${cited.map(k=>`「${k+1}.${it.ch[k]}」`).join("")}）と選択（${choiceText(it, st.c)}）が一致しません`});
+    const notFirst = st.c.length && !(st.c.length===1 && st.c[0]===0);
+    if (it.ch.length && !st.c.length && it.id!=="6") w.push({id:it.id, kind:"miss", msg:"選択が未入力"});
+    if (!hasNote) w.push({id:it.id, kind:"miss", msg: st.missing ? `特記未作成：${st.missing}` : n ? `聞き取り ${n} 件がありますが、特記が未作成` : "特記未作成（会話で確認できていません）"});
+    if (c.prop[it.id]) w.push({id:it.id, kind:"note", msg:"調査員の特記と別にAI案があります"});
+    if (st.cBy==="ai" && st.c.length) w.push({id:it.id, kind:"note", msg:`選択がAI推定のまま（${choiceText(it, st.c)}）`});
+  }
+  return w;
+}
+let withChoice = false;
+function renderOut(){
+  const v = $("#v-out"), w = checks(), miss = w.filter(x=>x.kind==="miss").length;
+  const c = C();
+  v.innerHTML = `<h2>出力</h2>
+    <h3>判定シミュレーション</h3>
+    ${simHTML(false)}
+    <h3>保存</h3>
+    <div class="card savecard">
+      <div class="small">この端末には入力のたびに自動で保存されています。</div>
+      ${MCP ? `<label><input type="checkbox" id="driveAuto"${driveOn()?" checked":""}><span>Google ドライブにも自動保存する<br><span class="small muted">入力が1分止まるたびに、下の用紙をGoogle ドキュメントとして保存します。古い版はドライブのゴミ箱に移ります。</span></span></label>
+      <div class="status${driveErr?" err":""}" id="driveStatus">${driveStatusHTML(c)}</div>` : `<div class="small muted">この表示ではGoogle ドライブへの自動保存は使えません。</div>`}
+      <div class="btnrow" style="margin:0">
+        ${MCP ? `<button class="btn acc" id="driveNow">今すぐドライブに保存</button>` : ""}
+        ${DL ? `<button class="btn acc" id="docxBtn">Word（.docx）で保存</button>` : ""}
+        <button class="btn" id="copyAll">全文をコピー</button>
+      </div>
+    </div>
+    <h3>確認（${w.length}件）</h3>
+    ${w.length ? `<details${w.length<=8?" open":""}><summary>未入力（選択・特記） ${miss} 件・内容の確認 ${w.length-miss} 件</summary><div class="warns" style="margin-top:6px">${w.map(x=>`<button class="warn" data-go="${x.id}"><span class="wk ${x.kind==="miss"?"miss":""}">${x.id}</span><span>${esc(BY[x.id].name)}：${esc(x.msg)}</span></button>`).join("")}</div></details>` : '<p class="ok">選択と特記の記入漏れはありません。</p>'}
+    <h3>特記事項用紙</h3>
+    <p class="small muted" style="margin:0 0 8px">枚方市の様式（52・R7.10）に合わせています。1枚30行で、入りきらない場合は2枚目以降に続きます。</p>
+    <div id="paper">${formSheetsHTML()}</div>
+    <h3>聞き取り記録・バックアップ</h3>
+    <div class="btnrow" style="margin:0"><button class="btn" id="copyLog">聞き取り記録をコピー</button>
+    ${DL ? `<button class="btn" id="backupBtn">バックアップを保存</button>` : ""}<button class="btn" id="importBtn">バックアップを読み込む</button></div>`;
+  fitSheets();
+}
+$("#v-out").addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g) { go("items"); openDetail(g.dataset.go); return; }
+  if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
+  if (e.target.id==="copyLog") copyText(C().utts.map(line).join("\n"));
+  if (e.target.id==="docxBtn") saveDocx();
+  if (e.target.id==="driveNow") { clearTimeout(driveT); driveSave(true); }
+  if (e.target.id==="backupBtn") saveBackup();
+  if (e.target.id==="importBtn") $("#importFile").click();
+});
+$("#v-out").addEventListener("change", e => {
+  if (e.target.id==="driveAuto") {
+    try { localStorage.setItem(KEY+".drive", e.target.checked ? "1" : "0"); } catch(_) {}
+    if (e.target.checked) { clearTimeout(driveT); driveSave(true); } else { clearTimeout(driveT); drivePending = false; setDriveMsg("自動保存はオフです"); }
+  }
+});
+
+/* ---------- meta view & cases ---------- */
+function renderMeta(){ const m = C().meta; document.querySelectorAll("#metaForm [data-k]").forEach(el => { el.value = m[el.dataset.k] || ""; }); if (STANDALONE) renderApi(); }
+/* AI settings (browser app only). The key is typed by the user and kept in this browser only. */
+function renderApi(msg){
+  $("#apiModel").innerHTML = MODELS.map(([id, label]) => `<option value="${id}"${id===API.model?" selected":""}>${esc(label)}</option>`).join("");
+  $("#apiKey").value = "";
+  $("#apiKey").placeholder = API.key ? `設定済み（末尾 ${API.key.slice(-4)}）。変更する場合だけ入力` : "sk-ant-…";
+  $("#apiStatus").textContent = msg || (API.key ? "AIは使える状態です。" : "APIキーが未設定のため、AIは使えません（キーワードでの振り分けと定型文になります）。");
+}
+if (STANDALONE) {
+  $("#apiSave").addEventListener("click", () => {
+    const k = $("#apiKey").value.trim();
+    if (k && !/^sk-ant-/.test(k)) { renderApi("APIキーの形式が違います。「sk-ant-」で始まるキーを入力してください。"); return; }
+    if (k) API.key = k;
+    API.model = $("#apiModel").value;
+    try { localStorage.setItem(KEY+".apikey", API.key); localStorage.setItem(KEY+".model", API.model); } catch(e) {}
+    applyApiSetting(); renderApi(API.key ? "保存しました。" : "モデルを保存しました。APIキーは未設定です。");
+  });
+  $("#apiClear").addEventListener("click", e => {
+    if (!e.target.dataset.armed) { e.target.dataset.armed = "1"; e.target.textContent = "もう一度押すと削除します"; return; }
+    e.target.dataset.armed = ""; e.target.textContent = "キーを削除";
+    API.key = ""; AUTO.on = false;
+    try { localStorage.removeItem(KEY+".apikey"); } catch(_) {}
+    applyApiSetting(); renderApi("APIキーを削除しました。");
+  });
+}
+$("#metaForm").addEventListener("input", e => { const k = e.target.dataset.k; if (!k) return; C().meta[k] = e.target.value; save(); updateCaseBtn(); });
+function caseLabel(c){ return `${c.meta.subject || "対象者未設定"}　${(c.meta.date||"").slice(5).replace("-","/")}`; }
+function updateCaseBtn(){ $("#caseBtn").textContent = caseLabel(C()); }
+$("#caseBtn").addEventListener("click", openCases);
+function openCases(){
+  const list = Object.values(DB.cases).sort((a,b)=>b.updated-a.updated);
+  openSheet(`<div class="sheet-h"><b>ケース</b><button class="btn" data-close>閉じる</button></div>
+    <div class="ulist">${list.map(c=>`<button class="ul-item" data-case="${c.id}" style="text-align:left${c.id===DB.cur?";border-color:var(--accent)":""}"><span class="tx">${esc(caseLabel(c))}<br><span class="small muted">記録 ${c.utts.length} 件・特記 ${Object.values(c.items).filter(x=>x.note&&x.note.trim()).length} 項目</span></span></button>`).join("")}</div>
+    <div class="btnrow"><button class="btn fill" id="caseNew">新しいケースを始める</button><button class="btn" id="caseSample">サンプルを開く</button><button class="btn danger" id="caseDel">表示中のケースを削除</button></div>
+    <p class="small muted">転記が終わったケースは削除してください。記録はこの端末にだけ保存されています。</p>`);
+  sheet.onclick = e => {
+    const b = e.target.closest("[data-case]"); if (b) { DB.cur = b.dataset.case; save(); closeSheet(); refreshAll(); return; }
+    if (e.target.id==="caseSample") { closeSheet(); loadSample(); go("out"); return; }
+    if (e.target.id==="caseNew") { newCase(); save(); closeSheet(); go("meta"); refreshAll(); toast("新しいケースを作りました"); return; }
+    if (e.target.id==="caseDel") {
+      if (!e.target.dataset.armed) { e.target.dataset.armed="1"; e.target.textContent="もう一度押すと削除します"; return; }
+      const fid = C().drive?.fileId; if (fid && MCP) MCP.callTool(DRIVE, "trash_file", {fileId: fid}).catch(()=>{});
+      delete DB.cases[DB.cur]; const ids = Object.keys(DB.cases); if (ids.length) DB.cur = ids[0]; else newCase();
+      save(); closeSheet(); refreshAll(); toast("削除しました");
+    }
+  };
+}
+
+function loadSample(){
+  const c = newCase({subject:"サンプル", age:"84", sex:"女", kubun:"更新", place:"自宅", witness:"長女（同居）", household:"長女夫婦と同居。日中は独居。", disease:"変形性膝関節症、アルツハイマー型認知症（軽度）", services:"通所介護 週2回、福祉用具（手すり・歩行器）"});
+  /* a free-flowing conversation, already sorted into items as the auto pass would */
+  const add = (t, sp, text, ...tags) => c.utts.push({id:uid(), t, sp, text, tags, sug:[], cls:true});
+  add("10:01","調査員","では横になった状態から、寝返りをしてみていただけますか","1-3");
+  add("10:02","調査員","ベッド柵につかまって左右とも寝返りできている","1-3");
+  add("10:02","本人","柵を持てば起きられます。ないと無理ね","1-4");
+  add("10:05","調査員","お部屋の中はどうやって歩いていますか","1-7");
+  add("10:05","本人","歩行器です。外は娘が腕を持ってくれます","1-7");
+  add("10:06","調査員","方向転換のときにふらつきあり","1-7");
+  add("10:09","家族","夜中にトイレに行くときはふらつくので、週3回くらい付き添っています","2-2","2-5");
+  add("10:11","調査員","お手洗いの失敗はありますか","2-5");
+  add("10:12","家族","週に2、3回は間に合わないです。リハパンとパッドで、交換は私がしています","2-5");
+  add("10:15","本人","お風呂はデイで入ってます。背中と足は洗ってもらうの","1-10","2-12");
+  add("10:20","調査員","今の季節はいつですか","3-6");
+  add("10:20","本人","冬かしら","3-6");
+  add("10:24","家族","財布がないと探し回って、私が盗ったと言うことが月に2回くらいあります","4-1");
+  add("10:26","家族","鍋をかけたまま忘れるのは週1回以上あって、ガスの元栓は私が締めています","4-12");
+  add("10:28","家族","薬はカレンダーにセットしていますけど、飲み忘れが多いので毎回声をかけています","5-1");
+  add("10:30","家族","お金は全部私が管理しています。買い物も料理も私です","5-2","5-5","5-6");
+  /* all 74 items answered (0-based choice index), so the simulation and the form fill out */
+  const CH = {"1-1":[0],"1-2":[3],"1-3":[1],"1-4":[1],"1-5":[0],"1-6":[1],"1-7":[1],"1-8":[1],"1-9":[1],"1-10":[1],"1-11":[2],"1-12":[0],"1-13":[1],
+    "2-1":[0],"2-2":[0],"2-3":[0],"2-4":[0],"2-5":[0],"2-6":[0],"2-7":[0],"2-8":[0],"2-9":[0],"2-10":[0],"2-11":[1],"2-12":[0],
+    "3-1":[0],"3-2":[1],"3-3":[0],"3-4":[1],"3-5":[0],"3-6":[1],"3-7":[0],"3-8":[0],"3-9":[0],
+    "4-1":[1],"4-2":[0],"4-3":[0],"4-4":[0],"4-5":[1],"4-6":[0],"4-7":[0],"4-8":[0],"4-9":[0],"4-10":[0],"4-11":[0],"4-12":[2],"4-13":[0],"4-14":[0],"4-15":[0],
+    "5-1":[1],"5-2":[2],"5-3":[1],"5-4":[0],"5-5":[3],"5-6":[3],"6":[],"7-1":[3],"7-2":[3]};
+  const NT = {
+    "0":"主訴は「膝が痛くて歩くのが不安。物忘れが増えた」とのこと。長女夫婦と同居し、主な介護者は長女で、日中は長女が仕事のため独居となる。住居は2階建ての一戸建てで、居室は1階にあり、玄関に段差が1段ある。特殊寝台と居室・トイレの手すりを使用し、屋内は歩行器で移動している。通所介護を週2回利用している。",
+    "1-1":"調査時、両上肢・両下肢の挙上を確認し、麻痺は見られなかった。",
+    "1-5":"調査時、背もたれのない椅子に10分間座っていられることを確認。",
+    "1-12":"調査時、視力確認表の図を正しく答えた。新聞の見出しも読めると本人より聞き取る。",
+    "2-1":"ベッドと椅子の間の乗り移りは、本人が手すりにつかまって行っている。",
+    "2-3":"食事や水分でむせることはないと長女より聞き取る。",
+    "2-4":"用意された食事を、本人が箸を使って食べている。",
+    "2-6":"排便は毎日トイレで行い、後始末も本人が行っているとのこと。",
+    "2-7":"歯磨きと義歯の洗浄は、洗面所で本人が行っている。",
+    "2-8":"洗顔は毎朝、洗面所で本人が行っている。",
+    "2-9":"整髪は本人がくしを使って行っている。",
+    "2-10":"上衣の着脱は、椅子に座って本人が行っている。",
+    "3-1":"調査員の質問に対し、自分の考えを言葉で伝えられた。",
+    "3-3":"調査時、生年月日と年齢を正しく答えた。",
+    "3-5":"調査時、氏名を正しく答えた。",
+    "3-7":"調査時、ここが自宅であると答えた。",
+    "3-8":"家の中を目的なく歩き回ることはないと長女より聞き取る。",
+    "3-9":"一人で外出することはなく、外出して戻れなくなったことはないとのこと。",
+    "4-2":"事実と違う話を作ることはないと長女より聞き取る。",
+    "4-3":"場面に合わずに泣いたり笑ったりすることはないとのこと。",
+    "4-4":"22時に寝て6時に起きる生活で、昼夜の逆転はないとのこと。",
+    "4-6":"大声を出すことはないとのこと。",
+    "4-7":"入浴や服薬の声かけを嫌がることはないとのこと。",
+    "4-8":"「家に帰る」と言って落ち着かなくなることはないとのこと。",
+    "4-9":"一人で外に出ようとすることはないとのこと。",
+    "4-10":"物を集めたり、無断で持ってきたりすることはないとのこと。",
+    "4-11":"物を壊したり衣類を破いたりすることはないとのこと。",
+    "4-13":"独り言や独り笑いはないとのこと。",
+    "4-14":"周囲を顧みずに自分勝手に行動することはないとのこと。",
+    "4-15":"調査中の会話は成り立っていた。",
+    "5-4":"通所介護では他の利用者と同じテーブルで過ごし、トラブルはないとのこと。",
+    "6":"過去14日間に、医師の指示に基づく医療処置は受けていない。",
+    "1-2":"両膝に拘縮あり。他動的に伸展させると、両膝とも約20度の伸展制限を確認。",
+    "1-3":"調査時、ベッド柵につかまって左右とも寝返りを確認。日頃も柵を使用しているとのこと。",
+    "1-4":"調査時、ベッド柵につかまり時間をかけて起き上がる。柵がないと起き上がれないと本人より聞き取る。",
+    "1-6":"調査時、テーブルに手をついて約10秒の立位保持を確認。支えなしでは膝が痛み不安定になると本人より聞き取る。",
+    "1-8":"調査時、椅子の肘掛けにつかまって立ち上がる。日頃も手すりや家具につかまって立ち上がっているとのこと。",
+    "1-9":"調査時、テーブルに手をついて左右とも片足立ちを1秒程度確認。支えなしでは行えなかった。",
+    "1-7":"屋内は歩行器を使用しゆっくり歩行。方向転換時にふらつきあり。屋外は長女が腕を支えて歩くとのこと。",
+    "1-10":"週2回の通所介護で入浴。洗身は本人が体の前面を洗い、背中と足先は職員が洗っているとのこと。",
+    "1-11":"手指・足趾とも長女が爪切りを行っている。手元が見えにくく危ないため任せていると本人より聞き取る。",
+    "1-13":"普通の声では聞き返しが多く、耳元で大きな声で話すと聞き取れた。",
+    "2-2":"屋内は歩行器を使用し、自力で介助なしで移動している（1日5回以上）。夜間のトイレへの移動はふらつきがあるため、長女が付き添い見守っている（3回／週）とのこと。より頻回な状況に基づき",
+    "2-5":"通常はトイレで自力で排尿している。リハビリパンツとパッドを使用し、尿失禁が週に2、3回あり、その際のパッド交換と汚染時の後始末は長女が行っているとのこと。より頻回な状況に基づき",
+    "2-11":"ズボンの着脱は手すりにつかまって本人が行うが、ふらつきがあるため長女がそばで見守っているとのこと。",
+    "2-12":"週2回の通所介護と月1回の通院で外出している。",
+    "3-2":"通所介護の曜日を覚えておらず、毎朝長女が伝えているとのこと。調査時も今日の予定を答えられなかった。",
+    "3-4":"調査時、3品を提示し5分後に確認したところ1品のみ回答。",
+    "3-6":"調査時（10月）、今の季節を「冬」と回答。",
+    "4-1":"財布が見つからないと探し回り、「娘が盗った」と言うことが月2回程度あるとのこと。長女がその都度一緒に探し、落ち着くまで対応している。",
+    "4-5":"同じ話を繰り返すことが月4回あるとのこと。",
+    "4-12":"鍋を火にかけたまま忘れることが週1回以上あり、ガスの元栓は長女が管理している。",
+    "5-1":"長女がお薬カレンダーにセットしているが飲み忘れが多く、毎回声かけをして服薬を確認している。",
+    "5-2":"年金・預金の管理は長女が行い、本人は小遣い程度の現金も管理していないとのこと。",
+    "5-3":"日常の衣服選びや食事の希望は伝えられるが、サービス変更など特別な場合の判断は長女に任せている。",
+    "5-5":"買い物は長女がすべて行っている。本人が店に行くことはないとのこと。",
+    "5-6":"調理は長女がすべて行っている。本人は電子レンジの使用もしていないとのこと。",
+    "7-1":"屋内では歩行器で生活し、日中は離床して過ごしている。介助があれば外出できるが、自ら外出することはない。",
+    "7-2":"置き忘れ、被害的な訴え、火の不始末など日常生活に支障をきたす症状が家庭内で見られ、長女の見守りが必要。"
+  };
+  /* sample notes end with the selection basis, in the guide's style */
+  for (const it of ITEMS) {
+    const ch = CH[it.id] || [];
+    let note = NT[it.id] || "";
+    if (note && ch.length && it.id !== "6") note += `${ch.map(k=>`「${k+1}.${it.ch[k]}」`).join("")}を選択する。`;
+    c.items[it.id] = {c: ch, cBy: "ai", note, noteBy: note ? "ai" : ""};
+  }
+  Object.assign(c.items["2-2"], {basisK:0, basis:"「1.介助されていない」週35回、「2.見守り等」週3回 → より頻回な「1.介助されていない」"});
+  Object.assign(c.items["2-5"], {basisK:0, basis:"「1.介助されていない」週45回、「3.一部介助」週2.5回 → より頻回な「1.介助されていない」"});
+  c.meta.surveyor = "調査員（サンプル）";
+  save(); refreshAll(); toast("サンプルを開きました（架空のケースです）");
+}
+
+/* ---------- navigation ---------- */
+function go(v){
+  S.view = v;
+  ["cap","items","out","meta"].forEach(k => { $("#v-"+k).hidden = k!==v; });
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-current", b.dataset.v===v ? "page" : "false"));
+  $("#main").classList.toggle("fixed", v==="cap");
+  if (v==="cap") { renderLog(); updateActive(); }
+  if (v==="items") renderItems();
+  if (v==="out") renderOut();
+  if (v==="meta") renderMeta();
+  if (v!=="cap") $("#main").scrollTop = 0;
+}
+$("#tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.v==="items") S.detail = null; go(b.dataset.v); });
+function refreshAll(){ updateCaseBtn(); S.detail = null; if (!AUTO.busy) { AUTO.msg = ""; AUTO.err = false; } go(S.view); }
+
+load(); setSpeaker("自動"); updateCaseBtn(); go("cap");
+/* test hook: only when opened with ?test outside the Claude viewer (local testing) */
+if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, buildOutput: () => buildOutput(withChoice)};
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+</script>
+</body>
+</html>

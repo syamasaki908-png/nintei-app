@@ -1,0 +1,17 @@
+{
+  "name": "認定調査 特記事項メモ",
+  "short_name": "特記事項メモ",
+  "description": "要介護認定調査の会話を文字にし、項目への振り分けと特記事項の作成、枚方市様式の用紙出力を行います。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3F5F8",
+  "theme_color": "#2A4A8A",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
