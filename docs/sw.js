@@ -1,6 +1,6 @@
 /* Offline support: the app shell is network-first (so updates arrive), libraries are cache-first.
    Calls to the Claude API are never cached. */
-const CACHE = "nintei-v3";
+const CACHE = "nintei-v4";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 const LIB_HOSTS = ["cdnjs.cloudflare.com", "cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
 

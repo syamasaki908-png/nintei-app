@@ -214,7 +214,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .fx-pn{color:#E34B6A;font-size:6.5pt;line-height:1.3}
 .fx-gn{color:#E34B6A;font-size:7.5pt;margin:2mm 0 .8mm 53mm}
 .fx-body{display:grid;grid-template-columns:50mm 1fr;gap:3mm}
-.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:6.8pt;line-height:2.73mm;height:230mm;overflow:hidden}
+.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:6.8pt;line-height:2.9mm;height:244.8mm;overflow:hidden}
 .fx-must{font-size:7.5pt;margin-top:1mm}
 .fx-t{border-collapse:collapse;width:100%;table-layout:fixed;border:.8pt solid #E34B6A}
 .fx-t th{height:8mm;font-weight:400;font-size:9pt;border:.8pt solid #E34B6A}
@@ -1413,7 +1413,7 @@ function simHTML(compact){
 /* ---------- form (特記事項用紙：枚方市 様式 52・R7.10) ----------
    Layout of the paper form: item panel on the left; 番号 (1桁｜2桁) and 特記事項 on 30 ruled lines per sheet.
    One page model feeds the on-screen sheet, the Word file and the Drive copy. */
-const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:30, cpl:33, insurer:"272104"};
+const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:32, cpl:33, insurer:"272104"};
 const PANEL = "101麻痺等|102拘縮等|103寝返り|104起き上がり|105座位保持|106両足での立位|107歩行|108立ち上がり|109片足での立位|110洗身|111つめ切り|112視力|113聴力|201移乗|202移動|203えん下|204食事摂取|205排尿|206排便|207口腔清潔|208洗顔|209整髪|210上衣の着脱|211ズボン等の着脱|212外出頻度|301意思の伝達|302日課を理解|303生年月日をいう|304短期記憶|305自分の名前を言う|306今の季節を理解|307場所の理解|308徘徊|309外出して戻れない|401被害的|402作話|403感情が不安定|404昼夜逆転|405同じ話をする|406大声を出す|407介護に抵抗|408落ち着きなし|409一人で出たがる|410収集癖|411物や衣類を壊す|412ひどい物忘れ|413独り言（独り笑い）|414自分勝手に行動する|415話がまとまらない|501薬の内服|502金銭の管理|503日常の意思決定|504集団への不適応|505買い物|506簡単な調理|601点滴の管理|602中心静脈栄養|603透析|604ストーマの処置|605酸素療法|606レスピレーター|607気管切開の処置|608疼痛の看護|609経管栄養|610モニター測定|611じょくそうの処置|612カテーテル|701障害高齢者自立度|702認知症高齢者自立度"
   .split("|").map(s => [s.slice(0,3), s.slice(3)]);
 const zen = s => s.replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 0xFEE0));
@@ -1507,7 +1507,7 @@ function docxXML(){
     run("［調査項目］", {sz:14}), run("０００．概況　", {sz:14}) + run("（必須）", {sz:14, color:R}),
     run("（主訴、家族状況、調査対象者の", {sz:14}), run("居住環境、日常的に使用する", {sz:14}), run("機器・器械の有無　等）", {sz:14}),
     ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:14}))
-  ].map(r => para(r, {line:158, ind:60})).join("");
+  ].map(r => para(r, {line:168, ind:60})).join("");
   const BLK = "111111", sideBd = s => bd(s, "single", BLK, 12);
   const G = [2835, 170, 340, 454, 6974];   /* panel 50mm | gap 3mm | 番 6mm | 号 8mm | 特記事項 123mm */
   const sheet = (rows, pi) => {
@@ -1519,7 +1519,7 @@ function docxXML(){
       lab("被保険者番号") + [...Array(10)].map((_,i)=>box("000"[i]||"", BLK)).join("") + tc(340, "") +
       box(pi>0 ? String(pi+1) : "") +
       tc(2431, para(run("２枚目以降がある場合は左の", {sz:13, color:R})) + para(run("枠内に何枚目かを記入して下さい", {sz:13, color:R})), {ml:80})));
-    const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 3005});
+    const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 3005, line: 220});
     const red = (s, v) => bd(s, v||"single", R, 8);
     const head = tr(454,
       tc(G[0], panelLines, {vm:"restart", va:"top", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"restart"}) +
@@ -1533,10 +1533,11 @@ function docxXML(){
         tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
         tc(G[4], para(run(r.text)), {ml:80, bd: red("left") + bottom + red("right")}));
     }).join("");
-    const foot = para(run("※７０１．７０２は必須", {sz:15, color:R}));
-    return top + para("", {line:120}) + ids + para("", {line:100}) + note + tbl(G, head + body) + foot;
+    const foot = para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220});
+    return top + para("", {line:80}) + ids + para("", {line:60}) + note + tbl(G, head + body) + foot;
   };
-  const pages = formPages().map(sheet).join(`<w:p><w:r><w:br w:type="page"/></w:r></w:p>`);
+  /* each sheet after the first starts with a 1pt paragraph set to begin a new page (no leftover break line) */
+  const pages = formPages().map((rows, i) => (i ? `<w:p><w:pPr><w:pageBreakBefore/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>` : "") + sheet(rows, i)).join("");
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:footerReference w:type="default" r:id="rIdFooter"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="567" w:bottom="567" w:left="567" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 async function docxBlob(){
@@ -1758,7 +1759,7 @@ function renderOut(){
     <h3>確認（${w.length}件）</h3>
     ${w.length ? `<details${w.length<=8?" open":""}><summary>未入力（選択・特記） ${miss} 件・内容の確認 ${w.length-miss} 件</summary><div class="warns" style="margin-top:6px">${w.map(x=>`<button class="warn" data-go="${x.id}"><span class="wk ${x.kind==="miss"?"miss":""}">${x.id}</span><span>${esc(BY[x.id].name)}：${esc(x.msg)}</span></button>`).join("")}</div></details>` : '<p class="ok">選択と特記の記入漏れはありません。</p>'}
     <h3>特記事項用紙</h3>
-    <p class="small muted" style="margin:0 0 8px">枚方市の様式（52・R7.10）に合わせています。1枚30行で、入りきらない場合は2枚目以降に続きます。</p>
+    <p class="small muted" style="margin:0 0 8px">枚方市の様式（52・R7.10）に合わせています。1枚32行で、入りきらない場合は2枚目以降に続きます。</p>
     <div id="paper">${formSheetsHTML()}</div>
     <h3>聞き取り記録・バックアップ</h3>
     <div class="btnrow" style="margin:0"><button class="btn" id="copyLog">聞き取り記録をコピー</button>
