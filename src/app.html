@@ -1031,7 +1031,7 @@ function renderDetail(){
 }
 function propHTML(it, p){
   const sug = Number.isInteger(p.suggest) && p.suggest>=1 && p.suggest<=it.ch.length ? p.suggest : null;
-  return `<div class="prop"><div class="ph">AIの下書き（未採用）</div><div class="pt" id="propText">${esc(p.note)}</div>
+  return `<div class="prop"><div class="ph">${p.reason ? `AIの別案：${esc(p.reason)}（未採用）` : "AIの下書き（未採用）"}</div><div class="pt" id="propText">${esc(p.note)}</div>
     ${sug?`<div class="pm">選択の目安：${sug}.${esc(it.ch[sug-1])}</div>`:""}
     ${p.missing?`<div class="pm">要確認：${esc(p.missing)}</div>`:""}
     <div class="btnrow"><button class="btn fill" data-p="replace">特記に採用</button><button class="btn" data-p="append">末尾に追記</button>
@@ -1047,17 +1047,20 @@ $("#v-items").addEventListener("click", e => {
   const t = e.target.closest("button"); if (!t) return;
   if (t.id==="dBack") { S.detail=null; renderItems(); return; }
   if (t.classList.contains("choice")) {
-    const k = +t.dataset.k, wasDone = !missingItems().length;
+    const k = +t.dataset.k, wasDone = !missingItems().length, before = st.c.slice();
     if (it.multi) {
       if (st.c.includes(k)) st.c = st.c.filter(x=>x!==k);
       else if (it.id!=="6" && k===0) st.c = [0];
       else st.c = st.c.filter(x=> it.id==="6" || x!==0).concat(k);
     } else st.c = st.c[0]===k ? [] : [k];
     const wasAi = st.cBy==="ai"; st.cBy = "user";
+    const swapped = syncNoteChoice(it, st);
     save();
-    if (wasAi) renderDetail();
+    if (wasAi || swapped) renderDetail();
     else document.querySelectorAll("#dCh .choice").forEach(b=>b.setAttribute("aria-pressed", st.c.includes(+b.dataset.k)));
     if (!wasDone && !missingItems().length) toast(`全項目を入力しました。判定シミュレーション：${simulate().level}（目安）`);
+    else if (swapped) toast("特記の選択肢名を新しい選択に差し替えました");
+    scheduleRewrite(it.id, before);
     return;
   }
   if (t.id==="cConfirm") { st.cBy = "user"; save(); renderDetail(); return; }
@@ -1088,6 +1091,63 @@ function template(id){
     if (u.sp==="観察") return `調査時、${s}を確認。`;
     return `${s}。`;
   }).join("");
+}
+
+/* ---------- 選択肢を人が変えたときの特記の修正 ----------
+   1) その場で：特記の「n.選択肢」を新しい選択肢名に差し替える（単一選択の項目）。
+   2) 少し待って：AIが特記を新しい選択の根拠に合うよう書き直し、「別案」として出す。採用は調査員が決める。 */
+function syncNoteChoice(it, st){
+  if (it.multi || st.c.length !== 1 || !st.note.trim()) return false;
+  const cited = citedChoices(it, st.note), k = st.c[0];
+  if (cited.length !== 1 || cited[0] === k) return false;
+  st.note = st.note.replace(`「${cited[0]+1}.${it.ch[cited[0]]}」`, `「${k+1}.${it.ch[k]}」`);
+  return true;
+}
+const rewriteT = {}, rewriteFrom = {};
+function scheduleRewrite(id, before){
+  const st = IT(id);
+  if (!SAMPLE || !st.note.trim() || !st.c.length) return;
+  if (!(id in rewriteFrom)) rewriteFrom[id] = before;          /* the choice before this burst of taps */
+  clearTimeout(rewriteT[id]);
+  rewriteT[id] = setTimeout(() => {
+    const from = rewriteFrom[id]; delete rewriteFrom[id];
+    if (JSON.stringify(from.slice().sort()) !== JSON.stringify(IT(id).c.slice().sort())) rewriteForChoice(id, from);
+  }, 1500);
+}
+let rwCtl = null;
+async function rewriteForChoice(id, from){
+  const c = C(), it = BY[id], st = IT(id);
+  if (!SAMPLE || !st.note.trim()) return;
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。調査員が「${formCode(it)} ${it.name}」の選択肢を「${choiceText(it, from) || "未選択"}」から「${choiceText(it, st.c)}」に変更しました。今の特記事項を、新しい選択の根拠として矛盾がないように書き直してください。
+
+${RULES}
+- 今の特記事項にある事実（調査時の確認結果、聞き取った内容、頻度、介護の手間）は残し、新しい選択と矛盾する評価の言い回しだけを直す。会話にない事実を足さない。
+- 最後に、新しい選択肢を「 」で囲んで「〜を選択する。」と書く。頻度の少ない状況は、その内容と頻度を残す。
+- 新しい選択を裏付ける事実が会話にない場合は、本文の後に改行して「【要確認】…」を1行書く。
+
+評価軸：${AXIS[it.axis].label}（${EXTRA[it.id] || AXIS[it.axis].guide}）
+選択肢：${it.ch.map((t,k)=>`${k+1}.${t}`).join(" ")}
+変更前の選択：${choiceText(it, from) || "未選択"}
+変更後の選択：${choiceText(it, st.c)}
+
+今の特記事項：
+${st.note}
+
+この項目に振り分けられた発言：
+${uttsFor(id).map(line).join("\n") || "（なし）"}
+
+出力：書き直した特記事項の本文だけ。前置きや見出しは書かない。`;
+  rwCtl?.abort(); rwCtl = new AbortController();
+  const ctl = rwCtl;
+  if (S.view==="items" && S.detail===id) $("#propBox").innerHTML = `<div class="prop"><div class="ph">選択の変更に合わせてAIが特記を見直し中…</div></div>`;
+  try {
+    const {text} = await SAMPLE(prompt, {signal: ctl.signal, cache:false});
+    let note = text.trim(), missing = "";
+    const mm = note.match(/【要確認】(.*)/); if (mm) { missing = mm[1].trim(); note = note.replace(mm[0], "").trim(); }
+    if (note && note !== st.note.trim()) { c.prop[id] = {note, suggest:null, missing, reason:"選択の変更に合わせた見直し"}; save(); }
+    else if (S.view==="items" && S.detail===id) toast("特記は新しい選択と矛盾していませんでした");
+  } catch(e) { if (e?.code !== "cancelled") toast(aiErr(e)); }
+  finally { if (rwCtl === ctl) rwCtl = null; if (S.view==="items" && S.detail===id) renderDetail(); else if (S.view==="items") renderItems(); }
 }
 
 let oneCtl = null;
