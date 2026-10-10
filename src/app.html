@@ -1116,6 +1116,7 @@ function renderDetail(){
     <div class="hint">${esc(EXTRA[it.id] || AXIS[it.axis].guide)}</div>
     ${st.cBy==="ai"&&st.c.length?`<div class="btnrow" style="margin:0 0 8px;align-items:center"><span class="aib">AI推定</span><span class="small muted">会話から推定した選択です。</span><button class="btn acc" id="cConfirm" style="padding:4px 10px">この選択で確定</button></div>`:""}
     ${st.basis?`<div class="hint" style="border-left-color:var(--accent)">頻度による選択：${esc(st.basis)}</div>`:""}
+    <div id="consistBox">${itemConsistHTML(it.id)}</div>
     <div class="choices${grid?" grid":""}" id="dCh">${it.ch.map((t,k)=>`<button class="choice" data-k="${k}" aria-pressed="${st.c.includes(k)}"><span class="n">${k+1}</span><span>${esc(t)}</span></button>`).join("")}</div>
     ${it.multi?'<p class="small muted">複数選択できます。</p>':""}
     <h3>この項目の聞き取り（${us.length}）</h3>
@@ -1166,8 +1167,10 @@ $("#v-items").addEventListener("click", e => {
     const swapped = syncNoteChoice(it, st);
     save();
     if (wasAi || swapped) renderDetail();
-    else document.querySelectorAll("#dCh .choice").forEach(b=>b.setAttribute("aria-pressed", st.c.includes(+b.dataset.k)));
+    else { document.querySelectorAll("#dCh .choice").forEach(b=>b.setAttribute("aria-pressed", st.c.includes(+b.dataset.k))); $("#consistBox").innerHTML = itemConsistHTML(it.id); }
+    const conflict = consistency().find(x => x.ids.includes(it.id));
     if (!wasDone && !missingItems().length) toast(`全項目を入力しました。判定シミュレーション：${simulate().level}（目安）`);
+    else if (conflict) toast("整合性の確認が必要な組み合わせがあります（この画面の赤い表示）");
     else if (swapped) toast("特記の選択肢名を新しい選択に差し替えました");
     scheduleRewrite(it.id, before);
     return;
@@ -1648,9 +1651,68 @@ function checks(){
   }
   return w;
 }
+/* ---------- 選択の整合性チェック ----------
+   項目同士の選択の組み合わせで、通常は起こりにくいものを「要確認」として知らせる（エラーにはしない）。
+   テキスト：能力と介助の方法の関係が不自然に感じられる特殊なケースは、両者の関係性を特記事項に丁寧に記録する。
+   v(id) は 1 始まりの選択肢番号（未選択は null）。 */
+const v = id => { const c = IT(id).c; return c.length === 1 ? c[0] + 1 : null; };
+const has6 = n => IT("6").c.includes(n - 1);
+const anyOf = (ids, n) => ids.some(id => v(id) === n);
+const CONSIST = [
+  {ids:["1-3","1-4"], when:() => v("1-3")===3 && v("1-4")!==null && v("1-4")<=2, msg:"寝返りが「できない」のに、起き上がりが「できる」になっています。"},
+  {ids:["1-4","1-5"], when:() => v("1-4")!==null && v("1-4")<=2 && v("1-5")===4, msg:"起き上がりが「できる」のに、座位保持が「できない」になっています。"},
+  {ids:["1-6","1-7","1-8","1-9"], when:() => v("1-6")===3 && [["1-7",2],["1-8",2],["1-9",2]].some(([id,n]) => v(id)!==null && v(id)<=n), msg:"両足での立位保持が「できない」のに、歩行・立ち上がり・片足での立位のいずれかが「できる」になっています。"},
+  {ids:["1-8","1-7"], when:() => v("1-8")===3 && v("1-7")!==null && v("1-7")<=2, msg:"立ち上がりが「できない」のに、歩行が「できる」になっています。立たせてもらえば歩ける場合は、特記にその状況を書いてください。"},
+  {ids:["1-7","2-2"], when:() => v("1-7")===3 && v("2-2")===1, msg:"歩行が「できない」のに、移動が「介助されていない」になっています。車いすを自分で操作している場合は、その状況を移動の特記に書いてください。"},
+  {ids:["1-7","2-2"], when:() => v("1-7")===1 && v("2-2")===4, msg:"歩行が「つかまらないでできる」のに、移動が「全介助」になっています。"},
+  {ids:["1-8","2-1"], when:() => v("1-8")===1 && v("2-1")===4, msg:"立ち上がりが「つかまらないでできる」のに、移乗が「全介助」になっています。"},
+  {ids:["1-6","1-8","2-1"], when:() => v("1-6")===3 && v("1-8")===3 && v("2-1")===1, msg:"立位保持も立ち上がりも「できない」のに、移乗が「介助されていない」になっています。"},
+  {ids:["2-3","2-4"], when:() => v("2-3")===3 && v("2-4")!==null && v("2-4")!==4, msg:"えん下が「できない」のに、食事摂取が「全介助」以外になっています。経管栄養などで介護者が注入している場合は、通常「全介助」です。"},
+  {ids:["6","2-4"], when:() => has6(9) && v("2-4")===1, msg:"特別な医療で「経管栄養」があるのに、食事摂取が「介助されていない」になっています。"},
+  {ids:["2-10","2-11"], when:() => v("2-10")!==null && v("2-11")!==null && Math.abs(v("2-10")-v("2-11"))>=3, msg:"上衣の着脱とズボン等の着脱の選択が大きく違います（「介助されていない」と「全介助」）。"},
+  {ids:["2-5","2-6"], when:() => v("2-5")!==null && v("2-6")!==null && Math.abs(v("2-5")-v("2-6"))>=3, msg:"排尿と排便の選択が大きく違います（「介助されていない」と「全介助」）。"},
+  {ids:["3-1","3-2","3-3","3-4","3-5","3-6","3-7"], when:() => v("3-1")===4 && anyOf(["3-2","3-3","3-4","3-5","3-6","3-7"], 1), msg:"意思の伝達が「できない」のに、日課・生年月日・短期記憶・名前・季節・場所のいずれかが「できる」になっています。"},
+  {ids:["3-1","5-3"], when:() => v("3-1")!==null && v("3-1")>=3 && v("5-3")===1, msg:"意思の伝達が「ほとんど伝達できない／できない」のに、日常の意思決定が「できる（特別な場合でもできる）」になっています。"},
+  {ids:["1-12","1-13","3-1"], when:() => (v("1-12")===5 || v("1-13")===5) && v("3-1")===1, msg:"視力または聴力が「判断不能」なのに、意思の伝達が「伝達できる」になっています。判断不能は、意思疎通ができず確認できない場合の選択肢です。"},
+  {ids:["3-5","3-3"], when:() => v("3-5")===2 && v("3-3")===1, msg:"自分の名前が言えないのに、生年月日や年齢は言えることになっています。"},
+  {ids:["7-1","1-7","2-2"], when:() => [2,3].includes(v("7-1")) && (v("1-7")===3 || v("2-2")===4), msg:"障害高齢者の日常生活自立度がJ（独力で外出）なのに、歩行が「できない」または移動が「全介助」になっています。"},
+  {ids:["7-1","1-7"], when:() => [8,9].includes(v("7-1")) && v("1-7")===1, msg:"障害高齢者の日常生活自立度がC（1日中ベッド上）なのに、歩行が「つかまらないでできる」になっています。"},
+  {ids:["7-2","3-4"], when:() => v("7-2")===1 && (v("3-4")===2 || ["4-1","4-2","4-3","4-4","4-5","4-6","4-7","4-8","4-9","4-10","4-11","4-12","4-13","4-14","4-15"].filter(id => v(id)===3).length >= 2), msg:"認知症高齢者の日常生活自立度が「自立」なのに、短期記憶が「できない」、または精神・行動障害の「ある」が2項目以上あります。"},
+  {ids:["7-2","3-2"], when:() => [7,8].includes(v("7-2")) && ["3-2","3-3","3-4","3-5","3-6","3-7"].every(id => v(id)===1) && ["4-1","4-2","4-3","4-4","4-5","4-6","4-7","4-8","4-9","4-10","4-11","4-12","4-13","4-14","4-15"].every(id => v(id)===1), msg:"認知症高齢者の日常生活自立度がⅣ／Mなのに、認知機能の項目がすべて「できる」で、精神・行動障害もすべて「ない」になっています。"},
+  {ids:["3-8","1-7","2-2"], when:() => (v("3-8")===3 || v("4-9")===3) && v("1-7")===3 && v("2-2")===4, msg:"歩行が「できない」で移動が「全介助」なのに、徘徊または「一人で外に出たがり目が離せない」が「ある」になっています。ベッド上を這い回るなどの状況なら、特記に書いてください。"},
+  {ids:["5-5","2-12"], when:() => v("5-5")===1 && v("2-12")===3, msg:"買い物が「介助されていない」なのに、外出頻度が「月1回未満」になっています。ネットスーパー等を自分で利用している場合は、買い物の特記に書いてください。"}
+];
+function consistency(){
+  return CONSIST.filter(r => { try { return r.when(); } catch(_) { return false; } })
+    .map(r => ({ids: r.ids.filter(id => IT(id).c.length || id === "6"), msg: r.msg}));
+}
+let aiConsist = null, aiConsistBusy = false;
+async function aiConsistency(){
+  if (!SAMPLE || aiConsistBusy) return;
+  aiConsistBusy = true; renderOut();
+  const list = ITEMS.filter(it => it.ch.length).map(it => { const st = IT(it.id); return `${it.id} ${it.name}｜選択：${choiceText(it, st.c) || "未選択"}｜特記：${(st.note||"").replace(/\s+/g," ").slice(0,200) || "なし"}`; }).join("\n");
+  try {
+    const res = await SAMPLE.json(`あなたは介護保険の要介護認定の認定調査票を点検します。下の基本調査の選択と特記事項を読み、項目同士の選択の矛盾、選択と特記の内容の矛盾、特記同士の食い違いを挙げてください（認定調査員テキスト2009改訂版の選択基準に照らす）。
+- 本当に矛盾または確認が必要なものだけを挙げる。問題がなければ空配列。
+- 各指摘は、関係する項目のidと、何が食い違っているかを1〜2文で書く。
+JSONだけを返す：{"issues":[{"ids":["1-7","2-2"],"msg":"…"}]}
+
+${list}`, {modelTier: "default", cache: false});
+    aiConsist = (Array.isArray(res?.issues) ? res.issues : []).map(x => ({ids: (Array.isArray(x.ids) ? x.ids : []).map(String).filter(id => BY[id]), msg: String(x.msg || "")})).filter(x => x.msg);
+  } catch(e) { toast(aiErr(e)); }
+  finally { aiConsistBusy = false; if (S.view === "out") renderOut(); }
+}
+function itemConsistHTML(id){
+  const mine = consistency().filter(x => x.ids.includes(id));
+  return mine.map(x => `<div class="hint" style="border-left-color:var(--rec)"><b>整合性：</b>${esc(x.msg)}（関係：${x.ids.filter(i=>i!==id).map(i=>formCode(BY[i])+" "+BY[i].name.slice(0,8)).map(esc).join("、")}）</div>`).join("");
+}
+function consistHTML(list, ai){
+  return list.map(x => `<div class="warn" style="flex-wrap:wrap"><span class="wk${ai?"":" miss"}">${ai?"AI":"要確認"}</span>${x.ids.map(id => `<button class="sug" data-go="${id}">${esc(formCode(BY[id]))} ${esc(BY[id].name.slice(0,8))}</button>`).join("")}<span style="flex-basis:100%">${esc(x.msg)}</span></div>`).join("");
+}
+
 let withChoice = false;
 function renderOut(){
-  const v = $("#v-out"), w = checks(), miss = w.filter(x=>x.kind==="miss").length;
+  const v = $("#v-out"), w = checks(), miss = w.filter(x=>x.kind==="miss").length, cs = consistency();
   const c = C();
   v.innerHTML = `<h2>出力</h2>
     <h3>判定シミュレーション</h3>
@@ -1665,6 +1727,12 @@ function renderOut(){
         ${DL ? `<button class="btn acc" id="docxBtn">Word（.docx）で保存</button>` : ""}
         <button class="btn" id="copyAll">全文をコピー</button>
       </div>
+    </div>
+    <h3>選択の整合性チェック（${cs.length}件）</h3>
+    ${cs.length ? `<div class="warns">${consistHTML(cs, false)}</div><p class="small muted" style="margin:6px 0 0">通常は起こりにくい組み合わせです。選択が正しい場合は、関係する項目の特記事項にその事情を記載してください。</p>` : '<p class="ok">ルールで確認できる矛盾はありません。</p>'}
+    <div class="ai-only" style="margin-top:8px">
+      <div class="btnrow" style="margin:0"><button class="btn acc" id="aiConsistBtn"${aiConsistBusy?" disabled":""}>${aiConsistBusy ? "AIが確認中…" : "AIで選択と特記の矛盾を確認"}</button></div>
+      ${aiConsist ? (aiConsist.length ? `<div class="warns" style="margin-top:6px">${consistHTML(aiConsist, true)}</div>` : '<p class="ok">AIの確認では、矛盾は見つかりませんでした。</p>') : ""}
     </div>
     <h3>確認（${w.length}件）</h3>
     ${w.length ? `<details${w.length<=8?" open":""}><summary>未入力（選択・特記） ${miss} 件・内容の確認 ${w.length-miss} 件</summary><div class="warns" style="margin-top:6px">${w.map(x=>`<button class="warn" data-go="${x.id}"><span class="wk ${x.kind==="miss"?"miss":""}">${x.id}</span><span>${esc(BY[x.id].name)}：${esc(x.msg)}</span></button>`).join("")}</div></details>` : '<p class="ok">選択と特記の記入漏れはありません。</p>'}
@@ -1681,6 +1749,7 @@ $("#v-out").addEventListener("click", e => {
   if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
   if (e.target.id==="copyLog") copyText(C().utts.map(line).join("\n"));
   if (e.target.id==="docxBtn") saveDocx();
+  if (e.target.id==="aiConsistBtn") aiConsistency();
   if (e.target.id==="driveNow") { clearTimeout(driveT); driveSave(true); }
   if (e.target.id==="backupBtn") saveBackup();
   if (e.target.id==="importBtn") $("#importFile").click();
