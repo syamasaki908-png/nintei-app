@@ -81,6 +81,11 @@ nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
 .ab-s.err{color:var(--rec)}
 .ab-btns{display:flex;flex-direction:column;gap:6px}
 .ab-btns .btn{padding:6px 10px;font-size:13px;white-space:nowrap}
+@media (max-width:560px){
+  .autobar{flex-wrap:wrap}
+  .ab-btns{flex-direction:row;width:100%}
+  .ab-btns .btn{flex:1;padding:6px 4px;font-size:12.5px}
+}
 #autoToggle.on{background:var(--surface);color:var(--accent);border-color:var(--accent)}
 .tag.prov{background:none;border:1px dashed var(--accent);font-weight:400}
 .aib{display:inline-block;font-size:11px;border-radius:6px;padding:0 6px;background:var(--warn-weak);color:var(--warn);font-weight:700;vertical-align:middle}
@@ -267,7 +272,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 <div class="app">
   <header class="top">
     <span class="brand">特記事項メモ</span>
-    <div class="case"><button class="casebtn" id="caseBtn">ケース</button></div>
+    <div class="case"><button class="casebtn" id="fsBtn" hidden>全画面</button> <button class="casebtn" id="caseBtn">ケース</button></div>
   </header>
 
   <main id="main">
@@ -280,6 +285,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
         </div>
         <div class="ab-btns">
           <button class="btn fill" id="autoToggle" hidden>自動振分けを開始</button>
+          <button class="btn" id="importBtn">文字起こし取込</button>
           <button class="btn" id="finishBtn">仕上げ</button>
         </div>
       </div>
@@ -290,11 +296,13 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
       <div class="composer">
         <div id="interim"></div>
         <div class="inrow">
-          <textarea id="inp" rows="2" placeholder="キーボードのマイクで話すと、ここに文字が入ります"></textarea>
+          <textarea id="inp" rows="3" placeholder="キーボードのマイクを押して話し続けてください。話が止まるたびに自動で記録します（入力中に欄は消えません）"></textarea>
           <button class="primary" id="commitBtn">記録</button>
         </div>
         <div class="subrow">
-          <label><input type="checkbox" id="autoCommit" checked> 3秒止まったら自動で記録</label>
+          <label><input type="checkbox" id="autoCommit" checked> 止まったら自動で記録</label>
+          <label>間隔 <select id="pauseSec"><option value="2">2秒</option><option value="3" selected>3秒</option><option value="5">5秒</option></select></label>
+          <span id="inpStat"></span>
           <button class="srbtn" id="srBtn" hidden><span class="dot"></span><span id="srLabel">連続音声認識</span></button>
         </div>
       </div>
@@ -342,6 +350,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
           <li>「聞き取り」で「自動振分けを開始」を押し、キーボードのマイクで会話を最初から最後まで文字にします。項目を選ぶ必要はありません。</li>
           <li>発言は話の切れ目ごとにまとめて判定され、話者（本人・家族・調査員）と調査項目が自動で付きます。点線の項目は判定前の仮の振り分けです。</li>
           <li>振り分けられた項目ごとに、特記事項と選択肢の推定が自動で作られ、会話が進むと更新されます。終わったら「仕上げ」で全体を見直します。</li>
+          <li>Claudeアプリの音声入力など、別のアプリで文字にした会話は「文字起こし取込」に貼り付けると、発言に区切って同じように振り分け・特記作成まで行います。</li>
           <li>「項目」で <span class="aib">AI</span> の付いた選択と特記を確認し、確定・修正します。自分で書き換えた特記は自動で上書きされません。<span class="ai-offnote">この表示ではAIは使えないため、キーワードでの振り分けと定型文になります。</span></li>
           <li>「出力」で記入漏れを確認し、全文をコピーして調査票や自治体システムに貼り付けます。</li>
         </ul>
@@ -892,6 +901,90 @@ $("#autoToggle").addEventListener("click", () => {
   renderAuto(); renderLog(false);
 });
 $("#finishBtn").addEventListener("click", finishAll);
+
+/* ---------- 文字起こしの取り込み ----------
+   Claudeアプリの音声入力などで文字にした会話を貼り付けると、発言に区切り（句読点が少なければAIが区切る）、
+   話者・項目の判定と特記事項の作成まで続けて行う。 */
+const SP_ALIAS = [[/^(本人|利用者|ご本人)$/, "本人"], [/^(調査員|調査者|認定調査員)$/, "調査員"], [/^(家族|長女|長男|次女|次男|妻|夫|娘|息子|嫁|孫|介護者)$/, "家族"]];
+function speakerOf(label){ for (const [re, sp] of SP_ALIAS) if (re.test(label)) return sp; return null; }
+function splitTranscript(t){
+  const out = [];
+  for (const raw of t.replace(/\r/g, "").split(/\n+/)) {
+    let line = raw.trim(); if (!line) continue;
+    let sp = null;
+    const m = line.match(/^([^\s:：「」]{1,6})\s*[:：]\s*(.+)$/);
+    if (m && speakerOf(m[1])) { sp = speakerOf(m[1]); line = m[2]; }
+    for (const part of line.split(/(?<=[。！？!?])/)) { const s = part.trim(); if (s) out.push({sp, text: s}); }
+  }
+  return out;
+}
+function chunks(t, size){
+  const res = []; let rest = t;
+  while (rest.length > size) {
+    let cut = Math.max(rest.lastIndexOf("。", size), rest.lastIndexOf("\n", size), rest.lastIndexOf("、", size));
+    if (cut < size * 0.5) cut = size;
+    res.push(rest.slice(0, cut + 1)); rest = rest.slice(cut + 1);
+  }
+  if (rest.trim()) res.push(rest);
+  return res;
+}
+async function aiSplit(t){
+  const out = [];
+  for (const part of chunks(t, 4000)) {
+    const res = await SAMPLE.json(`次は、介護保険の要介護認定調査（訪問調査）の会話を音声入力で文字にしたものです。句読点や改行が少ないため、発言ごとに区切ってください。
+- 文字は一字一句そのまま使い、要約・言い換え・補足をしない（明らかな句読点の付け足しだけはしてよい）。
+- 1つの発言は、1人が続けて話した1〜3文程度にする。
+- 話者を 本人／家族／調査員 から推定する。調査員の質問・確認動作の指示は「調査員」。判断できなければ null。
+JSONだけを返す：{"u":[{"sp":"調査員","text":"お風呂はどうしていますか。"}]}
+
+会話：
+${part}`, {modelTier: "quick", cache: false});
+    for (const x of (Array.isArray(res?.u) ? res.u : [])) {
+      const text = String(x?.text || "").trim(); if (!text) continue;
+      out.push({sp: ["本人","家族","調査員"].includes(x.sp) ? x.sp : null, text, guess: true});
+    }
+  }
+  return out;
+}
+function openImport(){
+  openSheet(`<div class="sheet-h"><b>文字起こしの取り込み</b><button class="btn" data-close>閉じる</button></div>
+    <p class="small muted" style="margin:0 0 6px">Claudeアプリのメッセージ入力欄の音声入力（マイク）で会話を文字にし、送信せずに入力欄の文字をすべて選択してコピーし、ここに貼り付けます。ボイスメモなど他のアプリの文字起こしも貼り付けられます。「家族：〜」のように話者が付いていれば、その話者で取り込みます。</p>
+    <textarea class="note" id="impText" style="min-height:200px" placeholder="ここに貼り付け"></textarea>
+    <div class="count" id="impCount">0 字</div>
+    <div class="btnrow"><button class="btn fill" id="impGo">取り込んで判定する</button></div>
+    <p class="small muted" id="impNote" style="margin:6px 0 0">${SAMPLE ? "取り込み後、発言の区切り・話者・項目の判定と特記事項の作成を自動で行います。" : "この表示ではAIが使えないため、句点（。）と改行で区切り、キーワードで振り分けます。"}</p>`);
+  sheet.oninput = e => { if (e.target.id === "impText") $("#impCount").textContent = `${e.target.value.length} 字`; };
+  sheet.onclick = e => { if (e.target.id === "impGo") importTranscript($("#impText").value); };
+}
+async function importTranscript(t){
+  t = (t || "").trim();
+  if (!t) { toast("文字起こしを貼り付けてください"); return; }
+  if (AUTO.busy) { toast("処理中です。終わってから取り込んでください"); return; }
+  closeSheet(); go("cap");
+  const c = C();
+  AUTO.busy = true; clearTimeout(AUTO.timer);
+  try {
+    let parts = splitTranscript(t);
+    /* voice input often has no 。 or line breaks: hand long unpunctuated stretches to the AI */
+    const marks = (t.match(/[。！？!?\n]/g) || []).length;
+    if (SAMPLE && (t.length / (marks + 1) > 30 || parts.some(p => p.text.length > 80))) { setAutoMsg(`AIで発言に区切っています…（${t.length}字）`); const ai = await aiSplit(t); if (ai.length) parts = ai; }
+    if (!parts.length) { toast("取り込める文字がありませんでした"); return; }
+    const time = hhmm();
+    for (const p of parts) c.utts.push({id: uid(), t: time, sp: p.sp || "—", spFixed: !!p.sp && !p.guess, text: p.text, tags: suggest(p.text).slice(0, 2), sug: [], cls: false, imported: true});
+    save(); renderLog();
+    toast(`${parts.length}件の発言を取り込みました`);
+    if (!SAMPLE) { localAuto(); return; }
+    const touched = new Set(); let left;
+    while ((left = unclassified()).length) {
+      setAutoMsg(`取り込んだ発言を判定中…（残り${left.length}件）`);
+      (await classifyBatch(c, left.slice(0, 25))).forEach(id => touched.add(id));
+    }
+    if (touched.size) { setAutoMsg(`特記事項を作成中…（${touched.size}項目）`); await draftItems([...touched], "default"); }
+    setAutoMsg(""); toast(`取り込みと判定が終わりました（特記 ${touched.size}項目を作成・更新）`);
+  } catch(e) { setAutoMsg(aiErr(e) + " 取り込んだ発言は残っています。「仕上げ」で判定をやり直せます。", true); }
+  finally { AUTO.busy = false; renderAuto(); renderLog(false); }
+}
+$("#importBtn").addEventListener("click", openImport);
 /* Items still without a note: what to ask about before leaving the home */
 $("#autoCounts").addEventListener("click", e => {
   if (e.target.id !== "todoBtn") return;
@@ -905,19 +998,35 @@ $("#autoCounts").addEventListener("click", e => {
   openSheet(h);
   sheet.onclick = ev => { const b = ev.target.closest("[data-todo]"); if (b) { closeSheet(); go("items"); openDetail(b.dataset.todo); } };
 });
-let autoT, composing = false;
+/* 追記方式：iPhoneの音声入力は、入力中に欄を書き換えると止まったり二重に入ったりするため、
+   話している間は欄を消さず、前回記録した位置より後ろに増えた文字だけを1発言として記録する。
+   欄を空にするのは、記録ボタン・Enter・キーボードが閉じたとき（音声入力が終わったとき）だけ。 */
+let autoT, composing = false, done = 0;
+const pending = () => inp.value.slice(Math.min(done, inp.value.length));
+function updInpStat(){
+  const p = pending().trim().length;
+  $("#inpStat").textContent = !inp.value ? "" : p ? `未記録 ${p}字` : "記録済み";
+}
+function commitPending(){
+  const t = pending();
+  if (t.trim()) commit(t);
+  done = inp.value.length; updInpStat();
+}
+function commitAndClear(){ clearTimeout(autoT); commitPending(); inp.value = ""; done = 0; updInpStat(); }
 inp.addEventListener("compositionstart", ()=>{ composing = true; clearTimeout(autoT); });
 inp.addEventListener("compositionend", ()=>{ composing = false; armAuto(); });
-inp.addEventListener("input", armAuto);
+inp.addEventListener("input", () => { if (inp.value.length < done) done = inp.value.length; updInpStat(); armAuto(); });
 function armAuto(){
   clearTimeout(autoT);
   if (!$("#autoCommit").checked || composing) return;
-  autoT = setTimeout(()=>{ if (!composing && inp.value.trim()) { commit(inp.value); inp.value=""; } }, 3000);
+  autoT = setTimeout(()=>{ if (!composing) commitPending(); }, (+$("#pauseSec").value || 3) * 1000);
 }
-inp.addEventListener("keydown", e => { if (e.key==="Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); clearTimeout(autoT); commit(inp.value); inp.value=""; } });
-$("#commitBtn").addEventListener("click", ()=>{ clearTimeout(autoT); commit(inp.value); inp.value=""; inp.focus(); });
-try { const a = localStorage.getItem(KEY+".auto"); if (a!==null) $("#autoCommit").checked = a==="1"; } catch(e) {}
+inp.addEventListener("keydown", e => { if (e.key==="Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); commitAndClear(); } });
+inp.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== inp && !composing) commitAndClear(); }, 400));
+$("#commitBtn").addEventListener("click", ()=>{ commitAndClear(); inp.focus(); });
+try { const a = localStorage.getItem(KEY+".auto"); if (a!==null) $("#autoCommit").checked = a==="1"; const ps = localStorage.getItem(KEY+".pause"); if (ps) $("#pauseSec").value = ps; } catch(e) {}
 $("#autoCommit").addEventListener("change", e => { try { localStorage.setItem(KEY+".auto", e.target.checked?"1":"0"); } catch(_){} });
+$("#pauseSec").addEventListener("change", e => { try { localStorage.setItem(KEY+".pause", e.target.value); } catch(_){} });
 
 function setSpeaker(sp){ S.speaker = sp; document.querySelectorAll("#speakerSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.sp===sp)); }
 $("#speakerSeg").addEventListener("click", e => { const b=e.target.closest("button"); if (b) setSpeaker(b.dataset.sp); });
@@ -1634,6 +1743,21 @@ $("#metaForm").addEventListener("input", e => { const k = e.target.dataset.k; if
 function caseLabel(c){ return `${c.meta.subject || "対象者未設定"}　${(c.meta.date||"").slice(5).replace("-","/")}`; }
 function updateCaseBtn(){ $("#caseBtn").textContent = caseLabel(C()); }
 $("#caseBtn").addEventListener("click", openCases);
+/* 全画面: only offered where the browser allows it (Android Chrome, PC). iPhone Safari does not. */
+(() => {
+  const el = document.documentElement, fsBtn = $("#fsBtn");
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const exit = document.exitFullscreen || document.webkitExitFullscreen;
+  const cur = () => document.fullscreenElement || document.webkitFullscreenElement;
+  if (!req || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)) return;
+  fsBtn.hidden = false;
+  const label = () => { fsBtn.textContent = cur() ? "全画面を終了" : "全画面"; };
+  document.addEventListener("fullscreenchange", label); document.addEventListener("webkitfullscreenchange", label);
+  fsBtn.addEventListener("click", async () => {
+    try { if (cur()) await exit.call(document); else await req.call(el); }
+    catch(e) { fsBtn.hidden = true; toast("この画面では全画面表示にできません"); }
+  });
+})();
 function openCases(){
   const list = Object.values(DB.cases).sort((a,b)=>b.updated-a.updated);
   openSheet(`<div class="sheet-h"><b>ケース</b><button class="btn" data-close>閉じる</button></div>
