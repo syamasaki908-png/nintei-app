@@ -219,9 +219,11 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .fx-t{border-collapse:collapse;width:100%;table-layout:fixed;border:.8pt solid #E34B6A}
 .fx-t th{height:8mm;font-weight:400;font-size:9pt;border:.8pt solid #E34B6A}
 .fx-t th:first-child{width:14mm}
-.fx-t td{height:7.4mm;padding:0;border-bottom:.6pt dashed #E34B6A;white-space:nowrap;overflow:hidden;font-size:10pt}
-.fx-t tr:last-child td{border-bottom:.8pt solid #E34B6A}
-.fx-c1{width:6mm;text-align:center;border-right:.6pt dashed #E34B6A}
+/* 罫線の点線：縦横とも同じ描き方（太さ0.35mm・線1.1mm・すき間0.8mm） */
+.fx-t td{height:7.4mm;padding:0;white-space:nowrap;overflow:hidden;font-size:10pt;background:repeating-linear-gradient(to right,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) left bottom/100% .35mm no-repeat}
+.fx-t tr:last-child td{border-bottom:.8pt solid #E34B6A;background:none}
+.fx-t td.fx-c1{width:6mm;text-align:center;border-right:0!important;background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat,repeating-linear-gradient(to right,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) left bottom/100% .35mm no-repeat}
+.fx-t tr:last-child td.fx-c1{background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat}
 .fx-c2{width:8mm;text-align:center;border-right:.8pt solid #E34B6A}
 .fx-tx{padding-left:1.5mm!important}
 .fx-city{text-align:right;font-size:7.5pt;line-height:1;margin-top:2mm}  /* 表の2mm下・右寄せ */
