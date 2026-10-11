@@ -87,6 +87,18 @@ nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
   .ab-btns .btn{flex:1;padding:6px 4px;font-size:12.5px}
 }
 #autoToggle.on{background:var(--surface);color:var(--accent);border-color:var(--accent)}
+/* 台本 */
+.script{margin-top:8px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:4px}
+.sc-h{display:grid;grid-template-columns:36px 1fr 36px;gap:4px;align-items:center}
+.sc-nav{min-height:34px;font-size:18px}
+.sc-title{border:0;background:none;text-align:left;font-size:13px;padding:4px 2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-title b{color:var(--accent);font-variant-numeric:tabular-nums}
+.sc-done{color:var(--ok);font-weight:700}
+.sc-body{padding:4px 6px 6px;font-size:14px;max-height:32vh;overflow:auto}
+.sc-k{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-top:6px}
+.sc-say{margin:2px 0;padding-left:10px;border-left:3px solid var(--accent-weak);line-height:1.6}
+.sc-act{border-left-color:var(--warn)}
+.sc-note{font-size:12px;color:var(--muted);margin-top:4px}
 .tag.prov{background:none;border:1px dashed var(--accent);font-weight:400}
 .aib{display:inline-block;font-size:11px;border-radius:6px;padding:0 6px;background:var(--warn-weak);color:var(--warn);font-weight:700;vertical-align:middle}
 .seg5{grid-template-columns:1.3fr repeat(4,1fr)!important}
@@ -297,6 +309,14 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
       </div>
       <div class="seg seg5" id="speakerSeg" role="group" aria-label="話者">
         <button data-sp="自動">話者自動</button><button data-sp="本人">本人</button><button data-sp="家族">家族</button><button data-sp="調査員">調査員</button><button data-sp="観察">観察</button>
+      </div>
+      <div class="script" id="script">
+        <div class="sc-h">
+          <button class="iconbtn sc-nav" id="scPrev" aria-label="前の項目の台本">‹</button>
+          <button class="sc-title" id="scTitle" aria-expanded="false"></button>
+          <button class="iconbtn sc-nav" id="scNext" aria-label="次の項目の台本">›</button>
+        </div>
+        <div class="sc-body" id="scBody" hidden></div>
       </div>
       <div class="log" id="log" aria-live="polite"></div>
       <div class="composer">
@@ -658,14 +678,14 @@ function emptyLog(){
 }
 function renderLog(scroll=true){
   const c = C();
-  if (!c.utts.length) { logEl.innerHTML = emptyLog(); renderAuto(); return; }
+  if (!c.utts.length) { logEl.innerHTML = emptyLog(); renderAuto(); renderScript(); return; }
   logEl.innerHTML = c.utts.map(u => `<div class="utt" data-u="${u.id}">
     <div class="utt-meta"><span class="sp sp-${esc(u.sp)}">${esc(u.sp)}</span><time>${esc(u.t)}</time>
     ${u.tags.map(t=>`<span class="tag${u.cls||u.manual?"":" prov"}" title="${esc(BY[t]?.name||"")}">${esc(t)} ${esc(BY[t]?.name.slice(0,7)||"")}</span>`).join("")}
     ${!u.cls && !u.manual ? '<span class="small">判定待ち</span>' : ""}</div>
     <div class="utt-text">${esc(u.text)}</div></div>`).join("");
   if (scroll) logEl.scrollTop = logEl.scrollHeight;
-  renderAuto();
+  renderAuto(); renderScript();
 }
 function commit(text){
   text = (text||"").trim(); if (!text) return;
@@ -991,6 +1011,104 @@ async function importTranscript(t){
   finally { AUTO.busy = false; renderAuto(); renderLog(false); }
 }
 $("#importBtn").addEventListener("click", openImport);
+
+/* ---------- 質問の台本 ----------
+   act：確認動作の指示（認定調査員テキストの確認方法に沿う）／ask：日頃の状況の質問／freq：頻度・手間の確認。
+   freq を省いた項目は評価軸ごとの共通の質問を使う。 */
+const SCRIPT = {
+  "0":   {ask:["今回の申請で、一番困っていることは何ですか。","どなたと暮らしていますか。主に介護をしているのはどなたですか。","お住まいは何階建てですか。段差や階段、寝ているお部屋の場所を教えてください。","ベッドや車いす、手すり、歩行器など、使っている福祉用具はありますか。","今利用しているサービス（デイサービス、ヘルパーなど）を教えてください。"], freq:[]},
+  "1-1": {act:["（座って）肘を伸ばしたまま、腕を前に肩の高さまで上げて、そのまま止めてください。次に横にも上げてください。","（座って）膝を伸ばして、足を床と平行になるまで上げて止めてください。太ももは椅子から離さないでください。"], ask:["手や足で、しびれや動かしにくいところはありますか。"], freq:["普段もこの動きはできますか。できない日はありますか。"]},
+  "1-2": {act:["腕を前と横に、肩の高さまで上げてみてください（上がらない場合は、痛みのない範囲で支えて動かします）。","仰向けで膝を立てて、膝を外側に開いてください（両膝の間がこぶし2個分あくか）。","膝を伸ばしたり曲げたりしてみてください。"], ask:["関節が固くて、曲げ伸ばししにくいところはありますか。"], freq:["おむつ交換や着替えのとき、関節が固くて困ることはありますか。"]},
+  "1-3": {act:["横向きに寝返りをしてみてください。何かにつかまらずにできますか。"], ask:["普段、寝返りはどのようにしていますか。ベッドの柵などにつかまりますか。"]},
+  "1-4": {act:["寝た状態から、起き上がってみてください。"], ask:["普段、起き上がるときは何かにつかまりますか。"]},
+  "1-5": {act:["背もたれに寄りかからずに、10分ほど座っていられますか（座ったままお話を伺います）。"], ask:["食事やテレビのとき、背もたれや手で支えずに座っていられますか。"]},
+  "1-6": {act:["何にもつかまらずに、両足で10秒ほど立っていてください（そばで支えられるようにします）。"], ask:["立っているとき、何かにつかまったり、支えてもらったりしますか。"]},
+  "1-7": {act:["5mほど歩いてみてください（安全な範囲で行います）。"], ask:["家の中や外は、どのように歩いていますか。杖や歩行器は使いますか。","ふらついたり、転んだりすることはありますか。"], freq:["転ぶのは、この1か月で何回くらいですか。","普段もこの歩き方ですか。調子の悪い日は週に何回くらいありますか。"]},
+  "1-8": {act:["椅子から立ち上がってみてください。"], ask:["普段は、手すりや家具につかまって立ち上がりますか。"]},
+  "1-9": {act:["片足ずつ、1秒ほど上げて立ってみてください（そばで支えられるようにします）。"], ask:["靴やズボンをはくときに、片足で立てますか。"]},
+  "1-10":{ask:["お風呂はどこで、どのように入っていますか。","体を洗うのはご自分ですか。洗ってもらうところはありますか（背中、足先など）。"], freq:["入浴は週に何回ですか。そのうち洗ってもらうのは何回ですか。"]},
+  "1-11":{ask:["手と足の爪切りは、どなたがしていますか。"], freq:["爪切りの頻度はどのくらいですか。"]},
+  "1-12":{act:["（視力確認表を見せて）この図が見えますか。","少し離れて（約1m）、この図は見えますか。"], ask:["新聞や本の字は読めますか。眼鏡は使っていますか。"]},
+  "1-13":{act:["（普通の大きさの声で）私の声は聞こえますか。"], ask:["聞き返すことは多いですか。補聴器は使っていますか。"]},
+  "2-1": {ask:["ベッドから車いすや椅子、トイレの便座に移るとき、手伝いはありますか。どのような手伝いですか。"]},
+  "2-2": {ask:["トイレや食卓、お風呂までは、どのように移動していますか。","付き添いや見守りはありますか。夜間はどうですか。"]},
+  "2-3": {ask:["食べ物や飲み物で、むせることはありますか。","食事の形（刻み、とろみ等）は工夫していますか。"], freq:["むせるのは週に何回くらいですか。"]},
+  "2-4": {ask:["食事はご自分で食べていますか。","口に運ぶ、食べ物を寄せるなどの手伝いはありますか。"]},
+  "2-5": {ask:["おしっこはトイレでしていますか。間に合わないことはありますか。","パッドやリハビリパンツは使っていますか。交換や後始末はどなたがしていますか。"], freq:["失敗するのは週に何回くらいですか。","夜間は何回トイレに行きますか。そのとき付き添いはありますか。"]},
+  "2-6": {ask:["便はトイレでしていますか。お尻を拭く、ズボンを上げ下げするなどの手伝いはありますか。","便秘や下剤の使用はありますか。"], freq:["便の失敗や手伝いは週に何回くらいですか。"]},
+  "2-7": {ask:["歯磨きや入れ歯の手入れは、どなたがしていますか。"]},
+  "2-8": {ask:["顔を洗うのは、ご自分でできますか。"]},
+  "2-9": {ask:["髪をとかしたり整えたりするのは、ご自分でしていますか。"]},
+  "2-10":{ask:["上着の着替えは、ご自分でしていますか。袖を通す、ボタンを留めるなどの手伝いはありますか。"]},
+  "2-11":{ask:["ズボンや靴下のはき替えはどうしていますか。手伝いや見守りはありますか。"]},
+  "2-12":{ask:["この1か月、外出はどのくらいしていますか（通院やデイサービスも含みます）。"], freq:["外出は週に何回ですか。"]},
+  "3-1": {act:["（調査中の受け答えで確認します）"], ask:["ご家族とは、普段から意思疎通ができていますか。"]},
+  "3-2": {act:["今日はこれから、何をする予定ですか。","毎日の過ごし方を教えてください。"]},
+  "3-3": {act:["お生まれは何年何月何日ですか。","今おいくつですか。"]},
+  "3-4": {act:["これから3つの物を見せます。覚えてください（物を見せた後、隠す）。","（5分ほど後に）さきほど見せた物は何でしたか。"], ask:["さっきのことを忘れてしまうことはありますか。"]},
+  "3-5": {act:["お名前を教えてください。"]},
+  "3-6": {act:["今の季節は何ですか。"]},
+  "3-7": {act:["ここはどこですか（自宅・施設などが分かるか）。"]},
+  "3-8": {ask:["この1か月で、家の中や外を目的なく歩き回ることはありますか。"]},
+  "3-9": {ask:["外出して、家に戻れなくなったことはありますか。"]},
+  "4-1": {ask:["物を盗られたと言うことはありますか。"]},
+  "4-2": {ask:["実際になかったことを、あったように話すことはありますか。"]},
+  "4-3": {ask:["場面に合わずに、泣いたり笑ったりすることはありますか。"]},
+  "4-4": {ask:["夜に眠れずに起きていて、昼間に寝ていることはありますか。"]},
+  "4-5": {ask:["同じ話を、しつこく繰り返すことはありますか。"]},
+  "4-6": {ask:["周りが困るような大声を出すことはありますか。"]},
+  "4-7": {ask:["お風呂や着替えなどの介護を嫌がったり、手を払ったりすることはありますか。"]},
+  "4-8": {ask:["「家に帰る」などと言って、落ち着かなくなることはありますか。"]},
+  "4-9": {ask:["一人で外に出ようとして、目が離せないことはありますか。"]},
+  "4-10":{ask:["いろいろな物を集めたり、人の物を黙って持ってきたりすることはありますか。"]},
+  "4-11":{ask:["物を壊したり、服を破いたりすることはありますか。"]},
+  "4-12":{ask:["物忘れで困っていることはありますか（火の消し忘れ、置き忘れなど）。","周りの方が代わりに対応していることはありますか。"]},
+  "4-13":{ask:["意味もなく、独り言や独り笑いをすることはありますか。"]},
+  "4-14":{ask:["周りの状況に合わずに、勝手に行動して困ることはありますか。"]},
+  "4-15":{ask:["話がまとまらず、会話にならないことはありますか。"]},
+  "5-1": {ask:["お薬の管理や、飲むのはどのようにしていますか。","飲み忘れはありますか。声かけや手渡しはしていますか。"], freq:["声かけや手渡しは毎回ですか。週に何回くらいですか。"]},
+  "5-2": {ask:["お金の管理（通帳や財布）は、どなたがしていますか。"]},
+  "5-3": {ask:["毎日の服や食事は、ご自分で決めていますか。","ケアプランなど大事なことを決めるときは、どうしていますか。"]},
+  "5-4": {ask:["デイサービスなどで、ほかの方となじめずに困ることはありますか。"]},
+  "5-5": {ask:["買い物はどうしていますか。ご自分で行きますか。"]},
+  "5-6": {ask:["食事の用意（温め、ご飯を炊くなど）は、どなたがしていますか。"]},
+  "6":   {ask:["この2週間で、医師の指示で看護師などが行った処置はありますか（点滴、透析、酸素、たんの吸引、床ずれの処置、カテーテル、経管栄養など）。"], freq:["どなたが、どのくらいの頻度で行っていますか。"]},
+  "7-1": {ask:["日中はどのように過ごしていますか。ベッドで過ごす時間はどのくらいですか。","外出は、一人でできますか。"], freq:[]},
+  "7-2": {ask:["物忘れなどで、日常生活で困っていることや、見守りが必要なことはありますか。"], freq:[]}
+};
+const FREQ_BY_AXIS = {
+  n: ["普段もそうですか。調子の悪い日（できない日）は、週に何回くらいありますか。"],
+  k: ["手伝いは1日（週）に何回くらいですか。どなたが手伝っていますか。","手伝うのにどのくらい時間がかかりますか。"],
+  u: ["この1か月で何回くらいありましたか。","そのとき、ご家族はどのように対応していますか（対応していない場合もお聞きします）。"],
+  m: [], j: [], g: []
+};
+const scriptFor = id => { const s = SCRIPT[id] || {}, it = BY[id]; return {act: s.act || [], ask: s.ask || [], freq: s.freq || FREQ_BY_AXIS[it.axis] || []}; };
+const covered = id => !!(IT(id).note.trim() || uttsFor(id).length);
+function scriptHTML(id){
+  const s = scriptFor(id), it = BY[id];
+  const blk = (label, list, cls) => list.length ? `<div class="sc-k">${label}</div>${list.map(t => `<p class="sc-say${cls||""}">${esc(t)}</p>`).join("")}` : "";
+  return blk("確認動作（実際に行ってもらう）", s.act, " sc-act") + blk("質問", s.ask) + blk("頻度・手間の確認", s.freq)
+    + (it.axis === "n" ? `<p class="sc-note">確認動作の結果と日頃の状況が違う場合は、概ね過去1週間のより頻回な状況を聞き取ります。危険がある場合は無理に行ってもらいません。</p>` : "")
+    + (it.axis === "u" && it.id !== "1-1" && it.id !== "1-2" ? `<p class="sc-note">概ね過去1か月の状況で聞き取ります（週1回以上＝ある、月1回以上＝ときどきある）。</p>` : "");
+}
+let scOpen = false;
+try { scOpen = localStorage.getItem(KEY+".scOpen") === "1"; } catch(_) {}
+function renderScript(){
+  const c = C(); if (!c.scriptId || !BY[c.scriptId]) c.scriptId = ORDER.find(id => !covered(id)) || ORDER[0];
+  const it = BY[c.scriptId], done = covered(it.id), left = ORDER.filter(id => !covered(id)).length;
+  $("#scTitle").innerHTML = `台本 <b>${esc(formCode(it))}</b> ${esc(it.name)} ${done ? '<span class="sc-done">✓</span>' : ""} <span class="small muted">（未確認 ${left}）${scOpen ? "▲" : "▼"}</span>`;
+  $("#scTitle").setAttribute("aria-expanded", scOpen);
+  const body = $("#scBody"); body.hidden = !scOpen;
+  if (scOpen) body.innerHTML = scriptHTML(it.id) + `<div class="btnrow"><button class="btn" id="scNextTodo">次の未確認へ</button><button class="btn" id="scList">台本の一覧</button></div>`;
+}
+function scriptMove(d){ const c = C(); let i = ORDER.indexOf(c.scriptId); i = Math.min(ORDER.length-1, Math.max(0, i + d)); c.scriptId = ORDER[i]; save(); renderScript(); }
+$("#scPrev").addEventListener("click", () => scriptMove(-1));
+$("#scNext").addEventListener("click", () => scriptMove(1));
+$("#scTitle").addEventListener("click", () => { scOpen = !scOpen; try { localStorage.setItem(KEY+".scOpen", scOpen ? "1" : "0"); } catch(_) {} renderScript(); });
+$("#scBody").addEventListener("click", e => {
+  if (e.target.id === "scNextTodo") { const c = C(), i = ORDER.indexOf(c.scriptId); c.scriptId = ORDER.slice(i+1).concat(ORDER.slice(0, i+1)).find(id => !covered(id)) || c.scriptId; save(); renderScript(); }
+  if (e.target.id === "scList") openPicker(id => { C().scriptId = id; save(); closeSheet(); scOpen = true; renderScript(); }, C().scriptId, false);
+});
 /* Items still without a note: what to ask about before leaving the home */
 $("#autoCounts").addEventListener("click", e => {
   if (e.target.id !== "todoBtn") return;
@@ -1086,14 +1204,14 @@ function openUtt(id){
   const c = C(), u = c.utts.find(x=>x.id===id); if (!u) return;
   const render = () => {
     sheet.innerHTML = `<div class="sheet-h"><b>発言を編集</b><button class="btn" data-close>閉じる</button></div>
-      <textarea class="note" id="uText" style="min-height:110px">${esc(u.text)}</textarea>
+      <textarea class="note" id="uText" style="min-height:110px">${esc(u.clean ?? u.text)}</textarea>${u.clean != null ? '<p class="small muted" style="margin:4px 0 0">AIで校正済みの文です。直すと、この文が記録になります。</p>' : ""}
       <h3>話者</h3><div class="seg" id="uSp">${SPEAKERS.map(s=>`<button data-sp="${s}" aria-pressed="${s===u.sp}">${s}</button>`).join("")}</div>
       <h3>紐づく項目</h3><div class="ulist">${u.tags.map(t=>`<div class="ul-item"><span class="tag">${esc(t)}</span><span class="tx">${esc(BY[t]?.name||"")}</span><button class="x" data-rm="${esc(t)}" aria-label="外す">×</button></div>`).join("") || '<p class="small muted">なし</p>'}</div>
       <div class="btnrow"><button class="btn acc" id="uAdd">項目を追加</button><button class="btn danger" id="uDel">この発言を削除</button></div>`;
     scrim.hidden = false;
   };
   render();
-  sheet.oninput = e => { if (e.target.id==="uText") { u.text = e.target.value; save(); renderLog(false); } };
+  sheet.oninput = e => { if (e.target.id==="uText") { u.text = e.target.value; delete u.clean; save(); renderLog(false); } };
   sheet.onclick = e => {
     const sp = e.target.closest("#uSp button"); if (sp) { u.sp = sp.dataset.sp; u.spFixed = true; save(); renderLog(false); render(); return; }
     const rm = e.target.closest("[data-rm]"); if (rm) { u.tags = u.tags.filter(t=>t!==rm.dataset.rm); u.manual = true; save(); renderLog(false); render(); return; }
@@ -1144,6 +1262,7 @@ function renderDetail(){
     ${st.cBy==="ai"&&st.c.length?`<div class="btnrow" style="margin:0 0 8px;align-items:center"><span class="aib">AI推定</span><span class="small muted">会話から推定した選択です。</span><button class="btn acc" id="cConfirm" style="padding:4px 10px">この選択で確定</button></div>`:""}
     ${st.basis?`<div class="hint" style="border-left-color:var(--accent)">頻度による選択：${esc(st.basis)}</div>`:""}
     <div id="consistBox">${itemConsistHTML(it.id)}</div>
+    <details class="card" style="margin:8px 0;padding:6px 10px"><summary style="margin:0">質問の台本</summary>${scriptHTML(it.id)}</details>
     <div class="choices${grid?" grid":""}" id="dCh">${it.ch.map((t,k)=>`<button class="choice" data-k="${k}" aria-pressed="${st.c.includes(k)}"><span class="n">${k+1}</span><span>${esc(t)}</span></button>`).join("")}</div>
     ${it.multi?'<p class="small muted">複数選択できます。</p>':""}
     <h3>この項目の聞き取り（${us.length}）</h3>
@@ -1773,6 +1892,94 @@ function consistHTML(list, ai){
   return list.map(x => `<div class="warn" style="flex-wrap:wrap"><span class="wk${ai?"":" miss"}">${ai?"AI":"要確認"}</span>${x.ids.map(id => `<button class="sug" data-go="${id}">${esc(formCode(BY[id]))} ${esc(BY[id].name.slice(0,8))}</button>`).join("")}<span style="flex-basis:100%">${esc(x.msg)}</span></div>`).join("");
 }
 
+/* ---------- 文字起こし記録（市への提出用） ----------
+   発言の文字起こしを、AIで誤変換・句読点だけ校正し（言い換え・要約はしない）、Word・テキストで保存する。
+   校正後の文は各発言の u.clean に持ち、元の文（u.text）は残す。 */
+let proofCtl = null, proofMsg = "";
+const trBody = u => u.clean ?? u.text;
+const trSpeaker = u => (u.sp && u.sp !== "—") ? u.sp : "話者不明";
+function transcriptText(){
+  const m = C().meta;
+  const head = `要介護認定調査 文字起こし記録\n調査実施日：${m.date||""}　対象者：${m.subject||""}　調査員：${m.surveyor||""}\n`;
+  return head + "\n" + C().utts.map(u => `[${u.t}] ${trSpeaker(u)}：${trBody(u)}`).join("\n") + "\n";
+}
+function transcriptSectionHTML(){
+  const c = C(), n = c.utts.length, done = c.utts.filter(u => u.clean != null).length;
+  return `<div class="card savecard">
+    <div class="small">発言 ${n}件・AI校正済み ${done}件。校正は誤変換と句読点だけを直し、話した内容の言い換えや要約はしません。聞き取れない箇所は〔不明瞭〕と記します。</div>
+    <div class="status" id="proofStatus">${esc(proofMsg)}</div>
+    <div class="btnrow" style="margin:0">
+      <button class="btn acc ai-only" id="proofBtn"${n && !proofCtl ? "" : " disabled"}>${done ? "AIで校正し直す" : "AIで校正する"}</button>
+      ${proofCtl ? `<button class="btn" id="proofStop">中止</button>` : ""}
+      ${DL ? `<button class="btn acc" id="trDocx"${n?"":" disabled"}>Wordで保存</button><button class="btn" id="trTxt"${n?"":" disabled"}>テキストで保存</button>` : ""}
+      <button class="btn" id="copyLog"${n?"":" disabled"}>全文をコピー</button>
+    </div>
+    ${n ? `<details><summary>文字起こしを表示（${n}件）</summary><pre class="out" style="margin-top:6px;font-size:13px">${esc(transcriptText())}</pre></details>` : ""}
+    <p class="small muted" style="margin:0">枚方市への提出はCD・DVD・Blu-rayのいずれかで行い、提出後は速やかにこのケースを削除してください（Google ドライブに保存している場合は、ドライブのゴミ箱も空にしてください）。</p>
+  </div>`;
+}
+async function proofread(){
+  if (!SAMPLE || proofCtl) return;
+  const c = C(), list = c.utts.slice();
+  if (!list.length) return;
+  proofCtl = new AbortController(); const ctl = proofCtl;
+  let fixed = 0;
+  try {
+    for (let s = 0; s < list.length; s += 60) {
+      const part = list.slice(s, s + 60);
+      proofMsg = `校正中…（${Math.min(s + 60, list.length)}/${list.length}件）`; if (S.view === "out") renderOut();
+      const res = await SAMPLE.json(`次は、介護保険の要介護認定調査（訪問調査）の会話を音声入力で文字にしたものです。市に提出する記録として、文字起こしの誤りだけを校正してください。
+- 明らかな誤変換（同音異義語など）を、前後の文脈から確実に分かる場合だけ直す。
+- 句読点（、。？）を補う。
+- 話した言葉は一字一句残す。言い換え・要約・敬語への書き換え・言いよどみの削除はしない。方言や話し言葉もそのまま。
+- 意味が通らず、正しい言葉が確定できない箇所は、その部分を〔不明瞭〕に置き換える。推測で補わない。
+- 発言の番号と件数は変えない。
+JSONだけを返す：{"u":[{"i":1,"text":"校正後の発言"}]}
+
+${part.map((u, k) => `#${k+1} ${trSpeaker(u)}：${u.text}`).join("\n")}`, {modelTier: "default", cache: false, signal: ctl.signal});
+      for (const x of (Array.isArray(res?.u) ? res.u : [])) {
+        const k = Number(x?.i) - 1, u = part[k], t = String(x?.text || "").trim();
+        if (u && t) { u.clean = t; fixed++; }
+      }
+      save();
+    }
+    proofMsg = `校正しました（${fixed}件）。内容を確認してから保存してください。`;
+  } catch(e) {
+    proofMsg = e?.code === "cancelled" ? "校正を中止しました。校正済みの分は残っています。" : aiErr(e);
+  } finally { proofCtl = null; if (S.view === "out") renderOut(); }
+}
+async function saveTranscriptTxt(){
+  if (!DL) { toast("この表示ではファイルを保存できません"); return; }
+  try { await DL.save({filename: fileBase().replace("特記事項", "文字起こし") + ".txt", data: transcriptText()}); toast("テキストを保存しました"); } catch(e) { dlErr(e); }
+}
+function transcriptDocxXML(){
+  const m = C().meta, X = s => String(s ?? "").replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  const run = (t, o={}) => `<w:r><w:rPr><w:rFonts w:ascii="BIZ UDPゴシック" w:eastAsia="BIZ UDPゴシック" w:hAnsi="BIZ UDPゴシック"/>${o.b?"<w:b/>":""}<w:sz w:val="${o.sz||20}"/></w:rPr><w:t xml:space="preserve">${X(t)}</w:t></w:r>`;
+  const p = (t, o={}) => `<w:p><w:pPr><w:spacing w:before="0" w:after="${o.after||0}"/>${o.center?'<w:jc w:val="center"/>':""}</w:pPr>${run(t, o)}</w:p>`;
+  const B = 'w:val="single" w:sz="4" w:space="0" w:color="555555"';
+  const tc = (w, t, o={}) => `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${o.fill?`<w:shd w:val="clear" w:color="auto" w:fill="${o.fill}"/>`:""}</w:tcPr>${p(t, o)}</w:tc>`;
+  const grid = [1000, 1300, 7333];
+  const rows = C().utts.map(u => `<w:tr><w:trPr><w:cantSplit/></w:trPr>${tc(grid[0], u.t)}${tc(grid[1], trSpeaker(u))}${tc(grid[2], trBody(u))}</w:tr>`).join("");
+  const proofed = C().utts.some(u => u.clean != null);
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>`
+    + p("要介護認定調査　文字起こし記録", {b:1, sz:28, center:1, after:160})
+    + p(`調査実施日：${m.date||""}　対象者：${m.subject||""}　調査員：${m.surveyor||""}`, {after:60})
+    + p(`作成方法：音声入力による文字起こし${proofed ? "（AIで誤変換・句読点を校正。〔不明瞭〕は聞き取れない箇所）" : ""}　発言数：${C().utts.length}件`, {sz:18, after:160})
+    + `<w:tbl><w:tblPr><w:tblW w:w="9633" w:type="dxa"/><w:tblBorders><w:top ${B}/><w:left ${B}/><w:bottom ${B}/><w:right ${B}/><w:insideH ${B}/><w:insideV ${B}/></w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w => `<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>`
+    + `<w:tr><w:trPr><w:tblHeader/></w:trPr>${tc(grid[0], "時刻", {b:1, fill:"EEEEEE"})}${tc(grid[1], "話者", {b:1, fill:"EEEEEE"})}${tc(grid[2], "発言", {b:1, fill:"EEEEEE"})}</w:tr>`
+    + rows + `</w:tbl><w:p/><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+}
+async function saveTranscriptDocx(){
+  if (!DL) { toast("この表示ではファイルを保存できません"); return; }
+  if (!window.JSZip) { toast("Word出力の部品を読み込めませんでした。通信状態を確認してください"); return; }
+  const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
+  add("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
+  add("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+  add("word/document.xml", transcriptDocxXML());
+  const blob = await z.generateAsync({type:"blob", compression:"DEFLATE", mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+  try { await DL.save({filename: fileBase().replace("特記事項", "文字起こし") + ".docx", data: blob}); toast("Wordファイルを保存しました"); } catch(e) { dlErr(e); }
+}
+
 let withChoice = false;
 function renderOut(){
   const v = $("#v-out"), w = checks(), miss = w.filter(x=>x.kind==="miss").length, cs = consistency();
@@ -1803,21 +2010,26 @@ function renderOut(){
     <h3>特記事項用紙</h3>
     <p class="small muted" style="margin:0 0 8px">枚方市の様式（52・R7.10）に合わせています。1枚32行で、入りきらない場合は2枚目以降に続きます。</p>
     <div id="paper">${formSheetsHTML()}</div>
-    <h3>聞き取り記録・バックアップ</h3>
-    <div class="btnrow" style="margin:0"><button class="btn" id="copyLog">聞き取り記録をコピー</button>
-    ${DL ? `<button class="btn" id="backupBtn">バックアップを保存</button>` : ""}<button class="btn" id="importBtn">バックアップを読み込む</button></div>`;
+    <h3>文字起こし記録（市への提出用）</h3>
+    ${transcriptSectionHTML()}
+    <h3>バックアップ</h3>
+    <div class="btnrow" style="margin:0">${DL ? `<button class="btn" id="backupBtn">バックアップを保存</button>` : ""}<button class="btn" id="restoreBtn">バックアップを読み込む</button></div>`;
   fitSheets();
 }
 $("#v-out").addEventListener("click", e => {
   const g = e.target.closest("[data-go]"); if (g) { go("items"); openDetail(g.dataset.go); return; }
   if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
-  if (e.target.id==="copyLog") copyText(C().utts.map(line).join("\n"));
+  if (e.target.id==="copyLog") copyText(transcriptText());
+  if (e.target.id==="proofBtn") proofread();
+  if (e.target.id==="proofStop") proofCtl?.abort();
+  if (e.target.id==="trDocx") saveTranscriptDocx();
+  if (e.target.id==="trTxt") saveTranscriptTxt();
   if (e.target.id==="docxBtn") saveDocx();
   if (e.target.id==="pdfBtn") savePdf();
   if (e.target.id==="aiConsistBtn") aiConsistency();
   if (e.target.id==="driveNow") { clearTimeout(driveT); driveSave(true); }
   if (e.target.id==="backupBtn") saveBackup();
-  if (e.target.id==="importBtn") $("#importFile").click();
+  if (e.target.id==="restoreBtn") $("#importFile").click();
 });
 $("#v-out").addEventListener("change", e => {
   if (e.target.id==="driveAuto") {
@@ -2007,7 +2219,7 @@ function refreshAll(){ updateCaseBtn(); S.detail = null; if (!AUTO.busy) { AUTO.
 
 load(); setSpeaker("自動"); updateCaseBtn(); go("cap");
 /* test hook: only when opened with ?test outside the Claude viewer (local testing) */
-if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, makePdfBlob, buildOutput: () => buildOutput(withChoice)};
+if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, makePdfBlob, transcriptDocxXML, transcriptText, proofread, buildOutput: () => buildOutput(withChoice)};
 })();
 </script>
 
