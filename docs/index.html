@@ -224,7 +224,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .fx-c1{width:6mm;text-align:center;border-right:.6pt dashed #E34B6A}
 .fx-c2{width:8mm;text-align:center;border-right:.8pt solid #E34B6A}
 .fx-tx{padding-left:1.5mm!important}
-.fx-city{position:absolute;right:10mm;bottom:4mm;font-size:7.5pt}  /* 欄外右下 */
+.fx-city{text-align:right;font-size:7.5pt;line-height:1;margin-top:2mm}  /* 表の2mm下・右寄せ */
 
 /* simulation */
 .sim{border:1.5px solid var(--accent);border-radius:12px;background:var(--surface);padding:14px}
@@ -1472,12 +1472,12 @@ function formSheetsHTML(){
         <div>（主訴、家族状況、調査対象者の<br>居住環境、日常的に使用する<br>機器・器械の有無　等）</div>
         ${PANEL.map(([c,n]) => `<div>${zen(c)}．${esc(n)}</div>`).join("")}
       </div><div class="fx-r fx-must">※７０１．７０２は必須</div></div>
-      <table class="fx-t"><thead><tr><th colspan="2">番　号</th><th>特　　　記　　　事　　　項</th></tr></thead><tbody>
+      <div class="fx-main"><table class="fx-t"><thead><tr><th colspan="2">番　号</th><th>特　　　記　　　事　　　項</th></tr></thead><tbody>
         ${Array.from({length:FORM.rows}, (_, i) => { const r = rows[i] || {code:"", text:""};
           return `<tr><td class="fx-c1">${esc(r.code.slice(0,1))}</td><td class="fx-c2">${esc(r.code.slice(1))}</td><td class="fx-tx">${esc(r.text)}</td></tr>`; }).join("")}
       </tbody></table>
+      <div class="fx-city">${FORM.city}</div></div>
     </div>
-    <div class="fx-city">${FORM.city}</div>
   </div></div>`).join("");
 }
 function fitSheets(){
@@ -1533,21 +1533,19 @@ function docxXML(){
         tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
         tc(G[4], para(run(r.text)), {ml:80, bd: red("left") + bottom + red("right")}));
     }).join("");
-    const foot = para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220});
+    const cityP = `<w:p><w:pPr><w:spacing w:before="113" w:after="0" w:line="170" w:lineRule="exact"/><w:jc w:val="right"/></w:pPr>${run(FORM.city, {sz:15})}</w:p>`;
+    const foot = tbl([G[0], 10773-G[0]], tr(300, tc(G[0], para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220}), {va:"top"}) + tc(10773-G[0], cityP, {va:"top", ml:0})));
     return top + para("", {line:80}) + ids + para("", {line:60}) + note + tbl(G, head + body) + foot;
   };
   /* each sheet after the first starts with a 1pt paragraph set to begin a new page (no leftover break line) */
   const pages = formPages().map((rows, i) => (i ? `<w:p><w:pPr><w:pageBreakBefore/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>` : "") + sheet(rows, i)).join("");
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:footerReference w:type="default" r:id="rIdFooter"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="567" w:bottom="567" w:left="567" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="567" w:bottom="567" w:left="567" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 async function docxBlob(){
   const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
-  add("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`);
+  add("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
   add("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
   add("word/document.xml", docxXML());
-  /* 欄外右下：大阪府　枚方市　R7.10 (page footer, every sheet) */
-  add("word/_rels/document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>`);
-  add("word/footer1.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="BIZ UDPゴシック" w:eastAsia="BIZ UDPゴシック" w:hAnsi="BIZ UDPゴシック"/><w:color w:val="111111"/><w:sz w:val="15"/></w:rPr><w:t xml:space="preserve">${FORM.city}</w:t></w:r></w:p></w:ftr>`);
   return z;
 }
 let DL = null;
