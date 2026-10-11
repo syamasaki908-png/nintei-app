@@ -214,7 +214,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .fx-pn{color:#E34B6A;font-size:6.5pt;line-height:1.3}
 .fx-gn{color:#E34B6A;font-size:7.5pt;margin:2mm 0 .8mm 53mm}
 .fx-body{display:grid;grid-template-columns:50mm 1fr;gap:3mm}
-.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:6.8pt;line-height:2.9mm;height:244.8mm;overflow:hidden}
+.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:8.2pt;line-height:3.25mm;height:244.8mm;overflow:hidden}
 .fx-must{font-size:7.5pt;margin-top:1mm}
 .fx-t{border-collapse:collapse;width:100%;table-layout:fixed;border:.8pt solid #E34B6A}
 .fx-t th{height:8mm;font-weight:400;font-size:9pt;border:.8pt solid #E34B6A}
@@ -1504,10 +1504,10 @@ function docxXML(){
   const lab = t => tc(t.length>4?794:680, para(run(t.slice(0, t.length-2), {sz:12, color:"FFFFFF"}), {jc:"center"}) + para(run("番　号", {sz:12, color:"FFFFFF"}), {jc:"center"}), {fill:R});
   const ins = insurerNo();
   const panelLines = [
-    run("［調査項目］", {sz:14}), run("０００．概況　", {sz:14}) + run("（必須）", {sz:14, color:R}),
-    run("（主訴、家族状況、調査対象者の", {sz:14}), run("居住環境、日常的に使用する", {sz:14}), run("機器・器械の有無　等）", {sz:14}),
-    ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:14}))
-  ].map(r => para(r, {line:168, ind:60})).join("");
+    run("［調査項目］", {sz:17}), run("０００．概況　", {sz:17}) + run("（必須）", {sz:17, color:R}),
+    run("（主訴、家族状況、調査対象者の", {sz:17}), run("居住環境、日常的に使用する", {sz:17}), run("機器・器械の有無　等）", {sz:17}),
+    ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:17}))
+  ].map(r => para(r, {line:186, ind:60})).join("");   /* 74 lines × 186 ≒ panel cell 13,894 */
   const BLK = "111111", sideBd = s => bd(s, "single", BLK, 12);
   const G = [2835, 170, 340, 454, 6974];   /* panel 50mm | gap 3mm | 番 6mm | 号 8mm | 特記事項 123mm */
   const sheet = (rows, pi) => {
