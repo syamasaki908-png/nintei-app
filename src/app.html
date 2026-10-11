@@ -203,6 +203,10 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .fx-t tr:last-child td{border-bottom:.8pt solid #E34B6A;background:none}
 .fx-t td.fx-c1{width:6mm;text-align:center;border-right:0!important;background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat,repeating-linear-gradient(to right,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) left bottom/100% .35mm no-repeat}
 .fx-t tr:last-child td.fx-c1{background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat}
+/* PDF作成時は、画像化の部品が描ける通常の点線（縦横とも同じ太さ）に切り替える */
+.fx-pdf .fx-t td{background:none!important;border-bottom:1pt dashed #E34B6A}
+.fx-pdf .fx-t tr:last-child td{border-bottom:1pt solid #E34B6A}
+.fx-pdf .fx-t td.fx-c1{border-right:1pt dashed #E34B6A!important}
 .fx-c2{width:8mm;text-align:center;border-right:.8pt solid #E34B6A}
 .fx-tx{padding-left:1.5mm!important}
 .fx-city{text-align:right;font-size:7.5pt;line-height:1;margin-top:2mm}  /* 表の2mm下・右寄せ */
@@ -1544,6 +1548,43 @@ function dlErr(e){
   if (e?.code === "rate_limited") { toast("保存の確認画面がすでに開いています"); return; }
   toast("この表示ではファイルを保存できません");
 }
+/* PDF：画面の用紙（枚方市様式）を1枚ずつ高解像度で画像にし、A4のPDFにまとめる */
+const PDF_LIBS = ["https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"];
+function loadScript(src){
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
+    const s = document.createElement("script"); s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error("load")); document.head.append(s);
+  });
+}
+async function makePdfBlob(onProgress){
+  await Promise.all(PDF_LIBS.map(loadScript));
+  try { await document.fonts?.ready; } catch(_) {}
+  const box = document.createElement("div");
+  box.className = "fx-pdf"; box.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm";
+  box.innerHTML = formSheetsHTML(); document.body.append(box);
+  try {
+    const pdf = new window.jspdf.jsPDF({unit:"mm", format:"a4", orientation:"portrait", compress:true});
+    const sheets = [...box.querySelectorAll(".fx")];
+    for (const [i, el] of sheets.entries()) {
+      onProgress?.(i + 1, sheets.length);
+      const cv = await window.html2canvas(el, {scale: 2, backgroundColor: "#FFFFFF", logging: false});
+      if (i) pdf.addPage();
+      pdf.addImage(cv.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 210, 297);
+    }
+    return pdf.output("blob");
+  } finally { box.remove(); }
+}
+async function savePdf(){
+  if (!DL) { toast("この表示ではファイルを保存できません"); return; }
+  const btn = $("#pdfBtn"); if (btn) btn.disabled = true;
+  try {
+    const blob = await makePdfBlob((n, all) => toast(`PDFを作成中…（${n}/${all}枚）`));
+    await DL.save({filename: fileBase() + ".pdf", data: blob});
+    toast("PDFを保存しました");
+  } catch(e) {
+    if (e?.code) dlErr(e); else toast("PDFを作成できませんでした。通信状態を確認して、もう一度押してください");
+  } finally { if (btn) btn.disabled = false; }
+}
 async function saveDocx(){
   if (!DL) { toast("この表示ではファイルを保存できません"); return; }
   if (!window.JSZip) { toast("Word出力の部品を読み込めませんでした。通信状態を確認してください"); return; }
@@ -1725,7 +1766,8 @@ function renderOut(){
       <div class="status${driveErr?" err":""}" id="driveStatus">${driveStatusHTML(c)}</div>` : `<div class="small muted">この表示ではGoogle ドライブへの自動保存は使えません。</div>`}
       <div class="btnrow" style="margin:0">
         ${MCP ? `<button class="btn acc" id="driveNow">今すぐドライブに保存</button>` : ""}
-        ${DL ? `<button class="btn acc" id="docxBtn">Word（.docx）で保存</button>` : ""}
+
+        ${DL ? `<button class="btn acc" id="pdfBtn">PDFで保存</button><button class="btn acc" id="docxBtn">Word（.docx）で保存</button>` : ""}
         <button class="btn" id="copyAll">全文をコピー</button>
       </div>
     </div>
@@ -1750,6 +1792,7 @@ $("#v-out").addEventListener("click", e => {
   if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
   if (e.target.id==="copyLog") copyText(C().utts.map(line).join("\n"));
   if (e.target.id==="docxBtn") saveDocx();
+  if (e.target.id==="pdfBtn") savePdf();
   if (e.target.id==="aiConsistBtn") aiConsistency();
   if (e.target.id==="driveNow") { clearTimeout(driveT); driveSave(true); }
   if (e.target.id==="backupBtn") saveBackup();
@@ -1943,6 +1986,6 @@ function refreshAll(){ updateCaseBtn(); S.detail = null; if (!AUTO.busy) { AUTO.
 
 load(); setSpeaker("自動"); updateCaseBtn(); go("cap");
 /* test hook: only when opened with ?test outside the Claude viewer (local testing) */
-if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, buildOutput: () => buildOutput(withChoice)};
+if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, makePdfBlob, buildOutput: () => buildOutput(withChoice)};
 })();
 </script>
