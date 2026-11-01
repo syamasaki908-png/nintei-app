@@ -617,7 +617,7 @@ const RULES = `記載ルール（要介護認定 認定調査員テキスト2009
 - 記録にない事実を補ったり推測で書いたりしない。判断に必要な情報が足りなければ別に示す。
 - あいまいな表現を使わない（使用禁止：やや、おそらく、たぶん、〜と思われる、〜のようだ、〜らしい、〜かもしれない、少し、若干、多少、ほぼ、だいたい、時々、〜くらい）。
 - 氏名は書かず、本人・長女・妻などの続柄で表す。
-- 特記事項用紙は原則2枚（64行・1行45字）、多くても3枚に収める。問題のない項目（介助なし・行動なし・「できる」等）は1文30字程度、介助や行動がある項目は100字程度まで。概況（id "0"）だけは160字程度で、主訴、家族状況（同居・主な介護者）、調査対象者の居住環境（住居の形態・段差・居室の位置など）、日常的に使用する機器・器械の有無を記載する。`;
+- 特記事項用紙は原則2枚（64行・1行42字）、多くても3枚に収める。問題のない項目（介助なし・行動なし・「できる」等）は1文30字程度、介助や行動がある項目は100字程度まで。概況（id "0"）だけは160字程度で、主訴、家族状況（同居・主な介護者）、調査対象者の居住環境（住居の形態・段差・居室の位置など）、日常的に使用する機器・器械の有無を記載する。`;
 
 /* ---------- capture view ---------- */
 const logEl = $("#log"), inp = $("#inp");
@@ -1491,7 +1491,7 @@ function simHTML(compact){
 /* ---------- form (特記事項用紙：枚方市 様式 52・R7.10) ----------
    Layout of the paper form: item panel on the left; 番号 (1桁｜2桁) and 特記事項 on 30 ruled lines per sheet.
    One page model feeds the on-screen sheet, the Word file and the Drive copy. */
-const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:32, cpl:45, insurer:"272104"};
+const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:32, cpl:42, insurer:"272104"};
 const PANEL = "101麻痺等|102拘縮等|103寝返り|104起き上がり|105座位保持|106両足での立位|107歩行|108立ち上がり|109片足での立位|110洗身|111つめ切り|112視力|113聴力|201移乗|202移動|203えん下|204食事摂取|205排尿|206排便|207口腔清潔|208洗顔|209整髪|210上衣の着脱|211ズボン等の着脱|212外出頻度|301意思の伝達|302日課を理解|303生年月日をいう|304短期記憶|305自分の名前を言う|306今の季節を理解|307場所の理解|308徘徊|309外出して戻れない|401被害的|402作話|403感情が不安定|404昼夜逆転|405同じ話をする|406大声を出す|407介護に抵抗|408落ち着きなし|409一人で出たがる|410収集癖|411物や衣類を壊す|412ひどい物忘れ|413独り言（独り笑い）|414自分勝手に行動する|415話がまとまらない|501薬の内服|502金銭の管理|503日常の意思決定|504集団への不適応|505買い物|506簡単な調理|601点滴の管理|602中心静脈栄養|603透析|604ストーマの処置|605酸素療法|606レスピレーター|607気管切開の処置|608疼痛の看護|609経管栄養|610モニター測定|611じょくそうの処置|612カテーテル|701障害高齢者自立度|702認知症高齢者自立度"
   .split("|").map(s => [s.slice(0,3), s.slice(3)]);
 const zen = s => s.replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 0xFEE0));
@@ -1596,7 +1596,11 @@ function wrapText(t, max){
     let line = "", w = 0;
     for (const ch of para) {
       const c = /[\x20-\x7E｡-ﾟ]/.test(ch) ? 0.5 : 1;
-      if (w + c > max && line && !NOHEAD.includes(ch)) { out.push(line); line = ""; w = 0; }
+      if (w + c > max && line && !NOHEAD.includes(ch)) {
+        /* an opening bracket never ends a line: carry it over to the next one */
+        const carry = /[「『（(［【〈《]$/.test(line) && line.length > 1 ? line.slice(-1) : "";
+        out.push(carry ? line.slice(0, -1) : line); line = carry; w = carry ? 1 : 0;
+      }
       line += ch; w += c;
     }
     out.push(line);
@@ -1619,9 +1623,9 @@ const insurerNo = () => (C().meta.insurerNo ?? FORM.insurer).replace(/\D/g,"").s
    original form (枚方市 様式52・R7.10, 600dpi scan), in millimetres. */
 const FXC = {red:"#D84A60", band:"#E04E68", ink:"#111111", screen:"#C9C9C9", font:'"BIZ UDGothic","MS Gothic","Hiragino Sans","Osaka-Mono",monospace'};   /* the original is set in a monospaced Gothic */
 const FXG = {
-  tableL:54.30, tableR:199.35, tableT:34.63, headB:41.135, rowH:7.532, col1:60.775, col2:69.305,
+  tableL:54.30, tableR:204.35,   /* original 199.35, widened 5mm */ tableT:34.63, headB:41.135, rowH:7.532, col1:60.775, col2:69.305,
   panelL:13.845, panelR:51.78, panelT:34.76, panelB:282.125,
-  textX:70.6, textSize:2.82, codeC1:57.55, codeC2:65.05
+  textX:70.6, textSize:3.175,   /* 9pt */ codeC1:57.55, codeC2:65.05
 };
 function fxText(ctx, s, x, glyphTop, size, opt = {}){
   ctx.font = `${opt.bold ? "700 " : ""}${size}px ${FXC.font}`;
@@ -1645,9 +1649,10 @@ function fxScreen(ctx, x, y, w, h){
   for (let yy = y + .2, r = 0; yy < y + h; yy += .42, r++) for (let xx = x + .2 + (r % 2) * .21; xx < x + w; xx += .42) { ctx.beginPath(); ctx.arc(xx, yy, .1, 0, Math.PI * 2); ctx.fill(); }
   ctx.restore();
 }
-function drawSheet(ctx, rows, pi){
+function drawSheet(ctx, rows, pi, onForm){
   const G = FXG, ins = insurerNo();
   ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, 210, 297);
+  if (onForm) { const o = printOffset(); ctx.translate(o.x, o.y); drawRows(ctx, rows); return; }
   /* title band */
   ctx.fillStyle = FXC.band; ctx.beginPath();
   if (ctx.roundRect) ctx.roundRect(10.42, 9.15, 42.0, 4.99, 1.7); else ctx.rect(10.42, 9.15, 42.0, 4.99);
@@ -1695,7 +1700,12 @@ function drawSheet(ctx, rows, pi){
   fxLine(ctx, G.tableL, G.headB, G.tableR, G.headB, .2);
   fxBox(ctx, G.tableL, G.tableT, G.tableR - G.tableL, B - G.tableT, .38);
   fxText(ctx, "番", 56.85, 35.75, 3.9); fxText(ctx, "号", 63.4, 35.75, 3.9);
-  [98.5, 121.1, 143.7, 166.3].forEach((x, k) => fxText(ctx, "特記事項"[k], x, 35.75, 3.9));
+  [101.0, 123.6, 146.2, 168.8].forEach((x, k) => fxText(ctx, "特記事項"[k], x, 35.75, 3.9));
+  drawRows(ctx, rows);
+  FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [172.1, 185.0, 196.7][k], 285.36, 3.05));
+}
+function drawRows(ctx, rows){
+  const G = FXG;
   for (let i = 0; i < FORM.rows; i++) {
     const r = rows[i]; if (!r) continue;
     const mid = G.headB + i * G.rowH + G.rowH / 2;
@@ -1704,17 +1714,18 @@ function drawSheet(ctx, rows, pi){
     if (r.code) { ctx.fillText(r.code.slice(0, 1), G.codeC1, mid); ctx.fillText(r.code.slice(1), G.codeC2, mid); }
     ctx.font = `${G.textSize}px ${FXC.font}`; ctx.textAlign = "left"; ctx.fillText(r.text, G.textX, mid, G.tableR - G.textX - .4);
   }
-  FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [167.1, 180.0, 191.7][k], 285.36, 3.05));
 }
 let fxPages = [];
 function formSheetsHTML(){
   fxPages = formPages();
   return fxPages.map((_, i) => `<div class="fx-wrap"><canvas class="fx-cv" data-p="${i}" role="img" aria-label="特記事項用紙 ${i+1}枚目"></canvas></div>`).join("");
 }
-function renderSheetCanvas(cv, rows, pi, pxWidth){
+/* printer offset for printing on the pre-printed form (mm, + = right / down), kept on this device */
+function printOffset(){ try { const o = JSON.parse(localStorage.getItem(KEY+".pOff") || "{}"); return {x:+o.x||0, y:+o.y||0}; } catch(_) { return {x:0, y:0}; } }
+function renderSheetCanvas(cv, rows, pi, pxWidth, onForm){
   cv.width = Math.round(pxWidth); cv.height = Math.round(pxWidth * 297 / 210);
   const ctx = cv.getContext("2d"), k = cv.width / 210;
-  ctx.setTransform(k, 0, 0, k, 0, 0); drawSheet(ctx, rows, pi);
+  ctx.setTransform(k, 0, 0, k, 0, 0); drawSheet(ctx, rows, pi, onForm);
 }
 let fxFontReady = null;
 function fitSheets(){
@@ -1749,16 +1760,16 @@ function docxXML(){
     ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:14}))
   ].map((r, i) => para(r, {line: i < 5 ? 158 : 183, ind:60})).join("");   /* item pitch 3.235mm as on the original */
   const BLK = "111111", sideBd = s => bd(s, "single", BLK, 12);
-  const G = [2151, 143, 367, 484, 7372];   /* measured from the original: panel 37.9mm | gap 2.5mm | 番 6.5mm | 号 8.5mm | 特記事項 130.0mm */
+  const G = [2151, 143, 367, 484, 7655];   /* measured from the original: panel 37.9mm | gap 2.5mm | 番 6.5mm | 号 8.5mm | 特記事項 130.0mm */
   const sheet = (rows, pi) => {
-    const top = tbl([2381, 7406, 571, 140], tr(404,
+    const top = tbl([2381, 7406, 571, 423], tr(404,
       tc(2381, para(run("認定調査票（特記事項）", {b:1, sz:19, color:"FFFFFF"}), {jc:"center"}), {fill:"E04E68", ml:0}) + gap(7406) +
-      tc(571, para(run(FORM.no, {sz:36}), {jc:"center"}), {ml:0, bd: ["top","left","bottom","right"].map(s=>bd(s,"single",R,4)).join("")}) + gap(140)), -194);
-    const ids = tbl([484, ...Array(6).fill(269), 168, 737, ...Array(10).fill(269), 454, 246, 4263], tr(343,
+      tc(571, para(run(FORM.no, {sz:36}), {jc:"center"}), {ml:0, bd: ["top","left","bottom","right"].map(s=>bd(s,"single",R,4)).join("")}) + gap(423)), -194);
+    const ids = tbl([484, ...Array(6).fill(269), 168, 737, ...Array(10).fill(269), 454, 246, 4546], tr(343,
       lab("保険者番号") + [...Array(6)].map((_,i)=>box(ins[i]||"", 269)).join("") + gap(168) +
       lab("被保険者番号") + [...Array(10)].map((_,i)=>box("000"[i]||"", 269)).join("") + gap(454) +
       box(pi>0 ? String(pi+1) : "", 246) +
-      tc(4263, para(run("２枚目以降がある場合は左の", {sz:15, color:R}), {line:190}) + para(run("枠内に何枚目かを記入して下さい", {sz:15, color:R}), {line:190}), {ml:167})), -139);
+      tc(4546, para(run("２枚目以降がある場合は左の", {sz:15, color:R}), {line:190}) + para(run("枠内に何枚目かを記入して下さい", {sz:15, color:R}), {line:190}), {ml:167})), -139);
     const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 2370, line: 220});
     const red = (s, v) => bd(s, v||"single", R, 8);
     const head = tr(369,
@@ -1771,15 +1782,15 @@ function docxXML(){
         tc(G[0], "", {vm:"cont", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"cont"}) +
         tc(G[2], para(run(r.code.slice(0,1)), {jc:"center"}), {bd: red("left") + bottom + red("right","dashed")}) +
         tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
-        tc(G[4], para(run(r.text, {sz:16})), {ml:73, bd: red("left") + bottom + red("right")}));
+        tc(G[4], para(run(r.text, {sz:18})), {ml:73, bd: red("left") + bottom + red("right")}));
     }).join("");
     const cityP = `<w:p><w:pPr><w:spacing w:before="113" w:after="0" w:line="170" w:lineRule="exact"/><w:jc w:val="right"/></w:pPr>${run(FORM.city, {sz:15})}</w:p>`;
-    const foot = tbl([G[0], 10517-G[0]], tr(300, tc(G[0], para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220}), {va:"top"}) + tc(10517-G[0], cityP, {va:"top", ml:0})));
+    const foot = tbl([G[0], 10800-G[0]], tr(300, tc(G[0], para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220}), {va:"top"}) + tc(10800-G[0], cityP, {va:"top", ml:0})));
     return top + para("", {line:178}) + ids + para("", {line:120}) + note + tbl(G, head + body) + foot;
   };
   /* each sheet after the first starts with a 1pt paragraph set to begin a new page (no leftover break line) */
   const pages = formPages().map((rows, i) => (i ? `<w:p><w:pPr><w:pageBreakBefore/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>` : "") + sheet(rows, i)).join("");
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="519" w:right="604" w:bottom="454" w:left="785" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="519" w:right="321" w:bottom="454" w:left="785" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 async function docxBlob(){
   const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
@@ -1811,26 +1822,26 @@ function loadScript(src){
     const s = document.createElement("script"); s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error("load")); document.head.append(s);
   });
 }
-async function makePdfBlob(onProgress){
+async function makePdfBlob(onProgress, onForm){
   await Promise.all(PDF_LIBS.map(loadScript));
   try { await document.fonts?.load(`10px "BIZ UDGothic"`); await document.fonts?.ready; } catch(_) {}
   const pages = formPages(), pdf = new window.jspdf.jsPDF({unit:"mm", format:"a4", orientation:"portrait", compress:true});
   const cv = document.createElement("canvas");
   for (const [i, rows] of pages.entries()) {
     onProgress?.(i + 1, pages.length);
-    renderSheetCanvas(cv, rows, i, 2480);
+    renderSheetCanvas(cv, rows, i, 2480, onForm);
     if (i) pdf.addPage();
     pdf.addImage(cv.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, 210, 297);
     await new Promise(r => setTimeout(r));
   }
   return pdf.output("blob");
 }
-async function savePdf(){
+async function savePdf(onForm){
   if (!DL) { toast("この表示ではファイルを保存できません"); return; }
-  const btn = $("#pdfBtn"); if (btn) btn.disabled = true;
+  const btn = $(onForm ? "#pdfFormBtn" : "#pdfBtn"); if (btn) btn.disabled = true;
   try {
-    const blob = await makePdfBlob((n, all) => toast(`PDFを作成中…（${n}/${all}枚）`));
-    await DL.save({filename: fileBase() + ".pdf", data: blob});
+    const blob = await makePdfBlob((n, all) => toast(`PDFを作成中…（${n}/${all}枚）`), onForm);
+    await DL.save({filename: fileBase() + (onForm ? "_用紙に直接印刷" : "") + ".pdf", data: blob});
     toast("PDFを保存しました");
   } catch(e) {
     if (e?.code) dlErr(e); else toast("PDFを作成できませんでした。通信状態を確認して、もう一度押してください");
@@ -2124,6 +2135,16 @@ function renderOut(){
     ${sheetInfoHTML()}
     <p class="small muted" style="margin:8px 0">枚方市の様式（52・R7.10）に合わせています。1枚32行で、原則2枚（多くても3枚）に収めます。</p>
     <div id="paper">${formSheetsHTML()}</div>
+    <h3>認定調査用紙に直接印刷</h3>
+    <div class="card savecard">
+      <div class="small">番号と特記事項の内容だけを、用紙の欄の位置に合わせて印刷します。罫線・項目名・見出しなどは印刷しません。印刷するときは倍率を「実際のサイズ（100%）」にしてください。</div>
+      <div class="small muted">ずれる場合は、印刷位置をmm単位で調整できます（右・下がプラス）。</div>
+      <div class="btnrow" style="margin:0;align-items:center">
+        <label class="small">横 <input id="pOffX" type="number" step="0.5" inputmode="decimal" style="width:5em" value="${printOffset().x}"> mm</label>
+        <label class="small">縦 <input id="pOffY" type="number" step="0.5" inputmode="decimal" style="width:5em" value="${printOffset().y}"> mm</label>
+      </div>
+      ${DL ? `<div class="btnrow" style="margin:0"><button class="btn acc" id="pdfFormBtn">直接印刷用PDFを保存</button></div>` : ""}
+    </div>
     <h3>文字起こし記録（市への提出用）</h3>
     ${transcriptSectionHTML()}
     <h3>バックアップ</h3>
@@ -2142,13 +2163,18 @@ $("#v-out").addEventListener("click", e => {
   if (e.target.id==="trDocx") saveTranscriptDocx();
   if (e.target.id==="trTxt") saveTranscriptTxt();
   if (e.target.id==="docxBtn") saveDocx();
-  if (e.target.id==="pdfBtn") savePdf();
+  if (e.target.id==="pdfBtn") savePdf(false);
+  if (e.target.id==="pdfFormBtn") savePdf(true);
   if (e.target.id==="aiConsistBtn") aiConsistency();
   if (e.target.id==="driveNow") { clearTimeout(driveT); driveSave(true); }
   if (e.target.id==="backupBtn") saveBackup();
   if (e.target.id==="restoreBtn") $("#importFile").click();
 });
 $("#v-out").addEventListener("change", e => {
+  if (e.target.id==="pOffX" || e.target.id==="pOffY") {
+    const o = {x: +$("#pOffX").value || 0, y: +$("#pOffY").value || 0};
+    try { localStorage.setItem(KEY+".pOff", JSON.stringify(o)); } catch(_) {}
+  }
   if (e.target.id==="driveAuto") {
     try { localStorage.setItem(KEY+".drive", e.target.checked ? "1" : "0"); } catch(_) {}
     if (e.target.checked) { clearTimeout(driveT); driveSave(true); } else { clearTimeout(driveT); drivePending = false; setDriveMsg("自動保存はオフです"); }
