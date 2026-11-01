@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <title>認定調査 特記事項メモ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=BIZ+UDPGothic:wght@400;700&display=swap">
 <style>
 /* Layout: one-hand phone app — sticky header, single working column, bottom tab bar. Paper-form neutrals, ink-blue accent, seal-red only for "recording". */
 :root{
@@ -187,41 +187,15 @@ pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--font);font-
 .savecard label input{margin-top:4px}
 .status{font-size:12.5px;color:var(--muted)}
 .status.err{color:var(--rec)}
+.warn-t{color:var(--warn)}
+.err-t{color:var(--rec)}
+.ok{color:var(--ok)}
 .status a{color:var(--accent)}
 
-/* 枚方市 様式52 sheet — fixed paper colors in both themes, sized in mm and scaled to fit */
-.fx-wrap{width:100%;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.18);background:#FFFFFF}
-.fx{position:relative;width:210mm;height:297mm;padding:8mm 10mm 6mm;background:#FFFFFF;color:#111111;transform-origin:0 0;font-family:"BIZ UDPGothic",var(--font);font-size:10pt;line-height:1.35}
-.fx-r{color:#E34B6A}
-.fx-top{display:flex;justify-content:space-between;align-items:center;height:10mm}
-.fx-title{background:#E34B6A;color:#FFFFFF;font-weight:700;font-size:13pt;border-radius:3mm;padding:1mm 4mm;letter-spacing:.05em}
-.fx-no{border:1.5pt solid #111111;font-size:16pt;width:15mm;height:9mm;display:flex;align-items:center;justify-content:center}
-.fx-ids{display:flex;align-items:center;gap:0;margin-top:2mm;height:9mm}
-.fx-lab{background:#E34B6A;color:#FFFFFF;font-size:6pt;line-height:1.15;text-align:center;padding:.6mm 1mm;margin-right:.8mm}
-.fx-boxes{display:flex;margin-right:4mm}
-.fx-d{width:6.5mm;height:8mm;border:.6pt solid #111111;margin-left:-.6pt;display:flex;align-items:center;justify-content:center;font-size:14pt}
-.fx-boxes .fx-d:first-child{margin-left:0}
-.fx-pg{border-color:#E34B6A;margin:0 1.5mm 0 3mm}
-.fx-pn{color:#E34B6A;font-size:6.5pt;line-height:1.3}
-.fx-gn{color:#E34B6A;font-size:7.5pt;margin:2mm 0 .8mm 53mm}
-.fx-body{display:grid;grid-template-columns:50mm 1fr;gap:3mm}
-.fx-panel{border:1.5pt solid #111111;padding:1.2mm 1.5mm;font-size:8.2pt;line-height:3.25mm;height:244.8mm;overflow:hidden}
-.fx-must{font-size:7.5pt;margin-top:1mm}
-.fx-t{border-collapse:collapse;width:100%;table-layout:fixed;border:.8pt solid #E34B6A}
-.fx-t th{height:8mm;font-weight:400;font-size:9pt;border:.8pt solid #E34B6A}
-.fx-t th:first-child{width:14mm}
-/* 罫線の点線：縦横とも同じ描き方（太さ0.35mm・線1.1mm・すき間0.8mm） */
-.fx-t td{height:7.4mm;padding:0;white-space:nowrap;overflow:hidden;font-size:10pt;background:repeating-linear-gradient(to right,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) left bottom/100% .35mm no-repeat}
-.fx-t tr:last-child td{border-bottom:.8pt solid #E34B6A;background:none}
-.fx-t td.fx-c1{width:6mm;text-align:center;border-right:0!important;background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat,repeating-linear-gradient(to right,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) left bottom/100% .35mm no-repeat}
-.fx-t tr:last-child td.fx-c1{background:repeating-linear-gradient(to bottom,#E34B6A 0 1.1mm,transparent 1.1mm 1.9mm) right top/.35mm 100% no-repeat}
-/* PDF作成時は、画像化の部品が描ける通常の点線（縦横とも同じ太さ）に切り替える */
-.fx-pdf .fx-t td{background:none!important;border-bottom:1pt dashed #E34B6A}
-.fx-pdf .fx-t tr:last-child td{border-bottom:1pt solid #E34B6A}
-.fx-pdf .fx-t td.fx-c1{border-right:1pt dashed #E34B6A!important}
-.fx-c2{width:8mm;text-align:center;border-right:.8pt solid #E34B6A}
-.fx-tx{padding-left:1.5mm!important}
-.fx-city{text-align:right;font-size:7.5pt;line-height:1;margin-top:2mm}  /* 表の2mm下・右寄せ */
+/* 枚方市 様式52 sheet — drawn on a canvas at the original form's measured coordinates */
+.fx-wrap{width:100%;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.18);background:#FFFFFF;line-height:0}
+.fx-cv{width:100%;max-width:100%;height:auto;display:block}
+#main{min-width:0}
 
 /* simulation */
 .sim{border:1.5px solid var(--accent);border-radius:12px;background:var(--surface);padding:14px}
@@ -643,7 +617,7 @@ const RULES = `記載ルール（要介護認定 認定調査員テキスト2009
 - 記録にない事実を補ったり推測で書いたりしない。判断に必要な情報が足りなければ別に示す。
 - あいまいな表現を使わない（使用禁止：やや、おそらく、たぶん、〜と思われる、〜のようだ、〜らしい、〜かもしれない、少し、若干、多少、ほぼ、だいたい、時々、〜くらい）。
 - 氏名は書かず、本人・長女・妻などの続柄で表す。
-- 1項目2〜5文、250字程度まで。概況（id "0"）だけは4〜8文で、主訴、家族状況（同居・主な介護者）、調査対象者の居住環境（住居の形態・段差・居室の位置など）、日常的に使用する機器・器械の有無を記載する。`;
+- 特記事項用紙は原則2枚（64行・1行45字）、多くても3枚に収める。問題のない項目（介助なし・行動なし・「できる」等）は1文30字程度、介助や行動がある項目は100字程度まで。概況（id "0"）だけは160字程度で、主訴、家族状況（同居・主な介護者）、調査対象者の居住環境（住居の形態・段差・居室の位置など）、日常的に使用する機器・器械の有無を記載する。`;
 
 /* ---------- capture view ---------- */
 const logEl = $("#log"), inp = $("#inp");
@@ -1517,7 +1491,7 @@ function simHTML(compact){
 /* ---------- form (特記事項用紙：枚方市 様式 52・R7.10) ----------
    Layout of the paper form: item panel on the left; 番号 (1桁｜2桁) and 特記事項 on 30 ruled lines per sheet.
    One page model feeds the on-screen sheet, the Word file and the Drive copy. */
-const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:32, cpl:33, insurer:"272104"};
+const FORM = {no:"52", city:"大阪府　枚方市　R7.10", red:"E34B6A", rows:32, cpl:45, insurer:"272104"};
 const PANEL = "101麻痺等|102拘縮等|103寝返り|104起き上がり|105座位保持|106両足での立位|107歩行|108立ち上がり|109片足での立位|110洗身|111つめ切り|112視力|113聴力|201移乗|202移動|203えん下|204食事摂取|205排尿|206排便|207口腔清潔|208洗顔|209整髪|210上衣の着脱|211ズボン等の着脱|212外出頻度|301意思の伝達|302日課を理解|303生年月日をいう|304短期記憶|305自分の名前を言う|306今の季節を理解|307場所の理解|308徘徊|309外出して戻れない|401被害的|402作話|403感情が不安定|404昼夜逆転|405同じ話をする|406大声を出す|407介護に抵抗|408落ち着きなし|409一人で出たがる|410収集癖|411物や衣類を壊す|412ひどい物忘れ|413独り言（独り笑い）|414自分勝手に行動する|415話がまとまらない|501薬の内服|502金銭の管理|503日常の意思決定|504集団への不適応|505買い物|506簡単な調理|601点滴の管理|602中心静脈栄養|603透析|604ストーマの処置|605酸素療法|606レスピレーター|607気管切開の処置|608疼痛の看護|609経管栄養|610モニター測定|611じょくそうの処置|612カテーテル|701障害高齢者自立度|702認知症高齢者自立度"
   .split("|").map(s => [s.slice(0,3), s.slice(3)]);
 const zen = s => s.replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 0xFEE0));
@@ -1526,12 +1500,93 @@ function formCode(it){
   if (it.id === "6") { const c = IT("6").c.slice().sort((a,b)=>a-b); return c.length ? "6" + pad(c[0]+1) : "6群"; }
   const [g, n] = it.id.split("-"); return g + pad(+n);
 }
+/* 用紙に載せる特記：
+   第4群は「ときどきある」「ある」が1つもなければ1行「該当項目なし」、あれば該当項目だけ。
+   第6群（特別な医療）は選択がなければ1行「該当項目なし」。 */
+const G4 = ITEMS.filter(it => it.g === 4).map(it => it.id);
+const g4Checked = () => G4.filter(id => IT(id).c.some(k => k >= 1));
 function formEntries(){
-  return ITEMS.filter(it => IT(it.id).note.trim()).map(it => {
-    let t = IT(it.id).note.trim();
+  const out = [], hit4 = g4Checked();
+  for (const it of ITEMS) {
+    if (it.g === 4) {
+      if (!hit4.length) { if (it.id === G4[0]) out.push({id:"g4", code:"4群", name:"精神・行動障害", text:"第4群（精神・行動障害）は該当項目なし。", fixed:true}); continue; }
+      if (!hit4.includes(it.id)) continue;
+    }
+    if (it.id === "6" && !IT("6").c.length) { out.push({id:"g6", code:"6群", name:"特別な医療", text:"特別な医療は該当項目なし。", fixed:true}); continue; }
+    let t = IT(it.id).note.trim(); if (!t) continue;
     if (it.id === "6") { const c = IT("6").c.slice().sort((a,b)=>a-b); if (c.length > 1) t = `（${c.map(k=>"6"+pad(k+1)).join("・")}）` + t; }
-    return {code: formCode(it), text: t};
-  });
+    out.push({id: it.id, code: formCode(it), name: it.name, text: t});
+  }
+  return out;
+}
+const lineCount = e => wrapText(e.text, FORM.cpl).length;
+function formStats(){ const rows = formEntries().reduce((a, e) => a + lineCount(e), 0); return {rows, sheets: Math.max(1, Math.ceil(rows / FORM.rows))}; }
+
+/* 2枚に収める：項目ごとに行数の上限を決め、超える特記だけAIで要約する */
+const noIssue = it => { const c = IT(it.id).c; return c.length === 1 && c[0] === 0 && ["n","k","u"].includes(it.axis); };
+function lineBudget(target){
+  const es = formEntries(), plan = {};
+  let left = target - es.filter(e => e.fixed).length;
+  const items = es.filter(e => !e.fixed).map(e => ({e, it: BY[e.id], now: lineCount(e)}));
+  for (const x of items) {
+    x.want = x.it.id === "0" ? 5 : x.it.axis === "j" ? 2 : noIssue(x.it) ? 1 : 3;
+    x.b = Math.min(x.now, x.want);
+  }
+  let sum = items.reduce((a, x) => a + x.b, 0);
+  /* over budget: trim the larger allowances one line at a time, never below 1 */
+  while (sum > left) { const big = items.filter(x => x.b > 1).sort((a, b) => b.b - a.b)[0]; if (!big) break; big.b--; sum--; }
+  /* room to spare: give lines back to items that had more, issues first */
+  for (const x of items.filter(x => !noIssue(x.it)).concat(items.filter(x => noIssue(x.it)))) { while (sum < left && x.b < x.now) { x.b++; sum++; } }
+  for (const x of items) plan[x.it.id] = {rows: x.b, now: x.now};
+  return plan;
+}
+let compressing = false;
+async function compressNotes(target){
+  if (!SAMPLE || compressing) return;
+  const c = C(), plan = lineBudget(target);
+  const over = Object.entries(plan).filter(([id, p]) => p.now > p.rows);
+  if (!over.length) { toast("すでに収まっています"); return; }
+  compressing = true; renderOut();
+  const list = over.map(([id, p]) => { const it = BY[id], st = IT(id); return {id, name: it.name, choice: choiceText(it, st.c) || "未選択", maxChars: p.rows * FORM.cpl - 2, note: st.note.trim()}; });
+  try {
+    const res = await SAMPLE.json(`認定調査票（特記事項）を用紙${target / FORM.rows}枚に収めるため、次の特記事項をそれぞれ maxChars 以内（全角1字＝1、半角英数字は0.5）に要約してください。
+${RULES}
+- 優先して残す順：①頻度（回数）②介護の手間（誰が何を）③調査時の確認結果と日頃の状況の違い④選択根拠。前置き・重複・言い回しを削る。
+- 事実や回数を変えない。書かれていないことを足さない。
+- maxChars が45字以上なら、最後に「「n.選択肢名」を選択する。」を残す。45字未満なら選択肢の引用は省いてよい。
+JSONだけを返す：{"items":[{"id":"1-3","note":"要約後の特記"}]}
+
+${JSON.stringify(list)}`, {modelTier: "default", cache: false});
+    const back = {};
+    for (const x of (Array.isArray(res?.items) ? res.items : [])) {
+      const id = String(x?.id || ""), t = String(x?.note || "").trim();
+      if (!BY[id] || !t || !plan[id]) continue;
+      back[id] = IT(id).note; IT(id).note = t; IT(id).noteBy = IT(id).noteBy || "ai";
+    }
+    if (Object.keys(back).length) { c.noteBackup = back; save(); }
+    const s = formStats();
+    toast(s.sheets <= target / FORM.rows ? `用紙${s.sheets}枚に収まりました（${s.rows}行）` : `要約しましたが、まだ${s.sheets}枚（${s.rows}行）です。もう一度押すか、手で短くしてください`);
+  } catch(e) { toast(aiErr(e)); }
+  finally { compressing = false; renderOut(); }
+}
+function undoCompress(){
+  const c = C(); if (!c.noteBackup) return;
+  for (const [id, t] of Object.entries(c.noteBackup)) IT(id).note = t;
+  delete c.noteBackup; save(); renderOut(); toast("要約前の特記に戻しました");
+}
+function sheetInfoHTML(){
+  const s = formStats(), c = C();
+  const cls = s.sheets <= 2 ? "ok" : s.sheets === 3 ? "warn-t" : "err-t";
+  const msg = s.sheets <= 2 ? "原則の2枚以内に収まっています。" : s.sheets === 3 ? "2枚を超えています（3枚までは可）。可能なら2枚に収めてください。" : "3枚を超えています。2枚（多くても3枚）に収めてください。";
+  return `<div class="card savecard">
+    <div><b class="${cls}">用紙 ${s.sheets}枚（${s.rows}行）</b>　<span class="small">${msg}</span></div>
+    <div class="small muted">第4群は「ときどきある」「ある」がなければ、第6群は選択がなければ「該当項目なし」の1行にまとめています。</div>
+    <div class="btnrow" style="margin:0">
+      ${s.sheets > 2 ? `<button class="btn acc ai-only" id="fit2"${compressing?" disabled":""}>${compressing ? "要約中…" : "AIで2枚に収める"}</button>` : ""}
+      ${s.sheets > 3 ? `<button class="btn ai-only" id="fit3"${compressing?" disabled":""}>AIで3枚に収める</button>` : ""}
+      ${c.noteBackup ? `<button class="btn" id="fitUndo">要約前に戻す</button>` : ""}
+    </div>
+  </div>`;
 }
 /* wrap to the ruled line: full-width = 1, half-width = 0.5; closing punctuation never starts a line */
 const NOHEAD = "、。，．）」』】・ー！？!?)ぁぃぅぇぉっゃゅょァィゥェォッャュョ";
@@ -1560,35 +1615,115 @@ function formPages(){
 }
 const insurerNo = () => (C().meta.insurerNo ?? FORM.insurer).replace(/\D/g,"").slice(0,6);
 
-/* on-screen sheet (HTML, mm units, scaled to the screen width) */
-function formSheetsHTML(){
-  const pages = formPages(), ins = insurerNo();
-  const boxes = (val, n) => Array.from({length:n}, (_, i) => `<span class="fx-d">${esc(val[i]||"")}</span>`).join("");
-  return pages.map((rows, pi) => `<div class="fx-wrap"><div class="fx">
-    <div class="fx-top"><span class="fx-title">認定調査票（特記事項）</span><span class="fx-no">${FORM.no}</span></div>
-    <div class="fx-ids"><span class="fx-lab">保険者<br>番　号</span><span class="fx-boxes">${boxes(ins,6)}</span>
-      <span class="fx-lab">被保険者<br>番　号</span><span class="fx-boxes">${boxes("000",10)}</span>
-      <span class="fx-d fx-pg">${pi>0?pi+1:""}</span><span class="fx-pn">２枚目以降がある場合は左の<br>枠内に何枚目かを記入して下さい</span></div>
-    <div class="fx-gn">※概況特記は必ず記入して下さい。</div>
-    <div class="fx-body">
-      <div class="fx-side"><div class="fx-panel">
-        <div>［調査項目］</div><div>０００．概況　<span class="fx-r">（必須）</span></div>
-        <div>（主訴、家族状況、調査対象者の<br>居住環境、日常的に使用する<br>機器・器械の有無　等）</div>
-        ${PANEL.map(([c,n]) => `<div>${zen(c)}．${esc(n)}</div>`).join("")}
-      </div><div class="fx-r fx-must">※７０１．７０２は必須</div></div>
-      <div class="fx-main"><table class="fx-t"><thead><tr><th colspan="2">番　号</th><th>特　　　記　　　事　　　項</th></tr></thead><tbody>
-        ${Array.from({length:FORM.rows}, (_, i) => { const r = rows[i] || {code:"", text:""};
-          return `<tr><td class="fx-c1">${esc(r.code.slice(0,1))}</td><td class="fx-c2">${esc(r.code.slice(1))}</td><td class="fx-tx">${esc(r.text)}</td></tr>`; }).join("")}
-      </tbody></table>
-      <div class="fx-city">${FORM.city}</div></div>
-    </div>
-  </div></div>`).join("");
+/* on-screen sheet and PDF: drawn on a canvas at the coordinates measured from the
+   original form (枚方市 様式52・R7.10, 600dpi scan), in millimetres. */
+const FXC = {red:"#D84A60", band:"#E04E68", ink:"#111111", screen:"#C9C9C9", font:'"BIZ UDGothic","MS Gothic","Hiragino Sans","Osaka-Mono",monospace'};   /* the original is set in a monospaced Gothic */
+const FXG = {
+  tableL:54.30, tableR:199.35, tableT:34.63, headB:41.135, rowH:7.532, col1:60.775, col2:69.305,
+  panelL:13.845, panelR:51.78, panelT:34.76, panelB:282.125,
+  textX:70.6, textSize:2.82, codeC1:57.55, codeC2:65.05
+};
+function fxText(ctx, s, x, glyphTop, size, opt = {}){
+  ctx.font = `${opt.bold ? "700 " : ""}${size}px ${FXC.font}`;
+  ctx.fillStyle = opt.color || FXC.ink; ctx.textBaseline = "top";
+  ctx.textAlign = opt.align || "left";
+  ctx.fillText(s, x, glyphTop - size * 0.09, opt.max);
 }
+/* characters set at an even pitch from x0 so the line ends where the original's does */
+function fxSpread(ctx, s, x0, x1, glyphTop, size, opt = {}){
+  const ch = [...s], pitch = (x1 - x0) / ch.length;
+  ch.forEach((c, i) => fxText(ctx, c, x0 + i * pitch + (pitch - size) / 2, glyphTop, size, opt));
+}
+function fxLine(ctx, x1, y1, x2, y2, w, color, dash){
+  ctx.beginPath(); ctx.setLineDash(dash || []); ctx.lineWidth = w; ctx.strokeStyle = color || FXC.red;
+  ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+}
+function fxBox(ctx, x, y, w, h, lw, color){ ctx.setLineDash([]); ctx.lineWidth = lw; ctx.strokeStyle = color || FXC.red; ctx.strokeRect(x, y, w, h); }
+function fxScreen(ctx, x, y, w, h){
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.fillStyle = FXC.screen;
+  for (let yy = y + .2, r = 0; yy < y + h; yy += .42, r++) for (let xx = x + .2 + (r % 2) * .21; xx < x + w; xx += .42) { ctx.beginPath(); ctx.arc(xx, yy, .1, 0, Math.PI * 2); ctx.fill(); }
+  ctx.restore();
+}
+function drawSheet(ctx, rows, pi){
+  const G = FXG, ins = insurerNo();
+  ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, 210, 297);
+  /* title band */
+  ctx.fillStyle = FXC.band; ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(10.42, 9.15, 42.0, 4.99, 1.7); else ctx.rect(10.42, 9.15, 42.0, 4.99);
+  ctx.fill();
+  fxText(ctx, "認定調査票（特記事項）", 31.42, 10.05, 3.35, {color:"#FFFFFF", bold:true, align:"center"});
+  /* form number */
+  fxBox(ctx, 186.42, 5.84, 10.07, 7.12, .2);
+  ctx.font = `6.5px ${FXC.font}`; ctx.fillStyle = FXC.ink; ctx.textBaseline = "alphabetic"; ctx.textAlign = "center";
+  ctx.fillText("5", 189.35, 11.77); ctx.fillText("2", 193.75, 11.77);
+  /* insurer / insured number boxes */
+  const label = (x, w, top) => {
+    fxScreen(ctx, x, 17.30, w, 6.05); fxBox(ctx, x, 17.30, w, 6.05, .2);
+    fxText(ctx, top, x + w / 2, 17.85, 2.45, {color:FXC.red, align:"center"});
+    fxText(ctx, "番　号", x + w / 2, 20.75, 2.45, {color:FXC.red, align:"center"});
+  };
+  const boxes = (x0, n, val) => {
+    for (let i = 0; i < n; i++) {
+      const x = x0 + i * 4.751; fxBox(ctx, x, 17.30, 4.27, 6.05, .2);
+      if (val[i]) { ctx.font = `6px ${FXC.font}`; ctx.fillStyle = FXC.ink; ctx.textBaseline = "alphabetic"; ctx.textAlign = "center"; ctx.fillText(val[i], x + 2.135, 22.65); }
+    }
+  };
+  label(11.39, 8.53, "保険者"); boxes(20.92, 6, ins);
+  label(51.90, 13.0, "被保険者"); boxes(65.92, 10, "000");
+  fxBox(ctx, 120.96, 17.19, 4.34, 6.10, .2);
+  if (pi > 0) fxText(ctx, String(pi + 1), 123.13, 18.3, 4.2, {align:"center"});
+  fxText(ctx, "２枚目以降がある場合は左の", 128.3, 17.1, 2.8, {color:FXC.red});
+  fxText(ctx, "枠内に何枚目かを記入して下さい", 128.3, 21.0, 2.8, {color:FXC.red});
+  fxText(ctx, "※概況特記は必ず記入して下さい。", 55.4, 30.74, 2.75, {color:FXC.red});
+  /* item panel */
+  fxBox(ctx, G.panelL, G.panelT, G.panelR - G.panelL, G.panelB - G.panelT, .33, FXC.ink);
+  /* panel: one full-width cell = 2.5mm, item lines every 3.235mm, as on the original */
+  const ps = 2.5, cx = 15.5;
+  fxText(ctx, "[調査項目]", 16.9, 36.71, ps);
+  fxText(ctx, "０００．概況", cx, 40.26, ps); fxText(ctx, "（必須）", cx + 8 * ps, 40.26, ps, {color:FXC.red});
+  fxSpread(ctx, "（主訴、家族状況、調査対象者の", 13.9, 50.4, 43.69, ps);
+  fxSpread(ctx, "居住環境、日常的に使用する", cx, 50.2, 46.45, ps);
+  fxSpread(ctx, "機器・器械の有無　等）", cx, 42.5, 49.20, ps);
+  PANEL.forEach(([c, n], i) => fxText(ctx, `${zen(c)}．${n}`, cx, 53.01 + i * 3.2351, ps));
+  fxText(ctx, "※７０１．７０２は必須", 14.6, 284.09, 2.5, {color:FXC.red});
+  /* main table */
+  const B = G.headB + FORM.rows * G.rowH;
+  for (let i = 1; i < FORM.rows; i++) fxLine(ctx, G.tableL, G.headB + i * G.rowH, G.tableR, G.headB + i * G.rowH, .13, FXC.red, [.53, .47]);
+  fxLine(ctx, G.col1, G.headB, G.col1, B, .13, FXC.red, [.53, .47]);
+  fxLine(ctx, G.col2, G.tableT, G.col2, B, .17);
+  fxLine(ctx, G.tableL, G.headB, G.tableR, G.headB, .2);
+  fxBox(ctx, G.tableL, G.tableT, G.tableR - G.tableL, B - G.tableT, .38);
+  fxText(ctx, "番", 56.85, 35.75, 3.9); fxText(ctx, "号", 63.4, 35.75, 3.9);
+  [98.5, 121.1, 143.7, 166.3].forEach((x, k) => fxText(ctx, "特記事項"[k], x, 35.75, 3.9));
+  for (let i = 0; i < FORM.rows; i++) {
+    const r = rows[i]; if (!r) continue;
+    const mid = G.headB + i * G.rowH + G.rowH / 2;
+    ctx.textBaseline = "middle"; ctx.fillStyle = FXC.ink;
+    ctx.font = `3.1px ${FXC.font}`; ctx.textAlign = "center";
+    if (r.code) { ctx.fillText(r.code.slice(0, 1), G.codeC1, mid); ctx.fillText(r.code.slice(1), G.codeC2, mid); }
+    ctx.font = `${G.textSize}px ${FXC.font}`; ctx.textAlign = "left"; ctx.fillText(r.text, G.textX, mid, G.tableR - G.textX - .4);
+  }
+  FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [167.1, 180.0, 191.7][k], 285.36, 3.05));
+}
+let fxPages = [];
+function formSheetsHTML(){
+  fxPages = formPages();
+  return fxPages.map((_, i) => `<div class="fx-wrap"><canvas class="fx-cv" data-p="${i}" role="img" aria-label="特記事項用紙 ${i+1}枚目"></canvas></div>`).join("");
+}
+function renderSheetCanvas(cv, rows, pi, pxWidth){
+  cv.width = Math.round(pxWidth); cv.height = Math.round(pxWidth * 297 / 210);
+  const ctx = cv.getContext("2d"), k = cv.width / 210;
+  ctx.setTransform(k, 0, 0, k, 0, 0); drawSheet(ctx, rows, pi);
+}
+let fxFontReady = null;
 function fitSheets(){
-  document.querySelectorAll(".fx-wrap").forEach(w => {
-    const s = Math.min(1, w.clientWidth / (210 * 96 / 25.4));
-    const f = w.firstElementChild; f.style.transform = `scale(${s})`; w.style.height = `${297 * 96 / 25.4 * s}px`;
+  const draw = () => document.querySelectorAll(".fx-cv").forEach(cv => {
+    const p = +cv.dataset.p; renderSheetCanvas(cv, fxPages[p] || [], p, cv.parentElement.clientWidth * (window.devicePixelRatio || 1) * 1.5);
   });
+  draw();
+  fxFontReady = fxFontReady || (document.fonts ? document.fonts.load(`10px "BIZ UDGothic"`).catch(() => {}) : Promise.resolve());
+  fxFontReady.then(draw);
 }
 window.addEventListener("resize", fitSheets);
 const fileBase = () => { const m = C().meta; return `特記事項_${(m.subject||"未設定").replace(/[\\/:*?"<>|\s]/g,"")}_${m.date||today()}`; };
@@ -1596,54 +1731,55 @@ const fileBase = () => { const m = C().meta; return `特記事項_${(m.subject||
 /* Word (.docx) — the same sheet in WordprocessingML, A4, one sheet per page */
 function docxXML(){
   const X = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const R = FORM.red, FONT = '<w:rFonts w:ascii="BIZ UDPゴシック" w:eastAsia="BIZ UDPゴシック" w:hAnsi="BIZ UDPゴシック"/>';
+  const R = FORM.red, FONT = '<w:rFonts w:ascii="BIZ UDゴシック" w:eastAsia="BIZ UDゴシック" w:hAnsi="BIZ UDゴシック"/>';
   const run = (t, o={}) => `<w:r><w:rPr>${FONT}${o.b?"<w:b/>":""}<w:color w:val="${o.color||"111111"}"/><w:sz w:val="${o.sz||20}"/></w:rPr><w:t xml:space="preserve">${X(t)}</w:t></w:r>`;
   const para = (runs, o={}) => `<w:p><w:pPr><w:spacing w:before="0" w:after="0"${o.line?` w:line="${o.line}" w:lineRule="exact"`:""}/>${o.ind?`<w:ind w:left="${o.ind}"/>`:""}<w:jc w:val="${o.jc||"left"}"/></w:pPr>${runs}</w:p>`;
   const bd = (side, val, color, sz) => `<w:${side} w:val="${val}" w:sz="${sz||8}" w:space="0" w:color="${color}"/>`;
   const NIL = ["top","left","bottom","right"].map(s => `<w:${s} w:val="nil"/>`).join("");
   const tc = (w, content, o={}) => `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${o.span?`<w:gridSpan w:val="${o.span}"/>`:""}${o.vm?`<w:vMerge${o.vm==="restart"?' w:val="restart"':""}/>`:""}<w:tcBorders>${o.bd||NIL}</w:tcBorders>${o.fill?`<w:shd w:val="clear" w:color="auto" w:fill="${o.fill}"/>`:""}<w:tcMar><w:left w:w="${o.ml??40}" w:type="dxa"/><w:right w:w="40" w:type="dxa"/></w:tcMar><w:vAlign w:val="${o.va||"center"}"/></w:tcPr>${content || para("")}</w:tc>`;
   const tr = (h, cells) => `<w:tr><w:trPr><w:trHeight w:val="${h}" w:hRule="exact"/></w:trPr>${cells}</w:tr>`;
-  const tbl = (grid, rows) => `<w:tbl><w:tblPr><w:tblW w:w="${grid.reduce((a,b)=>a+b,0)}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w=>`<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>${rows}</w:tbl>`;
-  const box = (t, color) => tc(369, para(run(t, {sz:26}), {jc:"center"}), {bd: ["top","left","bottom","right"].map(s=>bd(s,"single",color||R,6)).join("")});
-  const lab = t => tc(t.length>4?794:680, para(run(t.slice(0, t.length-2), {sz:12, color:"FFFFFF"}), {jc:"center"}) + para(run("番　号", {sz:12, color:"FFFFFF"}), {jc:"center"}), {fill:R});
+  const tbl = (grid, rows, ind) => `<w:tbl><w:tblPr><w:tblW w:w="${grid.reduce((a,b)=>a+b,0)}" w:type="dxa"/>${ind?`<w:tblInd w:w="${ind}" w:type="dxa"/>`:""}<w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w=>`<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>${rows}</w:tbl>`;
+  const box = (t, w) => tc(w||242, para(run(t, {sz:26}), {jc:"center"}), {ml:0, bd: ["top","left","bottom","right"].map(s=>bd(s,"single",R,4)).join("")});
+  const gap = w => tc(w, "", {ml:0});
+  const lab = t => tc(t.length>4?737:484, para(run(t.slice(0, t.length-2), {sz:13, color:R}), {jc:"center", line:150}) + para(run("番　号", {sz:13, color:R}), {jc:"center", line:150}), {ml:0, fill:"D9D9D9", bd: ["top","left","bottom","right"].map(s=>bd(s,"single",R,4)).join("")});
   const ins = insurerNo();
   const panelLines = [
-    run("［調査項目］", {sz:17}), run("０００．概況　", {sz:17}) + run("（必須）", {sz:17, color:R}),
-    run("（主訴、家族状況、調査対象者の", {sz:17}), run("居住環境、日常的に使用する", {sz:17}), run("機器・器械の有無　等）", {sz:17}),
-    ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:17}))
-  ].map(r => para(r, {line:186, ind:60})).join("");   /* 74 lines × 186 ≒ panel cell 13,894 */
+    run("[調査項目]", {sz:14}), run("０００．概況", {sz:14}) + run("（必須）", {sz:14, color:R}),
+    run("（主訴、家族状況、調査対象者の", {sz:14}), run("居住環境、日常的に使用する", {sz:14}), run("機器・器械の有無　等）", {sz:14}),
+    ...PANEL.map(([c,n]) => run(`${zen(c)}．${n}`, {sz:14}))
+  ].map((r, i) => para(r, {line: i < 5 ? 158 : 183, ind:60})).join("");   /* item pitch 3.235mm as on the original */
   const BLK = "111111", sideBd = s => bd(s, "single", BLK, 12);
-  const G = [2835, 170, 340, 454, 6974];   /* panel 50mm | gap 3mm | 番 6mm | 号 8mm | 特記事項 123mm */
+  const G = [2151, 143, 367, 484, 7372];   /* measured from the original: panel 37.9mm | gap 2.5mm | 番 6.5mm | 号 8.5mm | 特記事項 130.0mm */
   const sheet = (rows, pi) => {
-    const top = tbl([3969, 5953, 851], tr(567,
-      tc(3969, para(run("認定調査票（特記事項）", {b:1, sz:26, color:"FFFFFF"}), {jc:"center"}), {fill:R}) + tc(5953, "") +
-      tc(851, para(run(FORM.no, {sz:32}), {jc:"center"}), {bd: ["top","left","bottom","right"].map(sideBd).join("")})));
-    const ids = tbl([680, 369,369,369,369,369,369, 227, 794, 369,369,369,369,369,369,369,369,369,369, 340, 397, 2431], tr(510,
-      lab("保険者番号") + [...Array(6)].map((_,i)=>box(ins[i]||"", BLK)).join("") + tc(227, "") +
-      lab("被保険者番号") + [...Array(10)].map((_,i)=>box("000"[i]||"", BLK)).join("") + tc(340, "") +
-      box(pi>0 ? String(pi+1) : "") +
-      tc(2431, para(run("２枚目以降がある場合は左の", {sz:13, color:R})) + para(run("枠内に何枚目かを記入して下さい", {sz:13, color:R})), {ml:80})));
-    const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 3005, line: 220});
+    const top = tbl([2381, 7406, 571, 140], tr(404,
+      tc(2381, para(run("認定調査票（特記事項）", {b:1, sz:19, color:"FFFFFF"}), {jc:"center"}), {fill:"E04E68", ml:0}) + gap(7406) +
+      tc(571, para(run(FORM.no, {sz:36}), {jc:"center"}), {ml:0, bd: ["top","left","bottom","right"].map(s=>bd(s,"single",R,4)).join("")}) + gap(140)), -194);
+    const ids = tbl([484, ...Array(6).fill(269), 168, 737, ...Array(10).fill(269), 454, 246, 4263], tr(343,
+      lab("保険者番号") + [...Array(6)].map((_,i)=>box(ins[i]||"", 269)).join("") + gap(168) +
+      lab("被保険者番号") + [...Array(10)].map((_,i)=>box("000"[i]||"", 269)).join("") + gap(454) +
+      box(pi>0 ? String(pi+1) : "", 246) +
+      tc(4263, para(run("２枚目以降がある場合は左の", {sz:15, color:R}), {line:190}) + para(run("枠内に何枚目かを記入して下さい", {sz:15, color:R}), {line:190}), {ml:167})), -139);
+    const note = para(run("※概況特記は必ず記入して下さい。", {sz:15, color:R}), {ind: 2370, line: 220});
     const red = (s, v) => bd(s, v||"single", R, 8);
-    const head = tr(454,
+    const head = tr(369,
       tc(G[0], panelLines, {vm:"restart", va:"top", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"restart"}) +
-      tc(G[2]+G[3], para(run("番　号", {sz:18}), {jc:"center"}), {span:2, bd: red("top")+red("left")+red("bottom")+red("right")}) +
-      tc(G[4], para(run("特　　　記　　　事　　　項", {sz:18}), {jc:"center"}), {bd: red("top")+red("left")+red("bottom")+red("right")}));
+      tc(G[2]+G[3], para(run("番　　号", {sz:19}), {jc:"center"}), {span:2, bd: red("top")+red("left")+red("bottom")+red("right")}) +
+      tc(G[4], para(run("特　　　　記　　　　事　　　　項", {sz:19}), {jc:"center"}), {bd: red("top")+red("left")+red("bottom")+red("right")}));
     const body = Array.from({length: FORM.rows}, (_, i) => {
       const r = rows[i] || {code:"", text:""}, last = i === FORM.rows-1, bottom = red("bottom", last ? "single" : "dashed");
-      return tr(420,
+      return tr(427,
         tc(G[0], "", {vm:"cont", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"cont"}) +
         tc(G[2], para(run(r.code.slice(0,1)), {jc:"center"}), {bd: red("left") + bottom + red("right","dashed")}) +
         tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
-        tc(G[4], para(run(r.text)), {ml:80, bd: red("left") + bottom + red("right")}));
+        tc(G[4], para(run(r.text, {sz:16})), {ml:73, bd: red("left") + bottom + red("right")}));
     }).join("");
     const cityP = `<w:p><w:pPr><w:spacing w:before="113" w:after="0" w:line="170" w:lineRule="exact"/><w:jc w:val="right"/></w:pPr>${run(FORM.city, {sz:15})}</w:p>`;
-    const foot = tbl([G[0], 10773-G[0]], tr(300, tc(G[0], para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220}), {va:"top"}) + tc(10773-G[0], cityP, {va:"top", ml:0})));
-    return top + para("", {line:80}) + ids + para("", {line:60}) + note + tbl(G, head + body) + foot;
+    const foot = tbl([G[0], 10517-G[0]], tr(300, tc(G[0], para(run("※７０１．７０２は必須", {sz:15, color:R}), {line: 220}), {va:"top"}) + tc(10517-G[0], cityP, {va:"top", ml:0})));
+    return top + para("", {line:178}) + ids + para("", {line:120}) + note + tbl(G, head + body) + foot;
   };
   /* each sheet after the first starts with a 1pt paragraph set to begin a new page (no leftover break line) */
   const pages = formPages().map((rows, i) => (i ? `<w:p><w:pPr><w:pageBreakBefore/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>` : "") + sheet(rows, i)).join("");
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="567" w:bottom="567" w:left="567" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="519" w:right="604" w:bottom="454" w:left="785" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 async function docxBlob(){
   const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
@@ -1667,8 +1803,8 @@ function dlErr(e){
   if (e?.code === "rate_limited") { toast("保存の確認画面がすでに開いています"); return; }
   toast("この表示ではファイルを保存できません");
 }
-/* PDF：画面の用紙（枚方市様式）を1枚ずつ高解像度で画像にし、A4のPDFにまとめる */
-const PDF_LIBS = ["https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"];
+/* PDF：用紙を1枚ずつ原本の寸法でcanvasに描き、A4のPDFにまとめる */
+const PDF_LIBS = ["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"];
 function loadScript(src){
   return new Promise((res, rej) => {
     if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
@@ -1677,21 +1813,17 @@ function loadScript(src){
 }
 async function makePdfBlob(onProgress){
   await Promise.all(PDF_LIBS.map(loadScript));
-  try { await document.fonts?.ready; } catch(_) {}
-  const box = document.createElement("div");
-  box.className = "fx-pdf"; box.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm";
-  box.innerHTML = formSheetsHTML(); document.body.append(box);
-  try {
-    const pdf = new window.jspdf.jsPDF({unit:"mm", format:"a4", orientation:"portrait", compress:true});
-    const sheets = [...box.querySelectorAll(".fx")];
-    for (const [i, el] of sheets.entries()) {
-      onProgress?.(i + 1, sheets.length);
-      const cv = await window.html2canvas(el, {scale: 2, backgroundColor: "#FFFFFF", logging: false});
-      if (i) pdf.addPage();
-      pdf.addImage(cv.toDataURL("image/jpeg", 0.85), "JPEG", 0, 0, 210, 297);
-    }
-    return pdf.output("blob");
-  } finally { box.remove(); }
+  try { await document.fonts?.load(`10px "BIZ UDGothic"`); await document.fonts?.ready; } catch(_) {}
+  const pages = formPages(), pdf = new window.jspdf.jsPDF({unit:"mm", format:"a4", orientation:"portrait", compress:true});
+  const cv = document.createElement("canvas");
+  for (const [i, rows] of pages.entries()) {
+    onProgress?.(i + 1, pages.length);
+    renderSheetCanvas(cv, rows, i, 2480);
+    if (i) pdf.addPage();
+    pdf.addImage(cv.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, 210, 297);
+    await new Promise(r => setTimeout(r));
+  }
+  return pdf.output("blob");
 }
 async function savePdf(){
   if (!DL) { toast("この表示ではファイルを保存できません"); return; }
@@ -1782,15 +1914,16 @@ async function driveSave(manual){
 
 /* ---------- output view ---------- */
 function buildOutput(withChoice){
-  const c = C(), m = c.meta;
-  let out = `認定調査票（特記事項）\n調査実施日：${m.date||""}　調査員：${m.surveyor||""}　対象者：${m.subject||""}\n`;
-  for (const g of GROUPS) {
-    const its = ITEMS.filter(x=>x.g===g.g);
-    out += `\n${g.head}\n`;
-    for (const it of its) {
-      const st = IT(it.id);
-      out += `${formCode(it)}　${it.name}${withChoice && st.c.length?`〔${choiceText(it, st.c)}〕`:""}\n${st.note.trim() || "（未作成）"}\n`;
-    }
+  const m = C().meta;
+  let out = `認定調査票（特記事項）
+調査実施日：${m.date||""}　調査員：${m.surveyor||""}　対象者：${m.subject||""}
+
+`;
+  for (const e of formEntries()) {
+    const it = BY[e.id], st = it ? IT(e.id) : null;
+    out += `${e.code}　${e.name}${withChoice && st && st.c.length ? `〔${choiceText(it, st.c)}〕` : ""}
+${e.text}
+`;
   }
   return out;
 }
@@ -1806,7 +1939,8 @@ function checks(){
     if (cited.length && st.c.length && cited.some(k => !st.c.includes(k))) w.push({id:it.id, kind:"miss", msg:`特記の選択根拠（${cited.map(k=>`「${k+1}.${it.ch[k]}」`).join("")}）と選択（${choiceText(it, st.c)}）が一致しません`});
     const notFirst = st.c.length && !(st.c.length===1 && st.c[0]===0);
     if (it.ch.length && !st.c.length && it.id!=="6") w.push({id:it.id, kind:"miss", msg:"選択が未入力"});
-    if (!hasNote) w.push({id:it.id, kind:"miss", msg: st.missing ? `特記未作成：${st.missing}` : n ? `聞き取り ${n} 件がありますが、特記が未作成` : "特記未作成（会話で確認できていません）"});
+    const summarized = (it.g === 4 && !st.c.some(k => k >= 1)) || (it.id === "6" && !st.c.length);   /* 用紙では「該当項目なし」にまとめる */
+    if (!hasNote && !summarized) w.push({id:it.id, kind:"miss", msg: st.missing ? `特記未作成：${st.missing}` : n ? `聞き取り ${n} 件がありますが、特記が未作成` : "特記未作成（会話で確認できていません）"});
     if (c.prop[it.id]) w.push({id:it.id, kind:"note", msg:"調査員の特記と別にAI案があります"});
     if (st.cBy==="ai" && st.c.length) w.push({id:it.id, kind:"note", msg:`選択がAI推定のまま（${choiceText(it, st.c)}）`});
   }
@@ -1987,7 +2121,8 @@ function renderOut(){
     <h3>確認（${w.length}件）</h3>
     ${w.length ? `<details${w.length<=8?" open":""}><summary>未入力（選択・特記） ${miss} 件・内容の確認 ${w.length-miss} 件</summary><div class="warns" style="margin-top:6px">${w.map(x=>`<button class="warn" data-go="${x.id}"><span class="wk ${x.kind==="miss"?"miss":""}">${x.id}</span><span>${esc(BY[x.id].name)}：${esc(x.msg)}</span></button>`).join("")}</div></details>` : '<p class="ok">選択と特記の記入漏れはありません。</p>'}
     <h3>特記事項用紙</h3>
-    <p class="small muted" style="margin:0 0 8px">枚方市の様式（52・R7.10）に合わせています。1枚32行で、入りきらない場合は2枚目以降に続きます。</p>
+    ${sheetInfoHTML()}
+    <p class="small muted" style="margin:8px 0">枚方市の様式（52・R7.10）に合わせています。1枚32行で、原則2枚（多くても3枚）に収めます。</p>
     <div id="paper">${formSheetsHTML()}</div>
     <h3>文字起こし記録（市への提出用）</h3>
     ${transcriptSectionHTML()}
@@ -1998,6 +2133,9 @@ function renderOut(){
 $("#v-out").addEventListener("click", e => {
   const g = e.target.closest("[data-go]"); if (g) { go("items"); openDetail(g.dataset.go); return; }
   if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
+  if (e.target.id==="fit2") compressNotes(FORM.rows * 2);
+  if (e.target.id==="fit3") compressNotes(FORM.rows * 3);
+  if (e.target.id==="fitUndo") undoCompress();
   if (e.target.id==="copyLog") copyText(transcriptText());
   if (e.target.id==="proofBtn") proofread();
   if (e.target.id==="proofStop") proofCtl?.abort();
@@ -2198,6 +2336,6 @@ function refreshAll(){ updateCaseBtn(); S.detail = null; if (!AUTO.busy) { AUTO.
 
 load(); setSpeaker("自動"); updateCaseBtn(); go("cap");
 /* test hook: only when opened with ?test outside the Claude viewer (local testing) */
-if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, makePdfBlob, transcriptDocxXML, transcriptText, proofread, buildOutput: () => buildOutput(withChoice)};
+if (!window.claude && /[?&]test\b/.test(location.search)) window.ninteiTest = {setSample: f => { SAMPLE = f; document.body.classList.toggle("ai-off", !f); renderLog(false); }, commit, state: () => C(), loadSample, simulate, formSheetsHTML, formPages, docxXML, docxBlob, makePdfBlob, formStats, lineBudget, formEntries, compressNotes, transcriptDocxXML, transcriptText, proofread, buildOutput: () => buildOutput(withChoice)};
 })();
 </script>
