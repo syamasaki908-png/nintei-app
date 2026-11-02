@@ -149,6 +149,14 @@ body:not(.ai-off) .ai-offnote{display:none}
 /* detail */
 .back{border:0;background:none;color:var(--accent);padding:4px 0;font-size:14px}
 .axis{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--muted);vertical-align:middle;font-weight:400}
+.cs-btn{padding:5px 10px;font-size:13px;margin-top:6px}
+.cs-log{display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto;margin:8px 0}
+.cs-u{align-self:flex-end;max-width:85%;background:var(--ok-weak);border-radius:12px 12px 2px 12px;padding:8px 10px;white-space:pre-wrap;font-size:14px}
+.cs-a{align-self:flex-start;max-width:95%;background:var(--bg);border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:8px 10px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.cs-ch{border:1.5px solid var(--warn);background:var(--warn-weak);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.cs-note{white-space:pre-wrap;font-size:13.5px;background:var(--surface);border-radius:6px;padding:6px 8px;align-self:stretch}
+.cs-in{display:flex;gap:8px;align-items:flex-end}
+.cs-in textarea{flex:1;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--surface);color:var(--ink,inherit);resize:vertical}
 .hint{font-size:13px;color:var(--muted);background:var(--surface);border-left:3px solid var(--line);padding:6px 10px;margin:8px 0}
 .choices{display:flex;flex-direction:column;gap:6px}
 .choice{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;min-height:44px}
@@ -1254,6 +1262,7 @@ $("#v-items").addEventListener("click", e => {
   if (!S.detail) return;
   const c = C(), it = BY[S.detail], st = IT(it.id);
   const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.consult) { consultFrom(t.dataset.consult); return; }
   if (t.id==="dBack") { S.detail=null; renderItems(); return; }
   if (t.classList.contains("choice")) {
     const k = +t.dataset.k, wasDone = !missingItems().length, before = st.c.slice();
@@ -2010,11 +2019,132 @@ ${list}`, {modelTier: "default", cache: false});
 }
 function itemConsistHTML(id){
   const mine = consistency().filter(x => x.ids.includes(id));
-  return mine.map(x => `<div class="hint" style="border-left-color:var(--rec)"><b>整合性：</b>${esc(x.msg)}（関係：${x.ids.filter(i=>i!==id).map(i=>formCode(BY[i])+" "+BY[i].name.slice(0,8)).map(esc).join("、")}）</div>`).join("");
+  return mine.map(x => `<div class="hint" style="border-left-color:var(--rec)"><b>整合性：</b>${esc(x.msg)}（関係：${x.ids.filter(i=>i!==id).map(i=>formCode(BY[i])+" "+BY[i].name.slice(0,8)).map(esc).join("、")}）<br><button class="btn cs-btn ai-only" data-consult="rule:${consistency().findIndex(y => y.msg === x.msg)}">${consultHas(x.msg) ? "相談の続き" : "AIに相談"}</button></div>`).join("");
 }
 function consistHTML(list, ai){
-  return list.map(x => `<div class="warn" style="flex-wrap:wrap"><span class="wk${ai?"":" miss"}">${ai?"AI":"要確認"}</span>${x.ids.map(id => `<button class="sug" data-go="${id}">${esc(formCode(BY[id]))} ${esc(BY[id].name.slice(0,8))}</button>`).join("")}<span style="flex-basis:100%">${esc(x.msg)}</span></div>`).join("");
+  return list.map((x, i) => `<div class="warn" style="flex-wrap:wrap"><span class="wk${ai?"":" miss"}">${ai?"AI":"要確認"}</span>${x.ids.map(id => `<button class="sug" data-go="${id}">${esc(formCode(BY[id]))} ${esc(BY[id].name.slice(0,8))}</button>`).join("")}<span style="flex-basis:100%">${esc(x.msg)}</span><button class="btn cs-btn ai-only" data-consult="${ai?"ai":"rule"}:${i}">${consultHas(x.msg) ? "相談の続き" : "AIに相談"}</button></div>`).join("");
 }
+
+/* ---------- 指摘事項の相談（チャット） ----------
+   整合性チェック（ルール・AI）の指摘ごとに、調査員がAIとやりとりして、
+   選択と特記事項の修正案を受け取り、ボタン1つで反映する。
+   会話はこの端末のケースごとに残す（c.consult[指摘文]）。 */
+let consult = null;          /* {key, issue, busy, ctl} */
+const consultHas = key => !!C().consult?.[key]?.length;
+const consultLog = key => { const c = C(); c.consult = c.consult || {}; return c.consult[key] || (c.consult[key] = []); };
+function openConsult(issue){
+  if (!SAMPLE) { toast("この表示ではAIに相談できません"); return; }
+  consult = {key: issue.msg, issue, busy: false, ctl: null};
+  renderConsult();
+  if (!consultLog(consult.key).length) consultSend("");
+}
+function changeHTML(ch, mi, ci){
+  const it = BY[ch.id], st = IT(ch.id);
+  const now = ch.from ?? (choiceText(it, st.c) || "未選択"), next = ch.choice ? choiceText(it, ch.choice.map(n => n - 1)) : "";
+  return `<div class="cs-ch">
+    <div class="small"><b>${esc(formCode(it))} ${esc(it.name)}</b>${ch.why ? `：${esc(ch.why)}` : ""}</div>
+    ${ch.choice ? `<div class="small">選択：${esc(now)} → <b>${esc(next)}</b></div>` : ""}
+    ${ch.note != null ? `<div class="small muted">特記事項（書き換え後）</div><div class="cs-note">${esc(ch.note)}</div>` : ""}
+    ${ch.applied ? `<div class="ok small">反映しました</div>` : `<button class="btn acc" data-cs-apply="${mi}:${ci}">この変更を反映</button>`}
+  </div>`;
+}
+function renderConsult(){
+  if (!consult) return;
+  const log = consultLog(consult.key), draft = $("#csIn")?.value || "";
+  const rel = consult.issue.ids.filter(id => BY[id]).map(id => `${formCode(BY[id])} ${BY[id].name}`).join("、");
+  openSheet(`<div class="sheet-h"><b>指摘事項をAIに相談</b><button class="btn" data-close>閉じる</button></div>
+    <div class="hint" style="border-left-color:var(--rec);margin-top:0"><b>指摘：</b>${esc(consult.issue.msg)}<br><span class="small">関係する項目：${esc(rel || "—")}</span></div>
+    <div class="cs-log" id="csLog">${log.map((m, mi) => m.role === "user"
+      ? `<div class="cs-u">${esc(m.text)}</div>`
+      : `<div class="cs-a"><div style="white-space:pre-wrap">${esc(m.text)}</div>${(m.changes || []).map((ch, ci) => changeHTML(ch, mi, ci)).join("")}
+         ${(m.changes || []).filter(ch => !ch.applied).length > 1 ? `<button class="btn" data-cs-all="${mi}">すべて反映</button>` : ""}</div>`).join("")}
+      ${consult.busy ? `<div class="cs-a muted">考えています…</div>` : ""}</div>
+    <div class="cs-in">
+      <textarea id="csIn" rows="2" placeholder="事実の補足や、AIの案への意見を入力（例：日頃は手すりにつかまって歩いている）">${esc(draft)}</textarea>
+      ${consult.busy ? `<button class="btn" data-cs-stop>中止</button>` : `<button class="btn acc" data-cs-send>送信</button>`}
+    </div>
+    <p class="small muted" style="margin:6px 0 0">AIの案は、ボタンを押すまで選択や特記事項に反映されません。会話にない事実は特記に足さないよう指示しています。</p>`);
+  const lg = $("#csLog"); if (lg) lg.scrollTop = lg.scrollHeight;
+}
+async function consultSend(text){
+  if (!consult || consult.busy) return;
+  const cs = consult, log = consultLog(cs.key);
+  if (text) log.push({role: "user", text});
+  const ids = cs.issue.ids.filter(id => BY[id]);
+  const items = ids.map(id => { const it = BY[id], st = IT(id);
+    return `【${id}｜${formCode(it)} ${it.name}】評価軸：${AXIS[it.axis].label}（${EXTRA[it.id] || AXIS[it.axis].guide}）
+選択肢：${it.ch.map((t, k) => `${k+1}.${t}`).join(" ")}${it.multi ? "（複数選択）" : ""}
+今の選択：${choiceText(it, st.c) || "未選択"}
+今の特記事項：${st.note.trim() || "なし"}
+この項目に紐づく記録：
+${uttsFor(id).slice(-40).map(line).join("\n") || "（なし）"}`; }).join("\n\n");
+  const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。認定調査票の点検で出た指摘について、調査員と相談しながら、選択と特記事項の修正案を出してください。
+
+${RULES}
+- 相談の進め方：まず指摘の要点と、記録から分かること・分からないことを短く整理する。判断に必要な事実が足りなければ、調査員に具体的に質問する（1回に3つまで）。
+- 修正案は、記録または調査員の発言に根拠がある場合だけ出す。会話にない事実を作らない。選択が正しく、特記で事情を補えば足りる場合は、特記だけを直す案にする。直す必要がなければ、その理由を伝えて changes は空にする。
+- 特記事項の案は、その項目の特記の全文（書き換え後）を書く。選択を変える場合は、新しい選択の根拠になる内容にし、選択肢名は「番号.選択肢名」の形で引用する。
+
+指摘：${cs.issue.msg}
+
+関係する項目：
+${ids.length ? items : "（項目の指定なし）"}
+
+概況：
+${metaSummary()}
+
+これまでの相談（調査員／AI）：
+${log.map(m => `${m.role === "user" ? "調査員" : "AI"}：${m.text}${(m.changes || []).length ? `\n（AIの修正案：${m.changes.map(ch => `${ch.id}${ch.choice ? ` 選択${ch.choice.join("・")}` : ""}${ch.note != null ? " 特記を書き換え" : ""}${ch.applied ? "＝反映済み" : "＝未反映"}`).join("、")}）` : ""}`).join("\n") || "（まだなし。最初の整理をしてください）"}
+
+次の形のJSONだけを返す：
+{"reply":"調査員への返答（平易な日本語、300字以内）","changes":[{"id":"1-7","choice":[2],"note":"特記事項の全文","why":"変更の理由を1文"}]}
+choice は1始まりの選択肢番号の配列で、選択を変えないときは null。note は特記を変えないときは null。修正案がなければ changes は空配列。`;
+  cs.busy = true; cs.ctl = new AbortController(); renderConsult();
+  try {
+    const res = await SAMPLE.json(prompt, {signal: cs.ctl.signal, cache: false});
+    const changes = (Array.isArray(res?.changes) ? res.changes : []).map(ch => {
+      const it = BY[String(ch?.id)]; if (!it) return null;
+      let choice = Array.isArray(ch.choice) ? ch.choice.map(Number).filter(n => n >= 1 && n <= it.ch.length) : null;
+      if (choice && !choice.length) choice = null;
+      if (choice && !it.multi) choice = choice.slice(0, 1);
+      const note = typeof ch.note === "string" && ch.note.trim() ? ch.note.trim() : null;
+      return (choice || note != null) ? {id: it.id, choice, note, why: String(ch.why || ""), from: choiceText(it, IT(it.id).c) || "未選択"} : null;
+    }).filter(Boolean);
+    log.push({role: "ai", text: String(res?.reply || "").trim() || "（返答なし）", changes});
+  } catch(e) {
+    if (e?.code !== "cancelled") { toast(aiErr(e)); if (text) $("#csIn") && ($("#csIn").value = text); }
+    if (text && log[log.length - 1]?.text === text) log.pop();
+  } finally {
+    cs.busy = false; cs.ctl = null; save();
+    if (consult === cs && !scrim.hidden) renderConsult();
+  }
+}
+function applyChange(ch){
+  const it = BY[ch.id], st = IT(ch.id), before = st.c.slice();
+  if (ch.choice) { st.c = ch.choice.map(n => n - 1); st.cBy = "user"; }
+  if (ch.note != null) st.note = ch.note;
+  else if (ch.choice) { syncNoteChoice(it, st); }
+  ch.applied = true; save();
+  if (ch.choice && ch.note == null) scheduleRewrite(it.id, before);
+}
+function afterApply(){
+  renderConsult();
+  const still = consult && consistency().some(x => x.msg === consult.issue.msg);
+  toast(consult && !consult.issue.ai && !still ? "反映しました。この指摘は解消しました" : "選択と特記事項に反映しました");
+  if (S.view === "out") { const y = window.scrollY; renderOut(); window.scrollTo(0, y); }
+  else if (S.view === "items") { if (S.detail) renderDetail(); else renderItems(); }
+}
+sheet.addEventListener("click", e => {
+  if (!consult) return;
+  const t = e.target.closest("button"); if (!t) return;
+  const log = consultLog(consult.key);
+  if (t.hasAttribute("data-cs-send")) { const v = $("#csIn").value.trim(); if (!v) { toast("相談する内容を入力してください"); return; } $("#csIn").value = ""; consultSend(v); }
+  if (t.hasAttribute("data-cs-stop")) consult.ctl?.abort();
+  if (t.dataset.csApply) { const [mi, ci] = t.dataset.csApply.split(":").map(Number); const ch = log[mi]?.changes?.[ci]; if (ch && !ch.applied) { applyChange(ch); afterApply(); } }
+  if (t.dataset.csAll) { (log[+t.dataset.csAll]?.changes || []).filter(ch => !ch.applied).forEach(applyChange); afterApply(); }
+});
+sheet.addEventListener("keydown", e => { if (consult && e.target.id === "csIn" && e.key === "Enter" && (e.ctrlKey || e.metaKey)) sheet.querySelector("[data-cs-send]")?.click(); });
+scrim.addEventListener("click", e => { if (scrim.hidden) { consult?.ctl?.abort(); consult = null; } });
 
 /* ---------- 文字起こし記録（市への提出用） ----------
    発言の文字起こしを、AIで誤変換・句読点だけ校正し（言い換え・要約はしない）、Word・テキストで保存する。
@@ -2151,7 +2281,12 @@ function renderOut(){
     <div class="btnrow" style="margin:0">${DL ? `<button class="btn" id="backupBtn">バックアップを保存</button>` : ""}<button class="btn" id="restoreBtn">バックアップを読み込む</button></div>`;
   fitSheets();
 }
+function consultFrom(ref){
+  const [src, i] = ref.split(":"), x = (src === "ai" ? aiConsist : consistency())?.[+i];
+  if (x) openConsult({ids: x.ids, msg: x.msg, ai: src === "ai"});
+}
 $("#v-out").addEventListener("click", e => {
+  const cb = e.target.closest("[data-consult]"); if (cb) { consultFrom(cb.dataset.consult); return; }
   const g = e.target.closest("[data-go]"); if (g) { go("items"); openDetail(g.dataset.go); return; }
   if (e.target.id==="copyAll") copyText(buildOutput(withChoice));
   if (e.target.id==="fit2") compressNotes(FORM.rows * 2);
