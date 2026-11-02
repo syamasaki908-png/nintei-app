@@ -483,7 +483,7 @@ const AXIS = {
 const EXTRA = {
   "1-1":"確認動作で確認した状況と日頃の状況（概ね過去1週間）が異なる場合は、より頻回な状況に基づき選択し、違いと選択した根拠を記載する。",
   "1-2":"「関節の動く範囲の制限の有無の確認方法」に示す動作で確認する。確認できなかった場合は、その理由と聞き取り内容を記載する。",
-  "2-12":"「2-12 外出頻度」で定める選択基準（週1回以上／月1回以上／月1回未満）に基づいて選択し、外出の目的と頻度を記載する。",
+  "2-12":"「2-12 外出頻度」で定める選択基準（週1回以上／月1回以上／月1回未満）に基づいて選択し、特記事項には外出の頻度だけを記載する。",
   "4-12":"何らかの行動が発生していない場合でも、周囲の者が何らかの行動をとらなければならないような状況（火の不始末など）が発生している場合は「行動が発生している」として評価する。"
 };
 const SPEAKERS = ["本人","家族","調査員","観察"];
@@ -513,7 +513,7 @@ function load(){
 }
 let saveT;
 function flush(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch(e) { toast("この端末に保存できませんでした。出力タブからコピーして控えてください"); } }
-function save(){ C().updated = Date.now(); clearTimeout(saveT); saveT = setTimeout(flush, 400); scheduleDrive(); }
+function save(){ try { applyG1(); } catch(_) {} C().updated = Date.now(); clearTimeout(saveT); saveT = setTimeout(flush, 400); scheduleDrive(); }
 document.addEventListener("visibilitychange", () => { if (document.hidden) { clearTimeout(saveT); flush(); if (drivePending) { clearTimeout(driveT); driveSave(false); } } });
 
 let toastT;
@@ -611,6 +611,43 @@ function aiErr(e){
 }
 
 /* ---------- helpers ---------- */
+/* 第1群の決まった書き方：1-2「ない」は「拘縮なし」、1-5「できる」は定型文、1-1「ない」は既定の高さの確認を書く */
+const G1_FIXED = {"1-2": "拘縮なし", "1-5": "支えなしで10分保持できることを確認。", "1-12": "小さい文字が見えている。", "1-13": "普通の声の大きさが聞こえていることを確認。",
+  "3-1": "意思を他者に伝達できることを確認している。", "3-4": "直前のことは正答できた。", "5-3": "日常のあらゆる場面で意思決定ができることを確認。"};
+/* 外出頻度は頻度だけ：選択根拠の文を落とす */
+const freqOnly = t => String(t || "").replace(/[^。]*「\d+\.[^」]*」を選択する。?/g, "").trim();
+const G1_DEFAULT = {"1-1": "両上肢・両下肢とも既定の高さまで上がることを確認。"};
+const isFirst = id => { const c = IT(id).c; return c.length === 1 && c[0] === 0; };
+const fixedNote = id => G1_FIXED[id] && isFirst(id) ? G1_FIXED[id] : null;
+/* keep AI/empty notes of these items in the set form (a note the surveyor typed is left alone) */
+function applyG1(){
+  for (const id of [...Object.keys(G1_FIXED), ...Object.keys(G1_DEFAULT)]) {
+    const st = IT(id); if (!isFirst(id) || st.noteBy === "user") continue;
+    const want = G1_FIXED[id] || (!st.note.trim() ? G1_DEFAULT[id] : null);
+    if (want && st.note !== want) { st.note = want; st.noteBy = "ai"; delete C().prop[id]; }
+  }
+  const out = IT("2-12"); if (out.noteBy !== "user" && out.note && freqOnly(out.note) !== out.note) out.note = freqOnly(out.note);
+}
+/* 特記事項には「調査時、」を書かない（AIが書いても取り除く） */
+/* 文末の「〜を選択する。」は書かない：選択肢の引用と「選択する」の文を取り除き、事実の部分は残す */
+function stripSelect(t){
+  return String(t ?? "")
+    .replace(/(?:、|。)?(?:より頻回な状況に基づき|頻度から|以上から|以上より|このため|そのため|よって)?、?(?:「\d+\.[^」]*」|「ある（該当する）」)+を選択する。?/g, "。")
+    .replace(/ことのため。/g, "こと。").replace(/(ため|ので|ことから|ことより)。/g, "。")
+    .replace(/判断し、適切な介助の方法を選択する。?/g, "判断する。")
+    .replace(/[^。\n]*を選択する。?/g, "")
+    .replace(/(?:より頻回な状況に基づき|頻度から|以上から)、?(?=\n|$)/g, "")
+    .replace(/。{2,}/g, "。").replace(/^。/, "").replace(/\n。/g, "\n").trim();
+}
+const tidyNote = s => stripSelect(String(s ?? "").replace(/調査時(?:（[^）]*）)?[、,]\s*/g, "")).trim();
+/* notes saved before this rule: remove 「調査時、」 once */
+if (!DB.tidy2) {
+  for (const c of Object.values(DB.cases || {})) {
+    for (const st of Object.values(c.items || {})) if (st.note) st.note = tidyNote(st.note);
+    for (const p of Object.values(c.prop || {})) if (p?.note) p.note = tidyNote(p.note);
+  }
+  DB.tidy1 = DB.tidy2 = true; flush();
+}
 function choiceText(it, idxs){
   if (!idxs || !idxs.length) return "";
   return idxs.slice().sort((a,b)=>a-b).map(i => `${i+1}.${it.ch[i]}`).join("・");
@@ -635,14 +672,24 @@ const vagueWords = s => { const t = (s||"").replace(/「\d+\.[^」]*」/g, ""); 
 const citedChoices = (it, note) => it.ch.map((t,k) => (note||"").includes(`「${k+1}.${t}」`) ? k : -1).filter(k => k >= 0);
 const line = u => `[${u.t}] ${u.sp}${u.tags.length?`（${u.tags.join(",")}）`:""}：${u.text}`;
 const RULES = `記載ルール（要介護認定 認定調査員テキスト2009改訂版に準拠）:
-- 特記事項は「選択根拠」「手間」「頻度」の3つのポイントに留意し、基本調査と矛盾しないよう簡潔明瞭に記載する。文末は「〜である」「〜とのこと」「〜を選択する」の調子でそろえる。
-- 選択根拠：本文の最後に、選んだ選択肢を選択肢の表記どおりに「 」で囲んで示す（例：より頻回な状況に基づき「2.何かにつかまればできる」を選択する。／頻度から「3.ある」を選択する。）。特別な医療は「ある（該当する）」を選択する、と書く。
-- 能力の項目：調査時に実際に行ってもらった状況（「調査時、〜」）と、調査対象者や介護者から聞き取りした日頃の状況（「家族の話では、〜とのこと」）を書き、異なる場合は一定期間（調査日より概ね過去1週間）の状況において、より頻回な状況に基づき選択したことを書く。実際に行ってもらえなかった場合は、その理由や状況を書く。
-- 介助の方法の項目：実際に行われている具体的な「介護の手間」（誰が、何を）と「頻度」を書く。福祉用具（補装具や介護用品等）や器具類を使用している場合は、使用している状況を書く。「介助されていない」状態や「実際に行われている介助」が不適切と判断できる事実が会話にある場合だけ、その事実を書き「不適切な状況にあると判断し、適切な介助の方法を選択する。」と書く。
-- 有無（BPSD関連）の項目：一定期間（調査日より概ね過去1か月間）の行動の内容と頻度、それによって発生している介護の手間（介護者の対応）を書く。介護者が特に対応をとっていない場合はその旨を書く。場面や目的からみて不適当な行動でない場合は「1.ない」とし、その理由を書く。
-- 選択は頻度が高い方を優先する：一定期間の状況において、より頻回な状況に基づき選択し、特記事項に「より頻回な状況に基づき「n.選択肢」を選択する。」と書く。最も重い状態や中間の選択肢を選ばない。
+- 特記事項は「選択根拠」「手間」「頻度」の3つのポイントに留意し、基本調査と矛盾しないよう簡潔明瞭に記載する。文末は「〜である」「〜とのこと」「〜を確認」の調子でそろえる。
+- 選択根拠：選択の根拠になる事実（確認した状況、介護の手間、頻度）を書く。文末に「〜を選択する。」は書かず、選択肢名（「2.何かにつかまればできる」など）も引用しない。
+- 能力の項目：調査時に実際に行ってもらった状況（「〜を確認」「〜ができた」）と、調査対象者や介護者から聞き取りした日頃の状況（「家族の話では、〜とのこと」）を書き、異なる場合は一定期間（調査日より概ね過去1週間）の状況において、より頻回な状況に基づき選択したことを書く。実際に行ってもらえなかった場合は、その理由や状況を書く。
+- 介助の方法の項目：実際に行われている具体的な「介護の手間」（誰が、何を）と「頻度」を書く。福祉用具（補装具や介護用品等）や器具類を使用している場合は、使用している状況を書く。「介助されていない」状態や「実際に行われている介助」が不適切と判断できる事実が会話にある場合だけ、その事実と、不適切な状況にあると判断した理由を書く。
+- 有無（BPSD関連）の項目：一定期間（調査日より概ね過去1か月間）の行動の内容と頻度、それによって発生している介護の手間（介護者の対応）を書く。介護者が特に対応をとっていない場合はその旨を書く。場面や目的からみて不適当な行動でない場合は、その理由を書く。
+- 選択は頻度が高い方を優先する：一定期間の状況において、より頻回な状況に基づき選択し、特記事項には頻回な状況とその頻度を書く（「〜を選択する。」は書かない）。最も重い状態や中間の選択肢を選ばない。
 - 頻度：「ときどき」「頻繁に」のように人によってイメージする量が一定でない言葉は用いず、「週に2、3回」「（1回／週）」のように数量を用いて具体的に記載する。
-- 聞き取った内容は「家族の話では、〜とのこと」「〜と聞き取る」、調査員が確認した内容は「調査時、〜」「〜を確認」と書き分ける。用語は「介護者」「介護の手間」「見守り等」「一部介助」「全介助」などテキストの表記を用いる。
+- 聞き取った内容は「家族の話では、〜とのこと」「〜と聞き取る」、調査員が確認した内容は「〜を確認」「〜ができた」と書き分ける。「調査時、」という書き出しは使わない。用語は「介護者」「介護の手間」「見守り等」「一部介助」「全介助」などテキストの表記を用いる。
+- 第1群（1-1〜1-13）は、問題がない項目も含めて全項目に特記事項を書く。
+- 麻痺等の有無（1-1）：確認動作で上がった部位は「既定の高さまで上がることを確認」の文言で書く（例：両上肢・両下肢とも既定の高さまで上がることを確認。）。麻痺がある部位は、上がらない状況を書く。
+- 拘縮の有無（1-2）：拘縮がない（「1.ない」）場合、特記事項は「拘縮なし」とだけ書く。
+- 座位保持（1-5）：「1.できる」の場合、特記事項は「支えなしで10分保持できることを確認。」とだけ書く。
+- 視力（1-12）：「1.普通」の場合、特記事項は「小さい文字が見えている。」とだけ書く。
+- 聴力（1-13）：「1.普通」の場合、特記事項は「普通の声の大きさが聞こえていることを確認。」とだけ書く。
+- 外出頻度（2-12）：外出の頻度だけを書く（例：週2回。）。外出先・目的・手段や選択根拠の文は書かない。
+- 意思の伝達（3-1）：「1.調査対象者が意思を他者に伝達できる」の場合、特記事項は「意思を他者に伝達できることを確認している。」とだけ書く。
+- 短期記憶（3-4）：「1.できる」の場合、特記事項は「直前のことは正答できた。」とだけ書く。
+- 日常の意思決定（5-3）：「1.できる（特別な場合でもできる）」の場合、特記事項は「日常のあらゆる場面で意思決定ができることを確認。」とだけ書く。
 - 記録にない事実を補ったり推測で書いたりしない。判断に必要な情報が足りなければ別に示す。
 - あいまいな表現を使わない（使用禁止：やや、おそらく、たぶん、〜と思われる、〜のようだ、〜らしい、〜かもしれない、少し、若干、多少、ほぼ、だいたい、時々、〜くらい）。
 - 氏名は書かず、本人・長女・妻などの続柄で表す。
@@ -790,7 +837,7 @@ async function draftAllGroup(ids){
 ${RULES}
 - 評価軸の考え方：能力＝調査時の確認動作と日頃の状況。介助の方法＝実際に行われている介助の内容と頻度。有無＝過去1か月の行動の有無と頻度、介護の手間。特別な医療＝過去14日間に医師の指示で看護師等が実施したもの。
 - 項目タグが付いていない発言や、別の項目の話の中にも判断材料があれば使う（例：「自分で歩いてトイレに行く」は移動・歩行の材料になる）。
-- 問題がない項目も、根拠があれば書く（例：「調査時、何にもつかまらずに自力で寝返りができたため、「1.つかまらないでできる」を選択する。」「家族の話では、この1か月間、物を盗られたと言うことはないとのことのため、「1.ない」を選択する。」）。
+- 問題がない項目も、根拠があれば書く（例：「何にもつかまらずに自力で寝返りができた。」「家族の話では、この1か月間、物を盗られたと言うことはないとのこと。」）。
 - 会話に判断材料がまったくない項目だけ note を空文字にし、missing に「〜について会話で確認できていない」と書く。推測で埋めない。
 - 調査員の選択が確定している項目は、その選択に沿って書き suggest は null。
 
@@ -818,7 +865,7 @@ function applyDrafts(arr){
   const c = C(); let n = 0;
   for (const x of (Array.isArray(arr) ? arr : [])) {
     const id = String(x?.id||"").trim(), it = BY[id]; if (!it) continue;
-    const st = IT(id), note = String(x.note||"").trim();
+    const st = IT(id), note = tidyNote(x.note);
     if (note) {
       if (!st.note.trim() || st.noteBy==="ai") { st.note = note; st.noteBy = "ai"; delete c.prop[id]; }
       else c.prop[id] = {note, suggest:null, missing: x.missing ? String(x.missing) : ""};
@@ -1286,7 +1333,7 @@ $("#v-items").addEventListener("click", e => {
   if (t.dataset.consult) { consultFrom(t.dataset.consult); return; }
   if (t.id==="dBack") { S.detail=null; renderItems(); return; }
   if (t.classList.contains("choice")) {
-    const k = +t.dataset.k, wasDone = !missingItems().length, before = st.c.slice();
+    const k = +t.dataset.k, wasDone = !missingItems().length, before = st.c.slice(), noteBefore = st.note;
     if (it.multi) {
       if (st.c.includes(k)) st.c = st.c.filter(x=>x!==k);
       else if (it.id!=="6" && k===0) st.c = [0];
@@ -1295,7 +1342,7 @@ $("#v-items").addEventListener("click", e => {
     const wasAi = st.cBy==="ai"; st.cBy = "user";
     const swapped = syncNoteChoice(it, st);
     save();
-    if (wasAi || swapped) renderDetail();
+    if (wasAi || swapped || st.note !== noteBefore) renderDetail();
     else { document.querySelectorAll("#dCh .choice").forEach(b=>b.setAttribute("aria-pressed", st.c.includes(+b.dataset.k))); $("#consistBox").innerHTML = itemConsistHTML(it.id); }
     const conflict = consistency().find(x => x.ids.includes(it.id));
     if (!wasDone && !missingItems().length) toast(`全項目を入力しました。判定シミュレーション：${simulate().level}（目安）`);
@@ -1329,7 +1376,7 @@ function template(id){
     const s = clean(u.text);
     if (u.sp==="本人") return `本人より「${s}」とのこと。`;
     if (u.sp==="家族") return `家族の話では、「${s}」とのこと。`;
-    if (u.sp==="観察") return `調査時、${s}を確認。`;
+    if (u.sp==="観察") return `${s}を確認。`;
     return `${s}。`;
   }).join("");
 }
@@ -1347,7 +1394,7 @@ function syncNoteChoice(it, st){
 const rewriteT = {}, rewriteFrom = {};
 function scheduleRewrite(id, before){
   const st = IT(id);
-  if (!SAMPLE || !st.note.trim() || !st.c.length) return;
+  if (!SAMPLE || !st.note.trim() || !st.c.length || fixedNote(id)) return;
   if (!(id in rewriteFrom)) rewriteFrom[id] = before;          /* the choice before this burst of taps */
   clearTimeout(rewriteT[id]);
   rewriteT[id] = setTimeout(() => {
@@ -1363,7 +1410,7 @@ async function rewriteForChoice(id, from){
 
 ${RULES}
 - 今の特記事項にある事実（調査時の確認結果、聞き取った内容、頻度、介護の手間）は残し、新しい選択と矛盾する評価の言い回しだけを直す。会話にない事実を足さない。
-- 最後に、新しい選択肢を「 」で囲んで「〜を選択する。」と書く。頻度の少ない状況は、その内容と頻度を残す。
+- 「〜を選択する。」や選択肢名の引用は書かない。頻度の少ない状況は、その内容と頻度を残す。
 - 新しい選択を裏付ける事実が会話にない場合は、本文の後に改行して「【要確認】…」を1行書く。
 
 評価軸：${AXIS[it.axis].label}（${EXTRA[it.id] || AXIS[it.axis].guide}）
@@ -1385,7 +1432,7 @@ ${uttsFor(id).map(line).join("\n") || "（なし）"}
     const {text} = await SAMPLE(prompt, {signal: ctl.signal, cache:false});
     let note = text.trim(), missing = "";
     const mm = note.match(/【要確認】(.*)/); if (mm) { missing = mm[1].trim(); note = note.replace(mm[0], "").trim(); }
-    if (note && note !== st.note.trim()) { c.prop[id] = {note, suggest:null, missing, reason:"選択の変更に合わせた見直し"}; save(); }
+    if ((note = tidyNote(note)) && note !== st.note.trim()) { c.prop[id] = {note, suggest:null, missing, reason:"選択の変更に合わせた見直し"}; save(); }
     else if (S.view==="items" && S.detail===id) toast("特記は新しい選択と矛盾していませんでした");
   } catch(e) { if (e?.code !== "cancelled") toast(aiErr(e)); }
   finally { if (rwCtl === ctl) rwCtl = null; if (S.view==="items" && S.detail===id) renderDetail(); else if (S.view==="items") renderItems(); }
@@ -1420,7 +1467,7 @@ ${st.note.trim()?`\n調査員がすでに書いた特記（活かして整える
     let note = text.trim(), missing = "", suggest = null;
     const mm = note.match(/【要確認】(.*)/); if (mm) { missing = mm[1].trim(); note = note.replace(mm[0],""); }
     const ms = note.match(/【選択の目安】\s*(\d+)/); if (ms) { suggest = +ms[1]; note = note.replace(/【選択の目安】.*/,""); }
-    c.prop[id] = {note:note.trim(), suggest, missing}; save();
+    c.prop[id] = {note:tidyNote(note), suggest, missing}; save();
   } catch(e) { if (e?.code!=="cancelled") toast(aiErr(e)); }
   finally { oneCtl = null; if (S.view==="items" && S.detail===id) renderDetail(); }
 }
@@ -1435,7 +1482,7 @@ async function bulkDraft(){
   const prompt = `あなたは介護保険の要介護認定調査員の記録作成を補助します。訪問調査の聞き取り記録から、認定調査票の特記事項の下書きを項目ごとに作成してください。
 
 ${RULES}
-- 記録に根拠がある項目だけを出力する。項目タグのない発言も、内容から該当する項目に振り分ける。1つの発言が複数の項目に関係してよい。
+- 記録に根拠がある項目だけを出力する（第1群の13項目は必ず全項目を出力する）。項目タグのない発言も、内容から該当する項目に振り分ける。1つの発言が複数の項目に関係してよい。
 - 評価軸の考え方：能力＝調査時の確認動作と日頃の状況。介助の方法＝実際に行われている介助の内容と頻度。有無＝過去1か月の行動の有無と頻度、介護の手間。特別な医療＝過去14日間に医師の指示で看護師等が実施したもの。
 
 出力：次の形のJSONだけを返す。
@@ -1459,7 +1506,7 @@ ${rec}`;
     let n = 0;
     for (const x of arr) {
       const id = String(x?.id||"").trim(); if (!BY[id] || !x.note) continue;
-      c.prop[id] = {note:String(x.note).trim(), suggest: Number.isInteger(x.suggest)?x.suggest:null, missing: x.missing?String(x.missing):""}; n++;
+      c.prop[id] = {note:tidyNote(x.note), suggest: Number.isInteger(x.suggest)?x.suggest:null, missing: x.missing?String(x.missing):""}; n++;
     }
     save(); toast(`${n}項目のAI案を作りました`);
   } catch(e) { if (e?.code!=="cancelled") toast(aiErr(e)); }
@@ -1543,9 +1590,12 @@ function formEntries(){
       if (!hit4.includes(it.id)) continue;
     }
     if (it.id === "6" && !IT("6").c.length) { out.push({id:"g6", code:"6群", name:"特別な医療", text:"特別な医療は該当項目なし。", fixed:true}); continue; }
-    let t = IT(it.id).note.trim(); if (!t) continue;
+    let t = fixedNote(it.id) || IT(it.id).note.trim() || (isFirst(it.id) && G1_DEFAULT[it.id]) || "";
+    if (it.id === "2-12") t = freqOnly(t);
+    if (it.g !== 7) t = stripSelect(t);   /* 自立度（7-1・7-2）は入力された文章をそのまま載せる */
+    if (!t) continue;
     if (it.id === "6") { const c = IT("6").c.slice().sort((a,b)=>a-b); if (c.length > 1) t = `（${c.map(k=>"6"+pad(k+1)).join("・")}）` + t; }
-    out.push({id: it.id, code: formCode(it), name: it.name, text: t});
+    out.push({id: it.id, code: formCode(it), name: it.name, text: t, fixed: !!fixedNote(it.id)});
   }
   return out;
 }
@@ -1583,13 +1633,13 @@ async function compressNotes(target){
 ${RULES}
 - 優先して残す順：①頻度（回数）②介護の手間（誰が何を）③調査時の確認結果と日頃の状況の違い④選択根拠。前置き・重複・言い回しを削る。
 - 事実や回数を変えない。書かれていないことを足さない。
-- maxChars が45字以上なら、最後に「「n.選択肢名」を選択する。」を残す。45字未満なら選択肢の引用は省いてよい。
+- 「〜を選択する。」や選択肢名の引用は書かない。
 JSONだけを返す：{"items":[{"id":"1-3","note":"要約後の特記"}]}
 
 ${JSON.stringify(list)}`, {modelTier: "default", cache: false});
     const back = {};
     for (const x of (Array.isArray(res?.items) ? res.items : [])) {
-      const id = String(x?.id || ""), t = String(x?.note || "").trim();
+      const id = String(x?.id || ""), t = tidyNote(x?.note);
       if (!BY[id] || !t || !plan[id]) continue;
       back[id] = IT(id).note; IT(id).note = t; IT(id).noteBy = IT(id).noteBy || "ai";
     }
@@ -1653,7 +1703,7 @@ const insurerNo = () => (C().meta.insurerNo ?? FORM.insurer).replace(/\D/g,"").s
    original form (枚方市 様式52・R7.10, 600dpi scan), in millimetres. */
 const FXC = {red:"#D84A60", band:"#E04E68", ink:"#111111", screen:"#C9C9C9", font:'"BIZ UDGothic","MS Gothic","Hiragino Sans","Osaka-Mono",monospace'};   /* the original is set in a monospaced Gothic */
 const FXG = {
-  tableL:54.30, tableR:204.35,   /* original 199.35, widened 5mm */ tableT:34.63, headB:41.135, rowH:7.532, col1:60.775, col2:69.305,
+  tableL:54.30, tableR:204.35,   /* original 199.35, widened 5mm */ tableT:34.63, headB:41.135, rowH:7.7508,   /* original 7.532; table lengthened 7mm (+0.219mm per row) */ col1:60.775, col2:69.305,
   panelL:13.845, panelR:51.78, panelT:34.76, panelB:282.125,
   textX:70.6, textSize:3.175,   /* 9pt */ codeC1:57.55, codeC2:65.05
 };
@@ -1682,6 +1732,7 @@ function fxScreen(ctx, x, y, w, h){
 function drawSheet(ctx, rows, pi, onForm){
   const G = FXG, ins = insurerNo();
   ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, 210, 297);
+  ctx.translate(0, -5);   /* the whole sheet sits 5mm higher than the original (direct print too) */
   if (onForm) { const o = printOffset(); ctx.translate(o.x, o.y); drawRows(ctx, rows); return; }
   /* title band */
   ctx.fillStyle = FXC.band; ctx.beginPath();
@@ -1732,7 +1783,7 @@ function drawSheet(ctx, rows, pi, onForm){
   fxText(ctx, "番", 56.85, 35.75, 3.9); fxText(ctx, "号", 63.4, 35.75, 3.9);
   [101.0, 123.6, 146.2, 168.8].forEach((x, k) => fxText(ctx, "特記事項"[k], x, 35.75, 3.9));
   drawRows(ctx, rows);
-  FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [172.1, 185.0, 196.7][k], 285.36, 3.05));
+  FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [172.1, 185.0, 196.7][k], B + 2, 3.05));   /* 2mm below the table */
 }
 function drawRows(ctx, rows){
   const G = FXG;
@@ -1808,7 +1859,7 @@ function docxXML(){
       tc(G[4], para(run("特　　　　記　　　　事　　　　項", {sz:19}), {jc:"center"}), {bd: red("top")+red("left")+red("bottom")+red("right")}));
     const body = Array.from({length: FORM.rows}, (_, i) => {
       const r = rows[i] || {code:"", text:""}, last = i === FORM.rows-1, bottom = red("bottom", last ? "single" : "dashed");
-      return tr(427,
+      return tr(439,
         tc(G[0], "", {vm:"cont", bd: ["top","left","bottom","right"].map(sideBd).join("")}) + tc(G[1], "", {vm:"cont"}) +
         tc(G[2], para(run(r.code.slice(0,1)), {jc:"center"}), {bd: red("left") + bottom + red("right","dashed")}) +
         tc(G[3], para(run(r.code.slice(1)), {jc:"center"}), {bd: red("left","dashed") + bottom + red("right")}) +
@@ -1820,7 +1871,7 @@ function docxXML(){
   };
   /* each sheet after the first starts with a 1pt paragraph set to begin a new page (no leftover break line) */
   const pages = formPages().map((rows, i) => (i ? `<w:p><w:pPr><w:pageBreakBefore/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>` : "") + sheet(rows, i)).join("");
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="519" w:right="321" w:bottom="454" w:left="785" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pages}<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="236" w:right="321" w:bottom="300" w:left="785" w:header="0" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 async function docxBlob(){
   const z = new JSZip(), add = (n, d) => z.file(n, d, {createFolders:false});
@@ -1982,6 +2033,8 @@ function checks(){
     if (it.ch.length && !st.c.length && it.id!=="6") w.push({id:it.id, kind:"miss", msg:"選択が未入力"});
     const summarized = (it.g === 4 && !st.c.some(k => k >= 1)) || (it.id === "6" && !st.c.length);   /* 用紙では「該当項目なし」にまとめる */
     if (!hasNote && !summarized) w.push({id:it.id, kind:"miss", msg: st.missing ? `特記未作成：${st.missing}` : n ? `聞き取り ${n} 件がありますが、特記が未作成` : "特記未作成（会話で確認できていません）"});
+    if (it.id === "1-1" && hasNote && !st.note.includes("既定の高さまで上がることを確認")) w.push({id:it.id, kind:"note", msg:"特記に「既定の高さまで上がることを確認」の文言がありません"});
+    if (fixedNote(it.id) && hasNote && st.note.trim() !== fixedNote(it.id)) w.push({id:it.id, kind:"note", msg:`用紙には「${fixedNote(it.id)}」と記載します（入力した特記は用紙に載りません）`});
     if (c.prop[it.id]) w.push({id:it.id, kind:"note", msg:"調査員の特記と別にAI案があります"});
     if (st.cBy==="ai" && st.c.length) w.push({id:it.id, kind:"note", msg:`選択がAI推定のまま（${choiceText(it, st.c)}）`});
   }
@@ -2104,7 +2157,7 @@ ${uttsFor(id).slice(-40).map(line).join("\n") || "（なし）"}`; }).join("\n\n
 ${RULES}
 - 相談の進め方：まず指摘の要点と、記録から分かること・分からないことを短く整理する。判断に必要な事実が足りなければ、調査員に具体的に質問する（1回に3つまで）。
 - 修正案は、記録または調査員の発言に根拠がある場合だけ出す。会話にない事実を作らない。選択が正しく、特記で事情を補えば足りる場合は、特記だけを直す案にする。直す必要がなければ、その理由を伝えて changes は空にする。
-- 特記事項の案は、その項目の特記の全文（書き換え後）を書く。選択を変える場合は、新しい選択の根拠になる内容にし、選択肢名は「番号.選択肢名」の形で引用する。
+- 特記事項の案は、その項目の特記の全文（書き換え後）を書く。選択を変える場合は、新しい選択の根拠になる内容にする。「〜を選択する。」や選択肢名の引用は書かない。
 
 指摘：${cs.issue.msg}
 
@@ -2128,7 +2181,7 @@ choice は1始まりの選択肢番号の配列で、選択を変えないとき
       let choice = Array.isArray(ch.choice) ? ch.choice.map(Number).filter(n => n >= 1 && n <= it.ch.length) : null;
       if (choice && !choice.length) choice = null;
       if (choice && !it.multi) choice = choice.slice(0, 1);
-      const note = typeof ch.note === "string" && ch.note.trim() ? ch.note.trim() : null;
+      const note = typeof ch.note === "string" && tidyNote(ch.note) ? tidyNote(ch.note) : null;
       return (choice || note != null) ? {id: it.id, choice, note, why: String(ch.why || ""), from: choiceText(it, IT(it.id).c) || "未選択"} : null;
     }).filter(Boolean);
     log.push({role: "ai", text: String(res?.reply || "").trim() || "（返答なし）", changes});
@@ -2429,9 +2482,9 @@ function loadSample(){
     "5-1":[1],"5-2":[2],"5-3":[1],"5-4":[0],"5-5":[3],"5-6":[3],"6":[],"7-1":[3],"7-2":[3]};
   const NT = {
     "0":"主訴は「膝が痛くて歩くのが不安。物忘れが増えた」とのこと。長女夫婦と同居し、主な介護者は長女で、日中は長女が仕事のため独居となる。住居は2階建ての一戸建てで、居室は1階にあり、玄関に段差が1段ある。特殊寝台と居室・トイレの手すりを使用し、屋内は歩行器で移動している。通所介護を週2回利用している。",
-    "1-1":"調査時、両上肢・両下肢の挙上を確認し、麻痺は見られなかった。",
-    "1-5":"調査時、背もたれのない椅子に10分間座っていられることを確認。",
-    "1-12":"調査時、視力確認表の図を正しく答えた。新聞の見出しも読めると本人より聞き取る。",
+    "1-1":"両上肢・両下肢とも既定の高さまで上がることを確認。",
+    "1-5":"支えなしで10分保持できることを確認。",
+    "1-12":"視力確認表の図を正しく答えた。新聞の見出しも読めると本人より聞き取る。",
     "2-1":"ベッドと椅子の間の乗り移りは、本人が手すりにつかまって行っている。",
     "2-3":"食事や水分でむせることはないと長女より聞き取る。",
     "2-4":"用意された食事を、本人が箸を使って食べている。",
@@ -2441,9 +2494,9 @@ function loadSample(){
     "2-9":"整髪は本人がくしを使って行っている。",
     "2-10":"上衣の着脱は、椅子に座って本人が行っている。",
     "3-1":"調査員の質問に対し、自分の考えを言葉で伝えられた。",
-    "3-3":"調査時、生年月日と年齢を正しく答えた。",
-    "3-5":"調査時、氏名を正しく答えた。",
-    "3-7":"調査時、ここが自宅であると答えた。",
+    "3-3":"生年月日と年齢を正しく答えた。",
+    "3-5":"氏名を正しく答えた。",
+    "3-7":"ここが自宅であると答えた。",
     "3-8":"家の中を目的なく歩き回ることはないと長女より聞き取る。",
     "3-9":"一人で外出することはなく、外出して戻れなくなったことはないとのこと。",
     "4-2":"事実と違う話を作ることはないと長女より聞き取る。",
@@ -2461,22 +2514,22 @@ function loadSample(){
     "5-4":"通所介護では他の利用者と同じテーブルで過ごし、トラブルはないとのこと。",
     "6":"過去14日間に、医師の指示に基づく医療処置は受けていない。",
     "1-2":"両膝に拘縮あり。他動的に伸展させると、両膝とも約20度の伸展制限を確認。",
-    "1-3":"調査時、ベッド柵につかまって左右とも寝返りを確認。日頃も柵を使用しているとのこと。",
-    "1-4":"調査時、ベッド柵につかまり時間をかけて起き上がる。柵がないと起き上がれないと本人より聞き取る。",
-    "1-6":"調査時、テーブルに手をついて約10秒の立位保持を確認。支えなしでは膝が痛み不安定になると本人より聞き取る。",
-    "1-8":"調査時、椅子の肘掛けにつかまって立ち上がる。日頃も手すりや家具につかまって立ち上がっているとのこと。",
-    "1-9":"調査時、テーブルに手をついて左右とも片足立ちを1秒程度確認。支えなしでは行えなかった。",
+    "1-3":"ベッド柵につかまって左右とも寝返りを確認。日頃も柵を使用しているとのこと。",
+    "1-4":"ベッド柵につかまり時間をかけて起き上がる。柵がないと起き上がれないと本人より聞き取る。",
+    "1-6":"テーブルに手をついて約10秒の立位保持を確認。支えなしでは膝が痛み不安定になると本人より聞き取る。",
+    "1-8":"椅子の肘掛けにつかまって立ち上がる。日頃も手すりや家具につかまって立ち上がっているとのこと。",
+    "1-9":"テーブルに手をついて左右とも片足立ちを1秒程度確認。支えなしでは行えなかった。",
     "1-7":"屋内は歩行器を使用しゆっくり歩行。方向転換時にふらつきあり。屋外は長女が腕を支えて歩くとのこと。",
     "1-10":"週2回の通所介護で入浴。洗身は本人が体の前面を洗い、背中と足先は職員が洗っているとのこと。",
     "1-11":"手指・足趾とも長女が爪切りを行っている。手元が見えにくく危ないため任せていると本人より聞き取る。",
     "1-13":"普通の声では聞き返しが多く、耳元で大きな声で話すと聞き取れた。",
-    "2-2":"屋内は歩行器を使用し、自力で介助なしで移動している（1日5回以上）。夜間のトイレへの移動はふらつきがあるため、長女が付き添い見守っている（3回／週）とのこと。より頻回な状況に基づき",
-    "2-5":"通常はトイレで自力で排尿している。リハビリパンツとパッドを使用し、尿失禁が週に2、3回あり、その際のパッド交換と汚染時の後始末は長女が行っているとのこと。より頻回な状況に基づき",
+    "2-2":"屋内は歩行器を使用し、自力で介助なしで移動している（1日5回以上）。夜間のトイレへの移動はふらつきがあるため、長女が付き添い見守っている（3回／週）とのこと。",
+    "2-5":"通常はトイレで自力で排尿している。リハビリパンツとパッドを使用し、尿失禁が週に2、3回あり、その際のパッド交換と汚染時の後始末は長女が行っているとのこと。",
     "2-11":"ズボンの着脱は手すりにつかまって本人が行うが、ふらつきがあるため長女がそばで見守っているとのこと。",
-    "2-12":"週2回の通所介護と月1回の通院で外出している。",
-    "3-2":"通所介護の曜日を覚えておらず、毎朝長女が伝えているとのこと。調査時も今日の予定を答えられなかった。",
-    "3-4":"調査時、3品を提示し5分後に確認したところ1品のみ回答。",
-    "3-6":"調査時（10月）、今の季節を「冬」と回答。",
+    "2-12":"週2回。",
+    "3-2":"通所介護の曜日を覚えておらず、毎朝長女が伝えているとのこと。今日の予定も答えられなかった。",
+    "3-4":"3品を提示し5分後に確認したところ1品のみ回答。",
+    "3-6":"10月の調査で、今の季節を「冬」と回答。",
     "4-1":"財布が見つからないと探し回り、「娘が盗った」と言うことが月2回程度あるとのこと。長女がその都度一緒に探し、落ち着くまで対応している。",
     "4-5":"同じ話を繰り返すことが月4回あるとのこと。",
     "4-12":"鍋を火にかけたまま忘れることが週1回以上あり、ガスの元栓は長女が管理している。",
@@ -2492,7 +2545,6 @@ function loadSample(){
   for (const it of ITEMS) {
     const ch = CH[it.id] || [];
     let note = NT[it.id] || "";
-    if (note && ch.length && it.id !== "6") note += `${ch.map(k=>`「${k+1}.${it.ch[k]}」`).join("")}を選択する。`;
     c.items[it.id] = {c: ch, cBy: "ai", note, noteBy: note ? "ai" : ""};
   }
   Object.assign(c.items["2-2"], {basisK:0, basis:"「1.介助されていない」週35回、「2.見守り等」週3回 → より頻回な「1.介助されていない」"});
