@@ -1711,8 +1711,9 @@ function fxScreen(ctx, x, y, w, h){
 function drawSheet(ctx, rows, pi, onForm){
   const G = FXG, ins = insurerNo();
   ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, 210, 297);
-  ctx.translate(0, -5);   /* the whole sheet sits 5mm higher than the original (direct print too) */
-  if (onForm) { const o = printOffset(); ctx.translate(o.x, o.y); drawRows(ctx, rows); return; }
+  /* direct print goes onto the pre-printed form, so it keeps the original's geometry (no shift, original rows and width) */
+  if (onForm) { const o = printOffset(); ctx.translate(o.x, o.y); drawRows(ctx, rows, FXO); return; }
+  ctx.translate(0, -5);   /* the on-screen / PDF sheet sits 5mm higher than the original */
   /* title band */
   ctx.fillStyle = FXC.band; ctx.beginPath();
   if (ctx.roundRect) ctx.roundRect(10.42, 9.15, 42.0, 4.99, 1.7); else ctx.rect(10.42, 9.15, 42.0, 4.99);
@@ -1764,8 +1765,9 @@ function drawSheet(ctx, rows, pi, onForm){
   drawRows(ctx, rows);
   FORM.city.split("　").forEach((w, k) => fxText(ctx, w, [172.1, 185.0, 196.7][k], B + 2, 3.05));   /* 2mm below the table */
 }
-function drawRows(ctx, rows){
-  const G = FXG;
+/* the pre-printed form as measured from the scan: 特記事項 column ends at 199.35mm, rows 7.532mm */
+const FXO = Object.assign({}, FXG, {tableR:199.35, rowH:7.532});
+function drawRows(ctx, rows, G = FXG){
   for (let i = 0; i < FORM.rows; i++) {
     const r = rows[i]; if (!r) continue;
     const mid = G.headB + i * G.rowH + G.rowH / 2;
